@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "node"
+cache:
+  directories:
+    - "node_modules" # This will tell Travis CI to cache the dependencies
+    - "$HOME/.npm"
+jobs:
+  include:
+  - stage: deploy-playground
+    install: true
+    if: branch = develop AND type = push
+    script:
+    - echo 'Deploying to NOW'
+    - npm i -g now
+    - export GIT_REV=`git rev-parse --short HEAD`
+    - npm run deploy-now-playground && npm run alias-playground

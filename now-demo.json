@@ -1,0 +1,9 @@
+{
+  "name": "hotel-explorer-demo",
+  "alias": "hotel-explorer-demo.windingtree.com",
+  "build": {
+    "env": {
+      "WT_READ_API": "https://demo-api.windingtree.com"
+    }
+  }
+}
