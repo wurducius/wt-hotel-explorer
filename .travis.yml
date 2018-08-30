@@ -7,16 +7,16 @@ cache:
   - "$HOME/.npm"
 jobs:
   include:
-  - stage: deploy-playground
+  - stage: release-playground
     install: true
-    if: branch = deploy/playground
+    if: branch = release/playground
     script:
     - echo 'Deploying to NOW'
     - npm i -g now
     - npm run deploy-now-playground && npm run alias-playground
-  - stage: deploy-demo
+  - stage: release-demo
     install: true
-    if: branch = deploy/demo
+    if: branch = release/demo
     script:
     - echo 'Deploying to NOW'
     - npm i -g now
