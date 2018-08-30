@@ -1,8 +1,10 @@
 {
   "name": "hotel-explorer-demo",
   "alias": "hotel-explorer-demo.windingtree.com",
-  "env": {
-    "WT_READ_API": "https://demo-api.windingtree.com",
-    "NODE_ENV": "production"
+  "build": {
+    "env": {
+      "WT_READ_API": "https://demo-api.windingtree.com",
+      "NODE_ENV": "production"
+    }
   }
 }
