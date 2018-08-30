@@ -5,10 +5,10 @@
   "scripts": {
     "test": "eslint .",
     "start": "NODE_ENV=development GIT_REV=`git rev-parse --short HEAD` WT_READ_API=https://demo-api.windingtree.com ./node_modules/.bin/webpack-dev-server",
-    "build": "NODE_ENV=production ./node_modules/.bin/webpack --mode=production",
-    "deploy-now-demo": "now -e GIT_REV=`git rev-parse --short HEAD` --team windingtree --token $NOW_TOKEN --local-config=now-demo.json --docker --public",
+    "build": "NODE_ENV=production GIT_REV=$GIT_REV ./node_modules/.bin/webpack --mode=production",
+    "deploy-now-demo": "now -e GIT_REV=$TRAVIS_COMMIT --team windingtree --token $NOW_TOKEN --local-config=now-demo.json --docker --public",
     "alias-demo": "now alias --team windingtree --token=$NOW_TOKEN --local-config=now-demo.json",
-    "deploy-now-playground": "now  -e GIT_REV=`git rev-parse --short HEAD` --team windingtree --token $NOW_TOKEN --local-config=now-playground.json --docker --public",
+    "deploy-now-playground": "now -e GIT_REV=$TRAVIS_COMMIT --team windingtree --token $NOW_TOKEN --local-config=now-playground.json --docker --public",
     "alias-playground": "now alias --team windingtree --token=$NOW_TOKEN --local-config=now-playground.json",
     "now-start": "serve --single ./public",
     "postinstall": "npm install https://github.com/windingtree/wt-ui.git#develop",
