@@ -13,7 +13,6 @@ jobs:
     script:
     - echo 'Deploying to NOW'
     - npm i -g now
-    - export GIT_REV=`git rev-parse --short HEAD`
     - npm run deploy-now-playground && npm run alias-playground
   - stage: deploy-demo
     install: true
@@ -21,7 +20,6 @@ jobs:
     script:
     - echo 'Deploying to NOW'
     - npm i -g now
-    - export GIT_REV=`git rev-parse --short HEAD`
     - npm run deploy-now-demo && npm run alias-demo
 env:
   global:

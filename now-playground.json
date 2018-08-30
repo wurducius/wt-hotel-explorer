@@ -3,7 +3,8 @@
   "alias": "hotel-explorer-playground.windingtree.com",
   "build": {
     "env": {
-      "WT_READ_API": "https://playground-api.windingtree.com"
+      "WT_READ_API": "https://playground-api.windingtree.com",
+      "NODE_ENV": "production"
     }
   }
 }
