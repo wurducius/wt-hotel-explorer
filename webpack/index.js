@@ -13,7 +13,7 @@ const settings = {
   context: resolve(__dirname, '..'),
   entry: {
     app: [
-      'babel-polyfill',
+      '@babel/polyfill',
       './src/index'
     ],
   },
