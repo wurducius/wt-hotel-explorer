@@ -1,5 +1,6 @@
 FROM mhart/alpine-node:10
 RUN apk update && apk upgrade && apk add --no-cache bash git openssh
+ARG GIT_REV
 
 WORKDIR /usr/src/app
 
