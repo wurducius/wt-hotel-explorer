@@ -7,10 +7,10 @@ const devMode = process.env.NODE_ENV === 'development';
 
 const miniCssLoader = {
   loader: MiniCssExtractPlugin.loader,
-    options: {
-        publicPath: '../public/css'
-    }
-}
+  options: {
+    publicPath: '../public/css',
+  },
+};
 
 const rules = [
   {
@@ -19,9 +19,9 @@ const rules = [
     exclude: /node_modules/,
   },
   {
-  test: /\.s?css$/,
-  use: [
-    devMode ? 'style-loader' : miniCssLoader,
+    test: /\.s?css$/,
+    use: [
+      devMode ? 'style-loader' : miniCssLoader,
       {
         loader: 'css-loader',
         options: {
@@ -39,14 +39,14 @@ const rules = [
               postcssCssnext,
             ];
           },
-        }
+        },
       },
       {
         loader: 'sass-loader',
         options: {
           sourceMap: true,
         },
-      }
+      },
     ],
   },
   {
@@ -60,7 +60,7 @@ const rules = [
   {
     test: /\.(jpg|jpeg|gif|png|ico|svg)(\?.*$|$)$/,
     loader: 'file-loader?name=img/[name].[ext]',
-  }
+  },
 ];
 
 module.exports = rules;

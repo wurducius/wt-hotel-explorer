@@ -14,7 +14,7 @@ const settings = {
   entry: {
     app: [
       '@babel/polyfill',
-      './src/index'
+      './src/index',
     ],
   },
   output: {
@@ -28,8 +28,6 @@ const settings = {
   devServer,
   devtool,
   optimization,
-  mode: process.env.NODE_ENV
-}
+  mode: process.env.NODE_ENV,
+};
 module.exports = settings;
-
-
