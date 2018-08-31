@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const packageJson = require('../package');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -34,6 +35,13 @@ const plugins = [
         'git-rev': process.env.GIT_REV,
       }
     }),
+  new CopyWebpackPlugin([
+    {
+      from: './**/*.png',
+      to: './img',
+      context: './node_modules/windingtree-ui/dist/img/',
+    }
+  ])
 ];
 
 if (isProduction) {
