@@ -18,41 +18,24 @@ export default () => (
 
               <div className="col-6 col-md-3">
                 <dl className="mb-1">
-                  <dt className="mb-1">Solutions</dt>
-                  <dd>
-                    <nav className="nav flex-column small">
-                      <a href="/suppliers.html" className="nav-link px-0 text-white text--alpha-inverse">For travel suppliers</a>
-                      <a href="/sellers.html" className="nav-link px-0 text-white text--alpha-inverse">For sellers of travel</a>
-                      <a href="/software-vendors.html" className="nav-link px-0 text-white text--alpha-inverse">For software vendors</a>
-                      <a href="https://github.com/windingtree/" className="nav-link px-0 text-white text--alpha-inverse">API</a>
-                    </nav>
-                  </dd>
-                </dl>
-              </div>
-
-              <div className="col-6 col-md-3">
-                <dl className="mb-1">
-                  <dt className="mb-1">Lif Token</dt>
-                  <dd>
-                    <nav className="nav flex-column small">
-                      <a href="/lif-token.html" className="nav-link px-0 text-white text--alpha-inverse">About token</a>
-                      <a href="/lif-token.html" className="nav-link px-0 text-white text--alpha-inverse">Buy Lifs</a>
-                      <a href="/lif-token.html" className="nav-link px-0 text-white text--alpha-inverse">Smart contract</a>
-                    </nav>
-                  </dd>
-                </dl>
-              </div>
-
-              <div className="col-6 col-md-3">
-                <dl className="mb-1">
                   <dt className="mb-1">About</dt>
                   <dd>
                     <nav className="nav flex-column small">
-                      <a href="/foundation.html" className="nav-link px-0 text-white text--alpha-inverse">Foundation</a>
+                      <a href="https://windingtree.com" className="nav-link px-0 text-white text--alpha-inverse">Homepage</a>
                       <a href="https://blog.windingtree.com/" className="nav-link px-0 text-white text--alpha-inverse">Blog</a>
-                      <a href="/foundation.html#roadmap" className="nav-link px-0 text-white text--alpha-inverse">Roadmap</a>
-                      <a href="/foundation.html#team" className="nav-link px-0 text-white text--alpha-inverse">Team</a>
-                      <a href="/assets/files/White_Paper_EN.pdf" className="nav-link px-0 text-white text--alpha-inverse">Read the White paper</a>
+                    </nav>
+                  </dd>
+                </dl>
+              </div>
+
+              <div className="col-6 col-md-3">
+                <dl className="mb-1">
+                  <dt className="mb-1">Developers</dt>
+                  <dd>
+                    <nav className="nav flex-column small">
+                    <a href="https://github.com/windingtree/wt-hotel-explorer" className="nav-link px-0 text-white text--alpha-inverse">Source code</a>
+                      <a href="https://github.com/windingtree" className="nav-link px-0 text-white text--alpha-inverse">GitHub</a>
+                      <a href="https://groups.google.com/forum/#!forum/windingtree" className="nav-link px-0 text-white text--alpha-inverse">Google Group</a>
                     </nav>
                   </dd>
                 </dl>
@@ -71,26 +54,12 @@ export default () => (
                   </dd>
                 </dl>
               </div>
-
-              <div className="col-6 col-md-3">
-                <dl className="mb-1">
-                  <dt className="mb-1">Community</dt>
-                  <dd>
-                    <nav className="nav flex-column small">
-                      <a href="/startups-and-developers.html" className="nav-link px-0 text-white text--alpha-inverse">For developers &amp;&nbsp;startups</a>
-                    </nav>
-                  </dd>
-                </dl>
-              </div>
-
             </div>
           </div>
 
         </div>
       </div>
-
       <hr className="text--alpha" />
-
       <div className="py-1">
         <div className="d-flex flex-column-reverse flex-md-row align-items-center">
           <div className="d-flex flex-column flex-md-row align-items-center align-items-md-baseline">
@@ -104,7 +73,6 @@ export default () => (
 
           <div className="mb-1 mb-md-0 ml-md-auto">
             <ul className="social list-inline text-center text-md-right">
-
               <li className="list-inline-item">
                 <a href="https://github.com/windingtree" title="GitHub" className="text-white text--alpha">
                   <i className="mdi mdi-24px mdi-github-circle" />
@@ -146,12 +114,8 @@ export default () => (
                   <i className="mdi mdi-24px mdi-bitcoin" />
                 </a>
               </li>
-
             </ul>
-
-
           </div>
-
         </div>
       </div>
     </div>
