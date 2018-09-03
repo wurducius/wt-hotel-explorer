@@ -2,7 +2,8 @@ import React from 'react';
 
 const Home = () => (
   <div>
-  WT Hotel explorer
+    hotel 1
+    hotel 2
   </div>
 );
 

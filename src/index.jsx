@@ -9,7 +9,7 @@ import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 import 'windingtree-ui/src/css/app.scss';
-import './css/app.scss';
+import './assets/css/app.scss';
 
 ReactDOM.render(
   <App />,
