@@ -14,6 +14,11 @@
     "postalias-playground": "CF_ROOT=$CF_ROOT_PLAYGROUND ./scripts/cloudflare-cache-purge.sh",
     "postalias-demo": "CF_ROOT=$CF_ROOT_DEMO ./scripts/cloudflare-cache-purge.sh"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/windingtree/wt-hotel-explorer"
+  },
+  "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "bootstrap": "^4.1.3",
