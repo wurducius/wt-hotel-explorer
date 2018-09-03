@@ -8,7 +8,7 @@ const devMode = process.env.NODE_ENV === 'development';
 const miniCssLoader = {
   loader: MiniCssExtractPlugin.loader,
   options: {
-    publicPath: '../public/css',
+    publicPath: '../',
   },
 };
 
@@ -59,7 +59,7 @@ const rules = [
   },
   {
     test: /\.(jpg|jpeg|gif|png|ico|svg)(\?.*$|$)$/,
-    loader: 'file-loader?name=img/[name].[ext]',
+    loader: 'file-loader?name=img/[name].[hash].[ext]',
   },
 ];
 

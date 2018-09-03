@@ -36,13 +36,6 @@ const plugins = [
       'git-rev': process.env.GIT_REV,
     },
   }),
-  new CopyWebpackPlugin([
-    {
-      from: './**/*.png',
-      to: './img',
-      context: './node_modules/windingtree-ui/dist/img/',
-    },
-  ]),
 ];
 
 if (isProduction) {
