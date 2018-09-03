@@ -42,15 +42,16 @@ const LoadableJoin = Loadable({
 // Setup redux
 const history = createHistory();
 const routerMiddlewareInst = routerMiddleware(history);
+
+const middleware = [thunk, routerMiddlewareInst]
+const composeEnhancers = (process.env.NODE_ENV === 'development' && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 const store = createStore(
   connectRouter(history)(combineReducers({
     ...reducers,
   })),
-  compose(
-    applyMiddleware(thunk, routerMiddlewareInst),
-    process.env.NODE_ENV === 'development' && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), //eslint-disable-line
-  ),
+  composeEnhancers(applyMiddleware(...middleware))
 );
+
 
 // App itself
 const AppContainer = () => (

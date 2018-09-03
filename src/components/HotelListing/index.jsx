@@ -5,7 +5,7 @@ import HotelListingItem from '../HotelListingItem';
 
 const HotelListing = ({ hotels }) => {
   const hotelItems = hotels.map(hotel => (
-    <HotelListingItem hotel={hotel} />
+    <HotelListingItem key={hotel.id} hotel={hotel} />
   ));
 
   return (
