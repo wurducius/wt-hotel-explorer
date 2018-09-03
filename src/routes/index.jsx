@@ -6,9 +6,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Loadable from 'react-loadable';
 import { hot } from 'react-hot-loader';
-import { AppHeader, AppFooter } from 'windingtree-ui';
 
-import Loader from '../components/Loader';
+import { Header, Footer, Loader } from '../components';
 
 const LoadableHome = Loadable({
   loader: () => import(
@@ -23,11 +22,11 @@ const LoadableHome = Loadable({
 
 const AppContainer = () => (
   <div>
-    <AppHeader bgClass="app-header--themed" />
+    <Header />
     <Switch>
       <Route path="/" component={LoadableHome} />
     </Switch>
-    <AppFooter />
+    <Footer />
   </div>
 );
 
