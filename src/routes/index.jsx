@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Loadable from 'react-loadable';
 import { hot } from 'react-hot-loader';
 
-import { Header, Footer, Loader } from '../components';
+import { Header, Footer, Disclaimer, Loader } from '../components';
 
 const LoadableHome = Loadable({
   loader: () => import(
@@ -19,9 +19,12 @@ const LoadableHome = Loadable({
 const AppContainer = () => (
   <div>
     <Header />
-    <Switch>
-      <Route path="/" component={LoadableHome} />
-    </Switch>
+    <div class="container-fluid">
+      <Disclaimer />
+      <Switch>
+        <Route path="/" component={LoadableHome} />
+      </Switch>
+    </div>
     <Footer />
   </div>
 );
