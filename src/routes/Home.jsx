@@ -1,10 +1,10 @@
 import React from 'react';
 
-const Home = () => (
-  <div>
-    hotel 1
-    hotel 2
-  </div>
-);
+import HotelListing from '../components/HotelListing';
+
+const Home = ({ hotels }) => {
+  hotels = hotels || [];
+  return (<HotelListing hotels={hotels} />);
+};
 
 export default Home;

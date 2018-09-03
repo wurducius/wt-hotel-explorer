@@ -12,7 +12,7 @@ This is a demo application showcasing current capabilities
       {' '}
 platform. If you are interested in this,
     read about
-    {' '}
+      {' '}
       <Link to="/join-the-platform" className="alert-link">joining the platform</Link>
 .
     </p>
