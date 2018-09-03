@@ -11,6 +11,8 @@ import { ConnectedRouter, connectRouter, routerMiddleware } from 'connected-reac
 import { Route, Switch } from 'react-router-dom';
 
 import reducers from '../reducers';
+// Lazy loaded route with attributes is working in a weird way
+import Hotel from './Hotel';
 
 import {
   Header, Footer, Disclaimer, Loader,
@@ -43,13 +45,13 @@ const LoadableJoin = Loadable({
 const history = createHistory();
 const routerMiddlewareInst = routerMiddleware(history);
 
-const middleware = [thunk, routerMiddlewareInst]
-const composeEnhancers = (process.env.NODE_ENV === 'development' && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
+const middleware = [thunk, routerMiddlewareInst];
+const composeEnhancers = (process.env.NODE_ENV === 'development' && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose; // eslint-disable-line
 const store = createStore(
   connectRouter(history)(combineReducers({
     ...reducers,
   })),
-  composeEnhancers(applyMiddleware(...middleware))
+  composeEnhancers(applyMiddleware(...middleware)),
 );
 
 
@@ -61,6 +63,7 @@ const AppContainer = () => (
       <Disclaimer />
       <Switch>
         <Route exact path="/" component={LoadableHome} />
+        <Route exact path="/hotel/:hotelId" component={Hotel} />
         <Route exact path="/join-the-platform" component={LoadableJoin} />
       </Switch>
     </div>

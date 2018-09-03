@@ -7,25 +7,27 @@ import HotelListing from '../components/HotelListing';
 
 class Home extends React.PureComponent {
   componentDidMount() {
-    // TODO make this possibly more efficient
+    // TODO do not download every time
     const { fetchInitialData } = this.props;
     fetchInitialData();
   }
 
   render() {
-    const { hotels } = this.props;
-    return (<HotelListing hotels={hotels || []} />);
+    const { hotels, isLoading } = this.props;
+    return (<HotelListing hotels={hotels || []} isLoading={isLoading} />);
   }
 }
 
 Home.propTypes = {
   fetchInitialData: PropTypes.func.isRequired,
   hotels: PropTypes.instanceOf(Array).isRequired,
+  isLoading: PropTypes.bool.isRequired,
 };
 
 export default connect(
   state => ({
     hotels: state.hotels.list,
+    isLoading: state.hotels.hotelsLoading,
   }),
   dispatch => ({
     fetchInitialData: () => dispatch(actions.fetchHotelsData()),
