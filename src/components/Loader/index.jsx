@@ -1,31 +1,42 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export default class Loader extends React.Component {
-
-  render() {
-
-    const {block, label} = this.props;
-
+const Loader = ({ block, label }) => {
+  if (block && label) {
     return (
-
-      block ?
-        label ?
-        <div className="loader" style={{height: block, opacity: 0}}>
-          <div>
-            <i className="mdi mdi-loading mdi-36px"/>
-            <p>{label}</p>
-          </div>
+      <div className="loader" style={{ height: block, opacity: 0 }}>
+        <div>
+          <i className="mdi mdi-loading mdi-36px" />
+          <p>{label}</p>
         </div>
-        :
-        <div className="loader" style={{height: block, opacity: 0}}>
-          <i className="mdi mdi-loading mdi-36px"/>
-        </div>
-      :
-      label ?
-        <span><i className="mdi mdi-loading mdi-36px mdi-spin text-primary"/> {label}</span>
-        :
-        <i className="mdi mdi-loading mdi-36px mdi-spin text-primary"/>
-    )
+      </div>
+    );
+  } if (block) {
+    return (
+      <div className="loader" style={{ height: block, opacity: 0 }}>
+        <i className="mdi mdi-loading mdi-36px" />
+      </div>
+    );
+  } if (label) {
+    return (
+      <span>
+        <i className="mdi mdi-loading mdi-36px mdi-spin text-primary" />
+        {' '}
+        {label}
+      </span>
+    );
   }
-}
+  return (<i className="mdi mdi-loading mdi-36px mdi-spin text-primary" />);
+};
 
+Loader.defaultProps = {
+  block: undefined,
+  label: undefined,
+};
+
+Loader.propTypes = {
+  block: PropTypes.number,
+  label: PropTypes.string,
+};
+
+export default Loader;
