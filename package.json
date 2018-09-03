@@ -4,7 +4,7 @@
   "description": "Web app to show hotel inventory from WT api.",
   "scripts": {
     "lint": "eslint src --ext jsx",
-    "start": "NODE_ENV=development GIT_REV=`git rev-parse --short HEAD` WT_READ_API=https://demo-api.windingtree.com ./node_modules/.bin/webpack-dev-server",
+    "start": "NODE_ENV=development GIT_REV=`git rev-parse --short HEAD` WT_READ_API=https://playground-api.windingtree.com ./node_modules/.bin/webpack-dev-server",
     "build": "NODE_ENV=production ./node_modules/.bin/webpack --mode=production",
     "deploy-now-demo": "now --build-env GIT_REV=$TRAVIS_COMMIT --team windingtree --token $NOW_TOKEN --local-config=now-demo.json --docker --public",
     "alias-demo": "now alias --team windingtree --token=$NOW_TOKEN --local-config=now-demo.json",
@@ -37,6 +37,7 @@
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "redux-thunk-actions": "^1.2.1",
+    "reselect": "^3.0.1",
     "websocket": "^1.0.26",
     "windingtree-media-web": "git+https://github.com/windingtree/media.git#web-assets",
     "windingtree-ui": "git+https://github.com/windingtree/wt-ui.git#develop"

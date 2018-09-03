@@ -1,8 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import HotelListingItem from '../HotelListingItem';
 
-export default ({ hotels }) => {
+const HotelListing = ({ hotels }) => {
   const hotelItems = hotels.map(hotel => (
     <HotelListingItem hotel={hotel} />
   ));
@@ -16,3 +17,9 @@ export default ({ hotels }) => {
     </div>
   );
 };
+
+HotelListing.propTypes = {
+  hotels: PropTypes.instanceOf(Array).isRequired,
+};
+
+export default HotelListing;

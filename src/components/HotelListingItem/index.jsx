@@ -1,8 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export default ({ hotel }) => (
+const HotelListingItem = ({ hotel }) => (
   <div>
-HotelListingItem
     {hotel.name}
   </div>
 );
+
+HotelListingItem.propTypes = {
+  hotel: PropTypes.instanceOf(Object).isRequired,
+};
+
+export default HotelListingItem;
