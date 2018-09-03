@@ -25,7 +25,7 @@ const HotelListing = ({ hotels, isLoading }) => {
 
 HotelListing.propTypes = {
   hotels: PropTypes.instanceOf(Array).isRequired,
-  isLoading: PropTypes.bool.isRequired
+  isLoading: PropTypes.bool.isRequired,
 };
 
 export default HotelListing;
