@@ -8,10 +8,12 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-COPY . .
 
 RUN npm install
-RUN npm install webpack
+
+RUN ls -la ./node_modules/.bin
+
+COPY . .
 
 RUN npm run build
 
