@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const Loader = ({ block, label }) => {
   if (block && label) {
     return (
-      <div className="loader" style={{ height: block, opacity: 0 }}>
+      <div className="loader" style={{ height: block, opacity: 1 }}>
         <div>
           <i className="mdi mdi-loading mdi-36px" />
           <p>{label}</p>
@@ -13,7 +13,7 @@ const Loader = ({ block, label }) => {
     );
   } if (block) {
     return (
-      <div className="loader" style={{ height: block, opacity: 0 }}>
+      <div className="loader" style={{ height: block, opacity: 1 }}>
         <i className="mdi mdi-loading mdi-36px" />
       </div>
     );

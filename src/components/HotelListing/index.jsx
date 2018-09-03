@@ -2,11 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import HotelListingItem from '../HotelListingItem';
+import Loader from '../Loader';
 
-const HotelListing = ({ hotels }) => {
+const HotelListing = ({ hotels, isLoading }) => {
   const hotelItems = hotels.map(hotel => (
     <HotelListingItem key={hotel.id} hotel={hotel} />
   ));
+
+  if (isLoading) {
+    return (<Loader block={200} label="Loading hotels from API..." />);
+  }
 
   return (
     <div className="container">
@@ -20,6 +25,7 @@ const HotelListing = ({ hotels }) => {
 
 HotelListing.propTypes = {
   hotels: PropTypes.instanceOf(Array).isRequired,
+  isLoading: PropTypes.bool.isRequired
 };
 
 export default HotelListing;
