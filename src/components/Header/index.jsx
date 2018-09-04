@@ -5,7 +5,8 @@ export default () => (
   <nav className="navbar navbar-expand-xl navbar-light" id="navbar">
     <div className="container">
       <Link className="navbar-brand mr-2" to="/">Winding Tree</Link>
-      <button className="navbar-toggler px-0 border-0" id="navbar-toggler" type="button" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+
+      <button className="navbar-toggler px-0 border-0" id="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
         <i className="mdi mdi-24px mdi-menu" />
       </button>
 
