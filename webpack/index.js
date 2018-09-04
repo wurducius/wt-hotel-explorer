@@ -20,6 +20,7 @@ const settings = {
   output: {
     filename: 'js/[name].[hash].js',
     path: resolve(__dirname, '..', 'public'),
+    publicPath: '/',
   },
   module: {
     rules,
