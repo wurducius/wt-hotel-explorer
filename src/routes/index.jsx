@@ -59,7 +59,7 @@ const store = createStore(
 const AppContainer = () => (
   <div>
     <Header />
-    <div className="container-fluid">
+    <div id="app-content" role="main">
       <Disclaimer />
       <Switch>
         <Route exact path="/" component={LoadableHome} />

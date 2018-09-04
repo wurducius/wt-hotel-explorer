@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default () => (
-  <footer className="footer bg--purple text-white">
+  <footer id="app-footer">
     <div className="container">
 
       <div className="pt-2 pb-1">
