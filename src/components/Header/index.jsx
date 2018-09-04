@@ -1,14 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import logoWTmd from '../../../node_modules/windingtree-media-web/logo-variants/full-logo/svg/logo--white_white-text--md.svg';
-
 export default () => (
-  <header id="app-header" className="app-header--themed">
-    <h1>
-      <Link to="/">
-        <img className="img-fluid" src={logoWTmd} alt="WindingTree" />
-      </Link>
-    </h1>
-  </header>
+  <nav className="navbar navbar-expand-xl navbar-light" id="navbar">
+    <div className="container">
+      <Link className="navbar-brand mr-2" to="/">Winding Tree</Link>
+      <button className="navbar-toggler px-0 border-0" id="navbar-toggler" type="button" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+        <i className="mdi mdi-24px mdi-menu" />
+      </button>
+
+      <div className="collapse navbar-collapse" id="navbar-content">
+        <ul className="navbar-nav mr-auto" id="navbar-nav">
+          <li className="nav-item active">
+            <Link className="nav-link h5" to="/join-the-platform">Join the platform</Link>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 );
