@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import HotelListingItem from '../HotelListingItem';
 import Loader from '../Loader';
 
-const HotelListing = ({ hotels, isLoading }) => {
+const HotelListing = ({
+  hotels, isLoading, isLoadingMore, showMore, fetchMoreHotels,
+}) => {
   const hotelItems = hotels.map(hotel => (
     <HotelListingItem key={hotel.id} hotel={hotel} />
   ));
@@ -19,6 +21,11 @@ const HotelListing = ({ hotels, isLoading }) => {
         ? hotelItems
         : <h2 className="text-muted text-center">No hotels here at the moment.</h2>
           }
+      {showMore && (
+      <button type="button" className="btn btn-secondary" onClick={fetchMoreHotels}>
+        {isLoadingMore ? <span>Loading</span> : <span>Load more</span>}
+      </button>
+      )}
     </div>
   );
 };
@@ -26,6 +33,9 @@ const HotelListing = ({ hotels, isLoading }) => {
 HotelListing.propTypes = {
   hotels: PropTypes.instanceOf(Array).isRequired,
   isLoading: PropTypes.bool.isRequired,
+  isLoadingMore: PropTypes.bool.isRequired,
+  showMore: PropTypes.bool.isRequired,
+  fetchMoreHotels: PropTypes.func.isRequired,
 };
 
 export default HotelListing;
