@@ -6,7 +6,7 @@ import actions from '../actions/hotels';
 import HotelListing from '../components/HotelListing';
 
 class Home extends React.PureComponent {
-  componentDidMount() {
+  componentWillMount() {
     const { fetchHotelsData, hotels } = this.props;
     if (!hotels.length) {
       fetchHotelsData();
@@ -15,12 +15,12 @@ class Home extends React.PureComponent {
 
   render() {
     const {
-      hotels, next, isLoading, isLoadingMore, fetchHotelsData,
+      hotels, next, areHotelsInitialized, isLoadingMore, fetchHotelsData,
     } = this.props;
     return (
       <HotelListing
         hotels={hotels || []}
-        isLoading={isLoading}
+        areHotelsInitialized={areHotelsInitialized}
         isLoadingMore={isLoadingMore}
         showMore={!!next}
         fetchMoreHotels={fetchHotelsData}
@@ -37,7 +37,7 @@ Home.propTypes = {
   fetchHotelsData: PropTypes.func.isRequired,
   hotels: PropTypes.instanceOf(Array).isRequired,
   next: PropTypes.string,
-  isLoading: PropTypes.bool.isRequired,
+  areHotelsInitialized: PropTypes.bool.isRequired,
   isLoadingMore: PropTypes.bool.isRequired,
 };
 
@@ -45,7 +45,7 @@ export default connect(
   state => ({
     hotels: state.hotels.list,
     next: state.hotels.next,
-    isLoading: state.hotels.hotelsInitialLoading,
+    areHotelsInitialized: state.hotels.hotelsInitialized,
     isLoadingMore: state.hotels.hotelsLoading,
   }),
   dispatch => ({
