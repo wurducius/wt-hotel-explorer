@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 
 const HotelListingItem = ({ hotel }) => {
-  const mapsLink = `https://www.google.com/maps/place/${hotel.location.latitude}+${hotel.location.longitude}`;
   return (
     <div className="card">
       <div className="card-body">
@@ -13,8 +12,8 @@ const HotelListingItem = ({ hotel }) => {
         <div className="card-text">
           <ReactMarkdown source={hotel.description} />
         </div>
-        <Link to={`/hotel/${hotel.id}`} className="btn btn-primary">See detail</Link>
-        <a href={mapsLink} className="btn btn-small btn-primary float-right">See on a map</a>
+        <Link to={`/hotels/${hotel.id}`} className="btn btn-primary">See detail</Link>
+        <Link to={`/hotels/${hotel.id}`} className="btn btn-small btn-primary float-right">See on a map</Link>
       </div>
     </div>
   );

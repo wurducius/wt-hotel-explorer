@@ -10,7 +10,7 @@ import RoomTypes from '../RoomTypes';
 
 /*
 cancellationPolicies + defaultCancellationAmount
-roomTypes - w/ pictures and prices
+roomTypes - w/ prices
 */
 const HotelDetail = ({ hotel }) => (
   <div className="container">
@@ -36,7 +36,7 @@ const HotelDetail = ({ hotel }) => (
         <RoomTypes map={hotel.roomTypes} />
       </div>
     </div>
-    <div className="row">
+    <div className="row" id="hotel-contact">
       <div className="col-md-12">
         <h3>Contact</h3>
       </div>
