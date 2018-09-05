@@ -6,9 +6,10 @@ import AmenitiesList from '../AmenitiesList';
 import ImageList from '../ImageList';
 import HotelContacts from '../HotelContacts';
 import { Address, LocationMap } from '../HotelLocation';
+import RoomTypes from '../RoomTypes';
 
 /*
-cancellationTerms
+cancellationPolicies + defaultCancellationAmount
 roomTypes - w/ pictures and prices
 */
 const HotelDetail = ({ hotel }) => (
@@ -24,6 +25,19 @@ const HotelDetail = ({ hotel }) => (
     </div>
     <div className="row">
       <div className="col-md-12">
+        <ImageList list={hotel.images} />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-md-12">
+        <h3>Rooms</h3>
+      </div>
+      <div className="col-md-12">
+        <RoomTypes map={hotel.roomTypes} />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-md-12">
         <h3>Contact</h3>
       </div>
       <div className="col-md-4">
@@ -34,11 +48,6 @@ const HotelDetail = ({ hotel }) => (
       </div>
       <div className="col-md-4">
         <LocationMap name={hotel.name} location={hotel.location} address={hotel.address} />
-      </div>
-    </div>
-    <div className="row">
-      <div className="col-md-12">
-        <ImageList list={hotel.images} />
       </div>
     </div>
   </div>
