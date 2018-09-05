@@ -4,13 +4,9 @@ import ReactMarkdown from 'react-markdown';
 
 import AmenitiesList from '../AmenitiesList';
 import ImageList from '../ImageList';
+import HotelContacts from '../HotelContacts';
 /*
 cancellationTerms
-contacts
-map
-address
-currency
-?link to etherscan?
 roomTypes - pictures
 */
 const HotelDetail = ({ hotel }) => (
@@ -22,6 +18,24 @@ const HotelDetail = ({ hotel }) => (
         </h1>
         <AmenitiesList list={hotel.amenities} />
         <ReactMarkdown source={hotel.description} />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-md-12">
+        <h3>Contact</h3>
+      </div>
+      <div className="col-md-6">
+        <HotelContacts contacts={hotel.contacts} />
+      </div>
+      <div className="col-md-6">
+      location.longitude
+      location.latitude
+      address
+        line1
+        line2
+        postalCode
+        city
+        country
       </div>
     </div>
     <div className="row">
