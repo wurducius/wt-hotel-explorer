@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 import ReactMarkdown from 'react-markdown';
 
 const HotelListingItem = ({ hotel }) => {
@@ -13,7 +14,7 @@ const HotelListingItem = ({ hotel }) => {
           <ReactMarkdown source={hotel.description} />
         </div>
         <Link to={`/hotels/${hotel.id}`} className="btn btn-primary">See detail</Link>
-        <Link to={`/hotels/${hotel.id}`} className="btn btn-small btn-primary float-right">See on a map</Link>
+        <HashLink to={`/hotels/${hotel.id}#hotel-map`} className="btn btn-small btn-primary float-right">See on a map</HashLink>
       </div>
     </div>
   );
