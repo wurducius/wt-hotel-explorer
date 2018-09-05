@@ -2,12 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const AmenitiesList = ({ list }) => {
-  const amenitiesList = list.map(amenity => (
+  const amenitiesList = list && list.map(amenity => (
     <span key={amenity} className="badge badge-pill badge-primary">{amenity}</span>
   ));
-  return (
-    <span>{amenitiesList.length && amenitiesList}</span>
-  );
+  return amenitiesList && <span>{amenitiesList}</span>;
 };
 
 AmenitiesList.propTypes = {
