@@ -4,6 +4,8 @@ import ReactMarkdown from 'react-markdown';
 
 import AmenitiesList from '../AmenitiesList';
 
+// TODO use properties, totalQuantity and occupancy
+
 const RoomType = ({ roomType }) => (
   <div className="card">
     <img className="card-img-top" src={roomType.images[0]} alt={roomType.images[0]} />
