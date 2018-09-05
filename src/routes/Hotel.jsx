@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import actions from '../actions/hotels';
 import Loader from '../components/Loader';
+import HotelDetail from '../components/HotelDetail';
 
 class Hotel extends React.PureComponent {
   componentWillMount() {
@@ -18,10 +19,7 @@ class Hotel extends React.PureComponent {
       (!hotel || hotel.hasDetailLoading)
         ? <Loader block={200} label="Loading hotel from API..." />
         : (
-          <div>
-            <h1>{hotel.name}</h1>
-            <p>{hotel.currency}</p>
-          </div>
+          <HotelDetail hotel={hotel} />
         )
     );
   }

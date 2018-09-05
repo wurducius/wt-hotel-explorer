@@ -15,7 +15,7 @@ const HotelListing = ({
       {hotels.length
         ? hotelItems
         : <h2 className="text-muted text-center">No hotels here at the moment.</h2>
-            }
+      }
       {showMore && (
       <div className="row text-center">
         <div className="col-12">
