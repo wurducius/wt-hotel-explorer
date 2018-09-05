@@ -63,7 +63,7 @@ const AppContainer = () => (
       <Disclaimer />
       <Switch>
         <Route exact path="/" component={LoadableHome} />
-        <Route exact path="/hotel/:hotelId" component={Hotel} />
+        <Route exact path="/hotels/:hotelId" component={Hotel} />
         <Route exact path="/join-the-platform" component={LoadableJoin} />
       </Switch>
     </div>

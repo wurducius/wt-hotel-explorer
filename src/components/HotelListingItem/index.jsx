@@ -12,8 +12,8 @@ const HotelListingItem = ({ hotel }) => {
         <div className="card-text">
           <ReactMarkdown source={hotel.description} />
         </div>
-        <Link to={`/hotel/${hotel.id}`} className="btn btn-primary">See detail</Link>
-        <Link to={`hotel/${hotel.id}`} className="btn btn-small btn-primary float-right">See on a map</Link>
+        <Link to={`/hotels/${hotel.id}`} className="btn btn-primary">See detail</Link>
+        <Link to={`/hotels/${hotel.id}`} className="btn btn-small btn-primary float-right">See on a map</Link>
       </div>
     </div>
   );
