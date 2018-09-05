@@ -8,6 +8,7 @@ const defaultState = {
 
 const reducer = (state = defaultState, action) => {
   let modifiedList;
+  let existingIds;
   let hotel;
   let hotelIndex;
   switch (action.type) {
@@ -20,15 +21,26 @@ const reducer = (state = defaultState, action) => {
         return state;
       }
       // TODO somehow handle errored hotels
-      // TODO do not overwrite already downloaded hotel details
-      return Object.assign({}, state, {
-        erroredIds: [],
-        list: state.list.concat(
-          action.payload.items.map(item => Object.assign({}, item, {
+      modifiedList = state.list;
+      existingIds = state.list.map(h => h.id).reduce((acc, cur, i) => {
+        acc[cur] = i;
+        return acc;
+      }, {});
+      for (let i = 0; i < action.payload.items.length; i += 1) {
+        if (existingIds[action.payload.items[i].id] !== undefined) {
+          modifiedList[existingIds[action.payload.items[i].id]] = Object.assign({},
+            modifiedList[existingIds[action.payload.items[i].id]],
+            action.payload.items[i]);
+        } else {
+          modifiedList.push(Object.assign({}, action.payload.items[i], {
             hasDetailLoaded: false,
             hasDetailLoading: false,
-          })).filter(h => !!h),
-        ),
+          }));
+        }
+      }
+      return Object.assign({}, state, {
+        erroredIds: [],
+        list: modifiedList,
         hotelsLoading: false,
         hotelsInitialized: true,
         next: action.payload.next,
@@ -48,7 +60,6 @@ const reducer = (state = defaultState, action) => {
       modifiedList[hotelIndex] = hotel;
       return Object.assign({}, state, {
         list: modifiedList,
-        hotelsInitialized: true,
       });
     case 'FETCH_DETAIL_SUCCEEDED':
       modifiedList = [].concat(state.list);

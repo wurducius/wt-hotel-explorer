@@ -7,8 +7,8 @@ import HotelListing from '../components/HotelListing';
 
 class Home extends React.PureComponent {
   componentWillMount() {
-    const { fetchHotelsData, hotels } = this.props;
-    if (!hotels.length) {
+    const { fetchHotelsData, areHotelsInitialized } = this.props;
+    if (!areHotelsInitialized) {
       fetchHotelsData();
     }
   }
