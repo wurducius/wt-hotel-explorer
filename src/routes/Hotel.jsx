@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import actions from '../actions/hotels';
+import Loader from '../components/Loader';
 
 class Hotel extends React.PureComponent {
   componentWillMount() {
@@ -12,14 +13,16 @@ class Hotel extends React.PureComponent {
   }
 
   render() {
-    const { match, hotel } = this.props;
+    const { hotel } = this.props;
     return (
-      <div>
-      Hotel detail
-        {' '}
-        {match.params.hotelId}
-        <p>{hotel && hotel.currency}</p>
-      </div>
+      (!hotel || hotel.hasDetailLoading)
+        ? <Loader block={200} label="Loading hotel from API..." />
+        : (
+          <div>
+            <h1>{hotel.name}</h1>
+            <p>{hotel.currency}</p>
+          </div>
+        )
     );
   }
 }

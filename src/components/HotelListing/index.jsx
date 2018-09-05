@@ -2,15 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import HotelListingItem from '../HotelListingItem';
-import Loader from '../Loader';
 
 const HotelListing = ({
-  hotels, areHotelsInitialized, isLoadingMore, showMore, fetchMoreHotels,
+  hotels, isLoadingMore, showMore, fetchMoreHotels,
 }) => {
-  if (!areHotelsInitialized) {
-    return (<Loader block={200} label="Loading hotels from API..." />);
-  }
-
   const hotelItems = hotels.map(hotel => (
     <HotelListingItem key={hotel.id} hotel={hotel} />
   ));
@@ -36,7 +31,6 @@ const HotelListing = ({
 
 HotelListing.propTypes = {
   hotels: PropTypes.instanceOf(Array).isRequired,
-  areHotelsInitialized: PropTypes.bool.isRequired,
   isLoadingMore: PropTypes.bool.isRequired,
   showMore: PropTypes.bool.isRequired,
   fetchMoreHotels: PropTypes.func.isRequired,
