@@ -5,6 +5,7 @@ import actions from '../actions/hotels';
 
 import HotelListing from '../components/HotelListing';
 import Loader from '../components/Loader';
+import GuestForm from '../components/GuestForm';
 
 class Home extends React.PureComponent {
   componentWillMount() {
@@ -19,16 +20,19 @@ class Home extends React.PureComponent {
       hotels, next, areHotelsInitialized, isLoadingMore, fetchHotelsData,
     } = this.props;
     return (
-      !areHotelsInitialized
-        ? <Loader block={200} label="Loading hotels from API..." />
-        : (
-          <HotelListing
-            hotels={hotels || []}
-            isLoadingMore={isLoadingMore}
-            showMore={!!next}
-            fetchMoreHotels={fetchHotelsData}
-          />
-        ));
+      <div>
+        <GuestForm />
+        {!areHotelsInitialized
+          ? <Loader block={200} label="Loading hotels from API..." />
+          : (
+            <HotelListing
+              hotels={hotels || []}
+              isLoadingMore={isLoadingMore}
+              showMore={!!next}
+              fetchMoreHotels={fetchHotelsData}
+            />)}
+      </div>
+    );
   }
 }
 
