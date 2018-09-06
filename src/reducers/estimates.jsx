@@ -1,8 +1,6 @@
 const defaultState = {
   guestData: {},
-  ratePlans: {},
   estimates: {},
-  isComputing: false,
 };
 
 const reducer = (state = defaultState, action) => {
@@ -12,6 +10,13 @@ const reducer = (state = defaultState, action) => {
         guestData: {
           ...action.payload,
         },
+      });
+    case 'SET_ESTIMATES':
+      return Object.assign({}, state, {
+        estimates: {
+          ...state.estimates,
+          [action.payload.id]: action.payload.data,
+        }
       });
     default:
       return state;

@@ -75,6 +75,34 @@ const reducer = (state = defaultState, action) => {
       return Object.assign({}, state, {
         list: modifiedList,
       });
+    case 'FETCH_HOTEL_ROOM_TYPES_SUCCEEDED':
+      modifiedList = [].concat(state.list);
+      hotel = modifiedList.find(h => h.id === action.payload.id);
+      if (!hotel) {
+        return state;
+      }
+      hotelIndex = modifiedList.indexOf(hotel);
+      hotel = Object.assign({}, hotel, {
+        roomTypes: action.payload.data,
+      });
+      modifiedList[hotelIndex] = hotel;
+      return Object.assign({}, state, {
+        list: modifiedList,
+      });
+    case 'FETCH_HOTEL_RATE_PLANS_SUCCEEDED':
+      modifiedList = [].concat(state.list);
+      hotel = modifiedList.find(h => h.id === action.payload.id);
+      if (!hotel) {
+        return state;
+      }
+      hotelIndex = modifiedList.indexOf(hotel);
+      hotel = Object.assign({}, hotel, {
+        ratePlans: action.payload.data,
+      });
+      modifiedList[hotelIndex] = hotel;
+      return Object.assign({}, state, {
+        list: modifiedList,
+      });
     default:
       return state;
   }
