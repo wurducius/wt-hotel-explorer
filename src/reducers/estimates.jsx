@@ -1,6 +1,6 @@
 const defaultState = {
   guestData: {},
-  estimates: {},
+  current: {},
 };
 
 const reducer = (state = defaultState, action) => {
@@ -13,10 +13,10 @@ const reducer = (state = defaultState, action) => {
       });
     case 'SET_ESTIMATES':
       return Object.assign({}, state, {
-        estimates: {
-          ...state.estimates,
+        current: {
+          ...state.current,
           [action.payload.id]: action.payload.data,
-        }
+        },
       });
     default:
       return state;

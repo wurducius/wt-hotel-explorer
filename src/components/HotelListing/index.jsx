@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import HotelListingItem from '../HotelListingItem';
 
 const HotelListing = ({
-  hotels, isLoadingMore, showMore, fetchMoreHotels,
+  hotels, estimates, isLoadingMore, showMore, fetchMoreHotels,
 }) => {
   const hotelItems = hotels.map(hotel => (
-    <HotelListingItem key={hotel.id} hotel={hotel} />
+    <HotelListingItem key={hotel.id} hotel={hotel} estimates={estimates[hotel.id]} />
   ));
 
   return (
@@ -34,6 +34,7 @@ HotelListing.propTypes = {
   isLoadingMore: PropTypes.bool.isRequired,
   showMore: PropTypes.bool.isRequired,
   fetchMoreHotels: PropTypes.func.isRequired,
+  estimates: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default HotelListing;

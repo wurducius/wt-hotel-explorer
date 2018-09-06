@@ -18,7 +18,7 @@ class Home extends React.PureComponent {
 
   render() {
     const {
-      hotels, next, areHotelsInitialized, isLoadingMore, fetchHotelsData,
+      hotels, estimates, next, areHotelsInitialized, isLoadingMore, fetchHotelsData,
       handleGuestFormSubmit,
     } = this.props;
     return (
@@ -29,6 +29,7 @@ class Home extends React.PureComponent {
           : (
             <HotelListing
               hotels={hotels || []}
+              estimates={estimates || {}}
               isLoadingMore={isLoadingMore}
               showMore={!!next}
               fetchMoreHotels={fetchHotelsData}
@@ -45,6 +46,7 @@ Home.defaultProps = {
 Home.propTypes = {
   fetchHotelsData: PropTypes.func.isRequired,
   hotels: PropTypes.instanceOf(Array).isRequired,
+  estimates: PropTypes.instanceOf(Object).isRequired,
   next: PropTypes.string,
   areHotelsInitialized: PropTypes.bool.isRequired,
   isLoadingMore: PropTypes.bool.isRequired,
@@ -54,6 +56,7 @@ Home.propTypes = {
 export default connect(
   state => ({
     hotels: state.hotels.list,
+    estimates: state.estimates.current,
     next: state.hotels.next,
     areHotelsInitialized: state.hotels.hotelsInitialized,
     isLoadingMore: state.hotels.hotelsLoading,
