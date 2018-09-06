@@ -20,7 +20,7 @@ const GuestForm = ({ handleSubmit }) => {
       errors.arrival = 'Invalid arrival date!';
     }
     if (!normalizedDeparture.isValid()) {
-      errors.departure = 'Invalid arrival date!';
+      errors.departure = 'Invalid departure date!';
     }
     // arrival has to be before departure
     if (normalizedArrival.isValid()
@@ -28,7 +28,6 @@ const GuestForm = ({ handleSubmit }) => {
         && normalizedArrival.isAfter(normalizedDeparture)) {
       errors.arrival = 'Arrival has to be before departure!';
     }
-
     return errors;
   };
 
@@ -70,7 +69,7 @@ const GuestForm = ({ handleSubmit }) => {
               </div>
               <div className="form-group col-md-4">
                 <label htmlFor="numberOfGuests">Number of guests</label>
-                <Field type="number" className="form-control" name="numberOfGuests" id="numberOfGuests" placeholder="Number of guests" />
+                <Field type="number" className="form-control" min="1" name="numberOfGuests" id="numberOfGuests" placeholder="Number of guests" />
                 {errors.numberOfGuests && touched.numberOfGuests && <small className="text-danger">{errors.numberOfGuests}</small>}
               </div>
             </div>
