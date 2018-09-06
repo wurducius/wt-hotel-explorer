@@ -8,7 +8,7 @@ import 'jquery';
 import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
-import 'windingtree-ui/src/css/app.scss';
+import '@windingtree/wt-ui/dist/styles.css';
 import './assets/css/app.scss';
 
 ReactDOM.render(
