@@ -23,17 +23,20 @@ class Home extends React.PureComponent {
     } = this.props;
     return (
       <div>
-        <GuestForm handleSubmit={handleGuestFormSubmit} />
         {!areHotelsInitialized
           ? <Loader block={200} label="Loading hotels from API..." />
           : (
-            <HotelListing
-              hotels={hotels || []}
-              estimates={estimates || {}}
-              isLoadingMore={isLoadingMore}
-              showMore={!!next}
-              fetchMoreHotels={fetchHotelsData}
-            />)}
+            <React.Fragment>
+              <GuestForm handleSubmit={handleGuestFormSubmit} />
+              <HotelListing
+                hotels={hotels || []}
+                estimates={estimates || {}}
+                isLoadingMore={isLoadingMore}
+                showMore={!!next}
+                fetchMoreHotels={fetchHotelsData}
+              />
+            </React.Fragment>
+          )}
       </div>
     );
   }

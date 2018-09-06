@@ -7,11 +7,14 @@ import ImageList from '../ImageList';
 import HotelContacts from '../HotelContacts';
 import { Address, LocationMap } from '../HotelLocation';
 import RoomTypes from '../RoomTypes';
+import GuestForm from '../GuestForm';
 
 /*
 cancellationPolicies + defaultCancellationAmount
 */
-const HotelDetail = ({ hotel }) => (
+const HotelDetail = ({
+  hotel, estimates, handleGuestFormSubmit, guestFormInitialValues,
+}) => (
   <div className="container">
     <div className="row">
       <div className="col-md-12">
@@ -20,6 +23,7 @@ const HotelDetail = ({ hotel }) => (
         </h1>
         <AmenitiesList list={hotel.amenities} />
         <ReactMarkdown source={hotel.description} />
+        <GuestForm handleSubmit={handleGuestFormSubmit} initialValues={guestFormInitialValues} />
       </div>
     </div>
     <div className="row">
@@ -32,7 +36,7 @@ const HotelDetail = ({ hotel }) => (
         <h3>Rooms</h3>
       </div>
       <div className="col-md-12">
-        <RoomTypes map={hotel.roomTypes} />
+        <RoomTypes map={hotel.roomTypes} estimates={estimates} />
       </div>
     </div>
     <div className="row" id="hotel-contact">
@@ -52,8 +56,15 @@ const HotelDetail = ({ hotel }) => (
   </div>
 );
 
+HotelDetail.defaultProps = {
+  estimates: [],
+};
+
 HotelDetail.propTypes = {
   hotel: PropTypes.instanceOf(Object).isRequired,
+  estimates: PropTypes.instanceOf(Array),
+  handleGuestFormSubmit: PropTypes.func.isRequired,
+  guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default HotelDetail;

@@ -1,5 +1,11 @@
+import moment from 'moment';
+
 const defaultState = {
-  guestData: {},
+  guestData: {
+    arrival: moment().isoWeekday(5).startOf('day').format('YYYY-MM-DD'),
+    departure: moment().isoWeekday(7).startOf('day').format('YYYY-MM-DD'),
+    numberOfGuests: 1,
+  },
   current: {},
 };
 

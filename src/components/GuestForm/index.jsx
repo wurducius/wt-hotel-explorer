@@ -3,7 +3,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 
-const GuestForm = ({ handleSubmit }) => {
+const GuestForm = ({ handleSubmit, initialValues }) => {
   const validate = (values) => {
     const errors = {};
     // formats
@@ -20,7 +20,7 @@ const GuestForm = ({ handleSubmit }) => {
       errors.arrival = 'Invalid arrival date!';
     }
     if (!normalizedDeparture.isValid()) {
-      errors.departure = 'Invalid arrival date!';
+      errors.departure = 'Invalid departure date!';
     }
     // arrival has to be before departure
     if (normalizedArrival.isValid()
@@ -28,29 +28,25 @@ const GuestForm = ({ handleSubmit }) => {
         && normalizedArrival.isAfter(normalizedDeparture)) {
       errors.arrival = 'Arrival has to be before departure!';
     }
-
     return errors;
   };
 
   const doSubmit = (values, formActions) => {
     const result = {};
     result.numberOfGuests = values.numberOfGuests;
-    result.arrival = moment(values.arrival);
-    result.departure = moment(values.departure);
+    result.arrival = moment(values.arrival).format('YYYY-MM-DD');
+    result.departure = moment(values.departure).format('YYYY-MM-DD');
     result.formActions = {
       setSubmitting: formActions.setSubmitting,
       setErrors: formActions.setErrors,
     };
     handleSubmit(result);
   };
-  const nextFriday = moment().isoWeekday(5).startOf('day').format('YYYY-MM-DD');
-  const nextSunday = moment().isoWeekday(7).startOf('day').format('YYYY-MM-DD');
-
   return (
     <div>
       <h2>Get an estimate</h2>
       <Formik
-        initialValues={{ arrival: nextFriday, departure: nextSunday, numberOfGuests: 1 }}
+        initialValues={initialValues}
         validate={validate}
         onSubmit={doSubmit}
       >
@@ -70,7 +66,7 @@ const GuestForm = ({ handleSubmit }) => {
               </div>
               <div className="form-group col-md-4">
                 <label htmlFor="numberOfGuests">Number of guests</label>
-                <Field type="number" className="form-control" name="numberOfGuests" id="numberOfGuests" placeholder="Number of guests" />
+                <Field type="number" className="form-control" min="1" name="numberOfGuests" id="numberOfGuests" placeholder="Number of guests" />
                 {errors.numberOfGuests && touched.numberOfGuests && <small className="text-danger">{errors.numberOfGuests}</small>}
               </div>
             </div>
@@ -82,8 +78,17 @@ const GuestForm = ({ handleSubmit }) => {
   );
 };
 
+GuestForm.defaultProps = {
+  initialValues: {
+    arrival: moment().isoWeekday(5).startOf('day').format('YYYY-MM-DD'),
+    departure: moment().isoWeekday(7).startOf('day').format('YYYY-MM-DD'),
+    numberOfGuests: 1,
+  },
+};
+
 GuestForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
+  initialValues: PropTypes.instanceOf(Object),
 };
 
 export default GuestForm;

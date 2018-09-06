@@ -5,7 +5,7 @@ import { HashLink } from 'react-router-hash-link';
 import ReactMarkdown from 'react-markdown';
 
 const HotelListingItem = ({ hotel, estimates }) => {
-  const currentLowestEstimate = estimates && estimates.reduce((acc, current) => {
+  const currentLowestEstimate = estimates.reduce((acc, current) => {
     if (!acc.price || current.price <= acc.price) {
       return current;
     }
