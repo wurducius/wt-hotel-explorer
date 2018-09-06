@@ -20,16 +20,17 @@ const fetchHotelsData = createActionThunk('FETCH_LIST', ({ getState }) => {
 });
 
 const DETAIL_FIELDS = [
-  'roomTypes',
-  'location',
+  'id',
   'name',
   'description',
+  'location',
+  'images',
   'contacts',
   'address',
-  'images',
   'amenities',
   'defaultCancellationAmount',
   'cancellationPolicies',
+  'roomTypes',
 ];
 
 const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id }) => {
@@ -37,9 +38,31 @@ const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id }) => {
   return fetch(url).then(data => data.json());
 });
 
+const fetchHotelRatePlans = createActionThunk('FETCH_HOTEL_RATE_PLANS', ({ id }) => {
+  const url = `${process.env.WT_READ_API}/hotels/${id}/ratePlans`;
+  return fetch(url)
+    .then(data => data.json())
+    .then(data => ({
+      data,
+      id,
+    }));
+});
+
+const fetchHotelRoomTypes = createActionThunk('FETCH_HOTEL_ROOM_TYPES', ({ id }) => {
+  const url = `${process.env.WT_READ_API}/hotels/${id}/roomTypes`;
+  return fetch(url)
+    .then(data => data.json())
+    .then(data => ({
+      data,
+      id,
+    }));
+});
+
 const actions = {
   fetchHotelsData,
   fetchHotelDetail,
+  fetchHotelRatePlans,
+  fetchHotelRoomTypes,
 };
 
 export default actions;

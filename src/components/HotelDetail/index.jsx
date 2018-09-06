@@ -10,7 +10,6 @@ import RoomTypes from '../RoomTypes';
 
 /*
 cancellationPolicies + defaultCancellationAmount
-roomTypes - w/ prices
 */
 const HotelDetail = ({ hotel }) => (
   <div className="container">
@@ -46,7 +45,7 @@ const HotelDetail = ({ hotel }) => (
       <div className="col-md-4">
         <Address name={hotel.name} address={hotel.address} />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-4" id="hotel-map">
         <LocationMap name={hotel.name} location={hotel.location} address={hotel.address} />
       </div>
     </div>
