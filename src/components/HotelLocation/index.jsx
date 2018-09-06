@@ -6,7 +6,7 @@ import {
 
 import 'leaflet/dist/leaflet.css';
 
-class LocationMap extends React.Component {
+class LocationMap extends React.PureComponent {
   state = {
     zoom: 35,
   };
