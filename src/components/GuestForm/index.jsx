@@ -1,8 +1,9 @@
 import React from 'react';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import { Formik, Form, Field } from 'formik';
 
-const GuestForm = () => {
+const GuestForm = ({ handleSubmit }) => {
   const validate = (values) => {
     const errors = {};
     // formats
@@ -31,8 +32,16 @@ const GuestForm = () => {
     return errors;
   };
 
-  const handleSubmit = (values) => {
-    console.log(values);
+  const doSubmit = (values, formActions) => {
+    const result = {};
+    result.numberOfGuests = values.numberOfGuests;
+    result.arrival = moment(values.arrival);
+    result.departure = moment(values.departure);
+    result.formActions = {
+      setSubmitting: formActions.setSubmitting,
+      setErrors: formActions.setErrors,
+    };
+    handleSubmit(result);
   };
   const nextFriday = moment().isoWeekday(5).startOf('day').format('YYYY-MM-DD');
   const nextSunday = moment().isoWeekday(7).startOf('day').format('YYYY-MM-DD');
@@ -43,7 +52,7 @@ const GuestForm = () => {
       <Formik
         initialValues={{ arrival: nextFriday, departure: nextSunday, numberOfGuests: 1 }}
         validate={validate}
-        onSubmit={handleSubmit}
+        onSubmit={doSubmit}
       >
         {({ isSubmitting, errors, touched }) => (
           <Form>
@@ -65,12 +74,16 @@ const GuestForm = () => {
                 {errors.numberOfGuests && touched.numberOfGuests && <small className="text-danger">{errors.numberOfGuests}</small>}
               </div>
             </div>
-            <button type="submit" disabled={isSubmitting} className="btn btn-primary">Submit</button>
+            <button type="submit" disabled={isSubmitting} className="btn btn-primary">Get estimates!</button>
           </Form>
         )}
       </Formik>
     </div>
   );
+};
+
+GuestForm.propTypes = {
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 export default GuestForm;

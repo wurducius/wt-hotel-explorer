@@ -10,7 +10,6 @@ import RoomTypes from '../RoomTypes';
 
 /*
 cancellationPolicies + defaultCancellationAmount
-roomTypes - w/ prices
 */
 const HotelDetail = ({ hotel }) => (
   <div className="container">
