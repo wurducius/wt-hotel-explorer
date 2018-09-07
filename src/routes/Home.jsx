@@ -22,21 +22,25 @@ class Home extends React.PureComponent {
       handleGuestFormSubmit,
     } = this.props;
     return (
-      <div>
-        {!areHotelsInitialized
-          ? <Loader block={200} label="Loading hotels from API..." />
-          : (
-            <React.Fragment>
-              <GuestForm handleSubmit={handleGuestFormSubmit} />
-              <HotelListing
-                hotels={hotels || []}
-                estimates={estimates || {}}
-                isLoadingMore={isLoadingMore}
-                showMore={!!next}
-                fetchMoreHotels={fetchHotelsData}
-              />
-            </React.Fragment>
-          )}
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+          {!areHotelsInitialized
+            ? <Loader block={200} label="Loading hotels from API..." />
+            : (
+              <React.Fragment>
+                <GuestForm handleSubmit={handleGuestFormSubmit} />
+                <HotelListing
+                  hotels={hotels || []}
+                  estimates={estimates || {}}
+                  isLoadingMore={isLoadingMore}
+                  showMore={!!next}
+                  fetchMoreHotels={fetchHotelsData}
+                />
+              </React.Fragment>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
