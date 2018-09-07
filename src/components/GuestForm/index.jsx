@@ -44,15 +44,15 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
   };
   return (
     <div>
-      <h2>Get an estimate</h2>
+      <h2 className="my-1 h3">Get an estimate</h2>
       <Formik
         initialValues={initialValues}
         validate={validate}
         onSubmit={doSubmit}
       >
         {({ isSubmitting, errors, touched }) => (
-          <Form>
-            <div className="form-row">
+          <Form className="mb-1">
+            <div className="form-row mb-1">
               <div className="form-group col-md-4">
                 <label htmlFor="arrival">Date of arrival</label>
                 <Field type="text" className="form-control" name="arrival" id="arrival" placeholder="Date of arrival" />
@@ -71,6 +71,8 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
               </div>
             </div>
             <button type="submit" disabled={isSubmitting} className="btn btn-primary">Get estimates!</button>
+
+            <hr className="my-2"/>
           </Form>
         )}
       </Formik>
