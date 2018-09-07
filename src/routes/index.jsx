@@ -57,18 +57,20 @@ const store = createStore(
 
 // App itself
 const AppContainer = () => (
-  <div>
+  <React.Fragment>
     <Header />
     <div id="app-content" role="main">
-      <Disclaimer />
-      <Switch>
-        <Route exact path="/" component={LoadableHome} />
-        <Route exact path="/hotels/:hotelId" component={Hotel} />
-        <Route exact path="/join-the-platform" component={LoadableJoin} />
-      </Switch>
+      <div className="container">
+        <Disclaimer />
+        <Switch>
+          <Route exact path="/" component={LoadableHome} />
+          <Route exact path="/hotels/:hotelId" component={Hotel} />
+          <Route exact path="/join-the-platform" component={LoadableJoin} />
+        </Switch>
+      </div>
     </div>
     <Footer />
-  </div>
+  </React.Fragment>
 );
 
 const App = () => (
