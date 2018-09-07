@@ -1,3 +1,61 @@
-#app-header.app-header--themed {
-  background-image: url('../img/style/bg-header.png');
+/* OVERRIDES */
+.alert {border-width: 2px!important;}
+.badge {
+  padding: 6px 10px;
+  margin-bottom: 2px;
+  letter-spacing: 0.03em;
+  &+.badge {
+    margin-left: 0.2em;
+  }
+}
+.mdi { vertical-align: middle; }
+
+a.border-bottom {padding-bottom: 3px;}
+
+/* CONTAINERS */
+#app-hero {
+  h2 {margin-bottom: 10px;}
+}
+
+.img-crop {
+  height: 300px;
+  overflow: hidden;
+  border-radius: 5px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50%;
+
+  img {visibility: hidden;}
+}
+
+.hotel-description {
+  font-size: 19px;
+}
+
+/* Sticky footer styles */
+@media all and (min-width: 768px) {
+  html {
+    position: relative;
+    min-height: 100%;
+  }
+  body {
+    margin-bottom: 300px; /* Margin bottom by footer height */
+  }
+  #app-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 300px; /* Set the fixed height of the footer here */
+  }
+}
+
+
+/* HELPERS */
+.text--accent {color: #5F2987!important;}
+.text--link {
+  color: #164FDD;
+  &:hover {
+    color: #0F3697;
+  }
 }
