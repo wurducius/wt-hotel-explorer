@@ -20,7 +20,7 @@ const HotelListingItem = ({ hotel, estimates }) => {
             <img className="card-img-top" src={hotel.images[0]} alt={hotel.name} />
           <div className="card-body pt-1 text-muted">
             <h5 className="card-title h6">{hotel.name}</h5>
-            <div className="card-text">
+            <div className="card-text mb-1">
               <ReactMarkdown source={hotel.description} />
               {currentLowestEstimate.price && (
               <div className="mt-1 animated fadeIn text--accent">
