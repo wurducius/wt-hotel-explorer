@@ -3,22 +3,21 @@ import PropTypes from 'prop-types';
 
 const Carousel = ({ list }) => {
   const randomId = `carousel-${Math.random().toString(36).substring(7)}`;
-  const imageList = list.map(image => (
-    <div className="carousel-item" key={`carousel-${randomId}-item-${image}`}>
-      <img className="d-block w-100" src={image} alt={image} />
+  const imageList = list.map((image, index) => (
+    <div className={`carousel-item ${index===0 ? 'active' : ''}`} key={`carousel-${randomId}-item-${image}`}>
+      <div className="img-crop" style={{backgroundImage: `url(${image})`}}>
+        <img className="img-fluid w-100 rounded" src={image} alt={image}/>
+      </div>
     </div>
   ));
 
   const indicators = list.map((image, i) => (
-    <li key={`carousel-${randomId}-indicator-${image}`} data-target="#carouselExampleIndicators" data-slide-to={i} />
+    <li key={`carousel-${randomId}-indicator-${image}`} data-target="#carouselIndicators" data-slide-to={i} />
   ));
 
 
   return (
-    <div id={randomId} className="carousel slide" data-ride="carousel">
-      <ol className="carousel-indicators">
-        {indicators}
-      </ol>
+    <div id={randomId} className="carousel slide" data-ride="carousel" data-interval="5000">
       <div className="carousel-inner">
         {imageList}
       </div>
