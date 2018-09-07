@@ -11,7 +11,7 @@ const HotelContact = ({ contact }) => {
     </li>
   ));
   return (
-    <ul>
+    <ul className="list-unstyled">
       {contact.email && <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>}
       {contact.phone && <li><a href={`tel:${contact.phone}`}>{contact.phone}</a></li>}
       {contact.url && <li><a href={contact.url} target="_blank" rel="noopener noreferrer">{contact.url}</a></li>}

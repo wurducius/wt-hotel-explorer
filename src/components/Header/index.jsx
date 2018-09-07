@@ -2,21 +2,19 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default () => (
-  <nav className="navbar navbar-expand-xl navbar-light" id="navbar">
-    <div className="container">
-      <Link className="navbar-brand mr-2" to="/">Winding Tree</Link>
+  <div id="app-header">
+    <nav className="navbar navbar-expand-xl navbar-light" id="navbar">
+      <div className="container">
+        <Link className="navbar-brand mr-2" to="/">Winding Tree</Link>
 
-      <button className="navbar-toggler px-0 border-0" id="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
-        <i className="mdi mdi-24px mdi-menu" />
-      </button>
-
-      <div className="collapse navbar-collapse" id="navbar-content">
-        <ul className="navbar-nav mr-auto" id="navbar-nav">
-          <li className="nav-item active">
-            <Link className="nav-link h5" to="/join-the-platform">Join the platform</Link>
-          </li>
-        </ul>
+        <div id="navbar-content">
+          <div className="ml-auto">
+            <Link to="/join-the-platform" className="btn btn-block btn-primary " id="navbar-btn">
+              Join <span className="d-none d-sm-inline">Platform</span>
+            </Link>
+          </div>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </div>
 );
