@@ -60,28 +60,56 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
       };
     }
     const currentDate = moment(arrivalDate);
-    const dailyPrices = [];
+    const dailyPrices = {};
+    dailyPrices[hotel.currency] = [];
     // Find an appropriate rate plan for every day
     for (let i = 0; i < lengthOfStay; i += 1) {
-      // TODO Keep rate plans together by currency in addition to this
-      dailyPrices.push(applicableRatePlans.reduce((acc, cur) => {
-        const availableForTravelFrom = moment.utc(cur.availableForTravel.from);
-        const availableForTravelTo = moment.utc(cur.availableForTravel.to);
+      let currentRatePlan;
+      let currentCurrency = hotel.currency;
+      const bestDailyPrice = {};
+      for (let j = 0; j < applicableRatePlans.length; j += 1) {
+        currentRatePlan = applicableRatePlans[j];
+        currentCurrency = currentRatePlan.currency || hotel.currency;
+        if (!dailyPrices[currentCurrency]) {
+          dailyPrices[currentCurrency] = [];
+        }
+        const availableForTravelFrom = moment.utc(currentRatePlan.availableForTravel.from);
+        const availableForTravelTo = moment.utc(currentRatePlan.availableForTravel.to);
         // Deal with a rate plan ending sometimes during the stay
-        if (currentDate < availableForTravelFrom || currentDate > availableForTravelTo) {
-          return acc;
+        if (currentDate >= availableForTravelFrom && currentDate <= availableForTravelTo) {
+          const currentPrice = computeDailyPrice(currentRatePlan.price, guestData.numberOfGuests);
+          if (!bestDailyPrice[currentCurrency] || currentPrice <= bestDailyPrice[currentCurrency]) {
+            bestDailyPrice[currentCurrency] = currentPrice;
+          }
         }
-        const currentPrice = computeDailyPrice(cur.price, guestData.numberOfGuests);
-        if (!acc.price || currentPrice <= acc.price) {
-          return currentPrice;
-        }
-        return acc;
-      }, -1));
+      }
+      if (bestDailyPrice[currentCurrency] === undefined) {
+        bestDailyPrice[currentCurrency] = -1;
+      }
+      dailyPrices[currentCurrency].push(bestDailyPrice[currentCurrency]);
       currentDate.add(1, 'day');
     }
+
+    // Filter out currencies that do not cover the whole stay range
+    const allCurrencies = Object.keys(dailyPrices);
+    let currency;
+    for (let i = 0; i < allCurrencies.length; i += 1) {
+      currency = allCurrencies[i];
+      if (dailyPrices[currency].length < lengthOfStay || dailyPrices[currency].indexOf(-1) > -1) {
+        delete dailyPrices[currency];
+      }
+    }
+    // TODO keep estimates in multiple currencies
+    // for now, randomly pick a currency
+    const eligibleCurrencies = Object.keys(dailyPrices);
+    let resultingPrice;
+    if (eligibleCurrencies.length > 0) {
+      resultingPrice = dailyPrices[eligibleCurrencies[0]].reduce((a, b) => a + b, 0);
+    }
+
     return {
       id: roomType.id,
-      price: dailyPrices.indexOf(-1) > -1 ? undefined : dailyPrices.reduce((a, b) => a + b, 0),
+      price: resultingPrice,
       // TODO fix the currency decision making
       currency: applicableRatePlans[0].currency || hotel.currency,
     };
