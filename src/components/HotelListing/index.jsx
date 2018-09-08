@@ -13,16 +13,24 @@ const HotelListing = ({
   return (
     <div>
       {hotels.length
-        ? <div className="row">
-          {hotelItems}
-        </div>
+        ? (
+          <div className="row">
+            {hotelItems}
+          </div>
+        )
         : <h2 className="h3 text-muted text-center">No hotels here at the moment.</h2>
       }
       {showMore && (
       <div className="row text-center">
         <div className="col-12">
           <button type="button" className={`btn btn-secondary ${isLoadingMore ? 'disabled' : ''}`} onClick={fetchMoreHotels} disabled={isLoadingMore}>
-            {isLoadingMore ? <span><i className="mdi mdi-loading mdi-spin text-light"/> <span>Loading...</span></span> : <span>Load more</span>}
+            {isLoadingMore ? (
+              <span>
+                <i className="mdi mdi-loading mdi-spin text-light" />
+                {' '}
+                <span>Loading...</span>
+              </span>
+            ) : <span>Load more</span>}
           </button>
         </div>
       </div>

@@ -10,7 +10,9 @@ export default () => (
         <div id="navbar-content">
           <div className="ml-auto">
             <Link to="/join-the-platform" className="btn btn-block btn-primary " id="navbar-btn">
-              Join <span className="d-none d-sm-inline">Platform</span>
+              Join
+              {' '}
+              <span className="d-none d-sm-inline">Platform</span>
             </Link>
           </div>
         </div>

@@ -21,14 +21,18 @@ const HotelDetail = ({
       <div className="col-md-12">
 
         <div className="text-center">
-          <h1 className="mt-1"> {hotel.name} </h1>
+          <h1 className="mt-1">
+            {' '}
+            {hotel.name}
+            {' '}
+          </h1>
           <div className="row">
             <div className="col-md-10 mx-auto">
-              <ReactMarkdown source={hotel.description} className="hotel-description mb-1"/>
+              <ReactMarkdown source={hotel.description} className="hotel-description mb-1" />
             </div>
           </div>
           <div className="mb-2">
-            <AmenitiesList list={hotel.amenities}/>
+            <AmenitiesList list={hotel.amenities} />
           </div>
         </div>
       </div>
@@ -49,12 +53,12 @@ const HotelDetail = ({
       </div>
     </div>
 
-    <ScrollAnimation animateIn="fadeIn" animateOnce={true}>
+    <ScrollAnimation animateIn="fadeIn" animateOnce>
       <div className="row">
         <div className="col-md-12 bg-light p-2 rounded mt-1">
           <div className="row">
             <div className="col-lg-4">
-              <ImageList list={hotel.images}/>
+              <ImageList list={hotel.images} />
             </div>
             <div className="col-lg-4">
               <LocationMap name={hotel.name} location={hotel.location} address={hotel.address} />

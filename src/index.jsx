@@ -9,7 +9,7 @@ import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 import '@windingtree/wt-ui/dist/styles.css';
-import "animate.css/animate.css";
+import 'animate.css/animate.css';
 import './assets/css/app.scss';
 
 
