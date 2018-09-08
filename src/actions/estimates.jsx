@@ -110,8 +110,7 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
     return {
       id: roomType.id,
       price: resultingPrice,
-      // TODO fix the currency decision making
-      currency: applicableRatePlans[0].currency || hotel.currency,
+      currency: eligibleCurrencies[0] || hotel.currency,
     };
   });
   dispatch({
