@@ -8,8 +8,8 @@ cache:
 jobs:
   include:
   - stage: test
-        script:
-        - npm run lint
+    script:
+    - npm run lint
   - stage: release-playground
     install: true
     if: branch = release/playground
