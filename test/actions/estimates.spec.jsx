@@ -210,7 +210,140 @@ describe('action:estimates', () => {
         expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', 60 * 2);
         expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', exampleState.hotels.list[0].currency);
       });
-      // TODO multiple rate plans, stay interval touching multiple rate plans, multiple guests
+
+      it('should combine multiple rate plans if the stay range hits both of them', () => {
+        exampleState.hotels.list[0].ratePlans.rpa = Object.assign(
+          {},
+          exampleState.hotels.list[0].ratePlans.rpa, {
+            price: 73,
+            availableForTravel: {
+              from: '2018-10-02',
+              to: '2018-10-06',
+            },
+          },
+        );
+        exampleState.hotels.list[0].ratePlans.rpb = {
+          id: 'rpb',
+          price: 60,
+          roomTypeIds: ['rtb'],
+          availableForReservation: {
+            from: '2018-01-01',
+            to: '2020-12-31',
+          },
+          availableForTravel: {
+            from: '2018-10-07',
+            to: '2018-10-10',
+          },
+        };
+        exampleState.estimates.guestData = Object.assign({}, exampleState.estimates.guestData, {
+          arrival: '2018-10-02',
+          departure: '2018-10-10',
+          numberOfGuests: 3,
+        });
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(1);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rtb').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', 3 * ((60 * 3) + (73 * 5)));
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', exampleState.hotels.list[0].currency);
+      });
+
+      it('should not return an estimate if even a single date of a stay is not covered by a valid rate plan', () => {
+        exampleState.hotels.list[0].ratePlans.rpa = Object.assign(
+          {},
+          exampleState.hotels.list[0].ratePlans.rpa, {
+            price: 73,
+            availableForTravel: {
+              from: '2018-10-02',
+              to: '2018-10-04',
+            },
+          },
+        );
+        exampleState.hotels.list[0].ratePlans.rpb = {
+          id: 'rpb',
+          price: 60,
+          roomTypeIds: ['rtb'],
+          availableForReservation: {
+            from: '2018-01-01',
+            to: '2020-12-31',
+          },
+          availableForTravel: {
+            from: '2018-10-07',
+            to: '2018-10-10',
+          },
+        };
+        exampleState.estimates.guestData = Object.assign({}, exampleState.estimates.guestData, {
+          arrival: '2018-10-02',
+          departure: '2018-10-10',
+        });
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(1);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rtb').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', undefined);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', exampleState.hotels.list[0].currency);
+      });
+
+      it('should not combine rate plans with different currencies', () => {
+        exampleState.hotels.list[0].ratePlans.rpa = Object.assign(
+          {},
+          exampleState.hotels.list[0].ratePlans.rpa, {
+            price: 71,
+            availableForTravel: {
+              from: '2018-10-02',
+              to: '2018-10-06',
+            },
+            currency: 'EUR',
+          },
+        );
+        exampleState.hotels.list[0].ratePlans.rpb = {
+          id: 'rpb',
+          price: 17,
+          roomTypeIds: ['rtb'],
+          availableForReservation: {
+            from: '2018-01-01',
+            to: '2020-12-31',
+          },
+          availableForTravel: {
+            from: '2018-10-07',
+            to: '2018-10-10',
+          },
+          currency: 'GBP',
+        };
+        exampleState.hotels.list[0].ratePlans.rpc = {
+          id: 'rpb',
+          price: 21,
+          roomTypeIds: ['rtb'],
+          availableForReservation: {
+            from: '2018-01-01',
+            to: '2020-12-31',
+          },
+          availableForTravel: {
+            from: '2018-10-07',
+            to: '2018-10-10',
+          },
+          currency: 'EUR',
+        };
+        exampleState.estimates.guestData = Object.assign({}, exampleState.estimates.guestData, {
+          arrival: '2018-10-02',
+          departure: '2018-10-10',
+        });
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(1);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rtb').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', (5 * 71) + (3 * 21));
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', 'EUR');
+      });
+
+
+      // TODO guest age and other modifiers
     });
   });
 });
