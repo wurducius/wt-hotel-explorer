@@ -5,7 +5,8 @@
   "scripts": {
     "lint": "eslint src test --ext jsx,js",
     "test-watch": "jest --watch",
-    "test": "jest",
+    "test": "jest --coverage",
+    "coverage": "cat coverage/lcov.info | coveralls",
     "start": "NODE_ENV=development GIT_REV=`git rev-parse --short HEAD` WT_READ_API=https://playground-api.windingtree.com ./node_modules/.bin/webpack-dev-server",
     "build": "NODE_ENV=production ./node_modules/.bin/webpack --mode=production",
     "deploy-now-demo": "now --build-env GIT_REV=$TRAVIS_COMMIT --team windingtree --token $NOW_TOKEN --local-config=now-demo.json --docker --public",
@@ -68,6 +69,7 @@
     "babel-loader": "^8.0.0",
     "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.2",
+    "coveralls": "^3.0.2",
     "css-loader": "^1.0.0",
     "cssnano": "^4.0.2",
     "eslint": "^5.4.0",
@@ -99,9 +101,16 @@
     "webpack-serve": "^2.0.2"
   },
   "jest": {
-    "rootDir": "test",
+    "testRegex": "./test/.*.spec.jsx",
     "testPathIgnorePatterns": [
       "/node_modules/"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.jsx"
     ]
   },
   "config": {
