@@ -1,0 +1,216 @@
+import estimatesActions from '../../src/actions/estimates';
+
+describe('action:estimates', () => {
+  describe('recomputeHotelEstimates', () => {
+    let dispatchMock;
+    let getStateMock;
+    let exampleState;
+    let action;
+
+    beforeEach(() => {
+      dispatchMock = jest.fn();
+      getStateMock = jest.fn();
+      exampleState = {
+        estimates: {
+          guestData: {
+            arrival: '2018-01-03',
+            departure: '2018-01-05',
+            numberOfGuests: 1,
+          },
+        },
+        hotels: {
+          list: [{
+            id: '0x933198455e38925bccb4bfe9fb59bac31d00b4d3',
+            currency: 'CZK',
+            ratePlans: {
+              rpa: {
+                id: 'rpa',
+                price: 100,
+                roomTypeIds: ['rtb'],
+                availableForReservation: {
+                  from: '2018-01-01',
+                  to: '2020-12-31',
+                },
+                availableForTravel: {
+                  from: '2016-06-01',
+                  to: '2020-12-31',
+                },
+              },
+            },
+            roomTypes: {
+              rta: { id: 'rta' },
+              rtb: { id: 'rtb' },
+            },
+          }],
+        },
+      };
+      action = estimatesActions.recomputeHotelEstimates({ id: '0x933198455e38925bccb4bfe9fb59bac31d00b4d3' });
+    });
+
+    describe('input validation', () => {
+      it('should not do anything when hotel does not exist', () => {
+        exampleState.hotels.list = [];
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(0);
+        expect(getStateMock.mock.calls.length).toBe(1);
+      });
+
+      it('should not do anything when hotel does not have roomTypes', () => {
+        exampleState.hotels.list = [{
+          id: '0x933198455e38925bccb4bfe9fb59bac31d00b4d3',
+          ratePlans: {},
+        }];
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(0);
+        expect(getStateMock.mock.calls.length).toBe(1);
+      });
+
+      it('should not do anything when hotel does not have ratePlans', () => {
+        exampleState.hotels.list = [{
+          id: '0x933198455e38925bccb4bfe9fb59bac31d00b4d3',
+          roomTypes: {},
+        }];
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(0);
+        expect(getStateMock.mock.calls.length).toBe(1);
+      });
+
+      it('should not do anything when there are no guest data', () => {
+        exampleState.estimates = {};
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(0);
+        expect(getStateMock.mock.calls.length).toBe(1);
+      });
+
+      it('should not do anything when numberOfGuests is missing', () => {
+        exampleState.estimates.guestData = {
+          arrival: '2018-01-01',
+          departure: '2018-04-01',
+        };
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(0);
+        expect(getStateMock.mock.calls.length).toBe(1);
+      });
+
+      it('should not do anything when arrival is missing', () => {
+        exampleState.estimates.guestData = {
+          departure: '2018-01-01',
+          numberOfGuests: 1,
+        };
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(0);
+        expect(getStateMock.mock.calls.length).toBe(1);
+      });
+
+      it('should not do anything when departure is missing', () => {
+        exampleState.estimates.guestData = {
+          arrival: '2018-01-01',
+          numberOfGuests: 1,
+        };
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(0);
+        expect(getStateMock.mock.calls.length).toBe(1);
+      });
+    });
+
+    describe('rate plan computation', () => {
+      it('should return null price if no rate plan matches the room type', () => {
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(1);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('id', exampleState.hotels.list[0].id);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rta').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rta')).toHaveProperty('price', undefined);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rta')).toHaveProperty('currency', exampleState.hotels.list[0].currency);
+      });
+
+      it('should not use a rate plan if it is not available for reservation based on current date', () => {
+        // make sure the rate plan for rtb does not work for today
+        exampleState.hotels.list[0].ratePlans.rpa.availableForReservation = {
+          from: '2015-01-01',
+          to: '2015-10-10',
+        };
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rtb').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', undefined);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', exampleState.hotels.list[0].currency);
+      });
+
+      it('should not use a rate plan if it is not available for travel based on guest data', () => {
+        // make sure the rate plan for rtb does not work for current estimates.guestData
+        exampleState.hotels.list[0].ratePlans.rpa.availableForTravel = {
+          from: '2015-01-01',
+          to: '2015-10-10',
+        };
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(1);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rtb').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', undefined);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', exampleState.hotels.list[0].currency);
+      });
+
+      it('should return base price if no modifiers are present and only one rate plan fits', () => {
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(1);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rtb').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', 100 * 2);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', exampleState.hotels.list[0].currency);
+      });
+
+      it('should override hotel currency if rate plan is more specific', () => {
+        exampleState.hotels.list[0].ratePlans.rpa.currency = 'USD';
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(1);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rtb').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', 100 * 2);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', 'USD');
+      });
+
+      it('should return the lowest base price if no modifiers are present and multiple rate plans fit', () => {
+        exampleState.hotels.list[0].ratePlans.rpb = {
+          id: 'rpb',
+          price: 60,
+          roomTypeIds: ['rtb'],
+          availableForReservation: {
+            from: '2018-01-01',
+            to: '2020-12-31',
+          },
+          availableForTravel: {
+            from: '2016-06-01',
+            to: '2020-09-30',
+          },
+        };
+        getStateMock.mockReturnValue(exampleState);
+        action(dispatchMock, getStateMock);
+        expect(dispatchMock.mock.calls.length).toBe(1);
+        expect(getStateMock.mock.calls.length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload).toHaveProperty('data');
+        expect(dispatchMock.mock.calls[0][0].payload.data.filter(e => e.id === 'rtb').length).toBe(1);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('price', 60 * 2);
+        expect(dispatchMock.mock.calls[0][0].payload.data.find(e => e.id === 'rtb')).toHaveProperty('currency', exampleState.hotels.list[0].currency);
+      });
+      // TODO multiple rate plans, stay interval touching multiple rate plans, multiple guests
+    });
+  });
+});

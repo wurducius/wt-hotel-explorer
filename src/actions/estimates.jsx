@@ -1,4 +1,10 @@
+import moment from 'moment';
 import hotelActions from './hotels';
+
+const computeTotalPrice = (basePrice,
+  numberOfGuests,
+  numberOfNights) => basePrice * numberOfGuests * numberOfNights;
+
 
 const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   const state = getState();
@@ -19,8 +25,31 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   }
   ratePlans = Object.values(ratePlans);
   roomTypes = Object.values(roomTypes);
+  const now = moment.utc();
+  const arrivalDate = moment.utc(guestData.arrival);
+  const departureDate = moment.utc(guestData.departure);
   const data = roomTypes.map((roomType) => {
-    const applicableRatePlans = ratePlans.filter(rp => rp.roomTypeIds.indexOf(roomType.id > -1));
+    const applicableRatePlans = ratePlans.filter((rp) => {
+      const availableForTravelFrom = moment.utc(rp.availableForTravel.from);
+      const availableForTravelTo = moment.utc(rp.availableForTravel.to);
+      const availableForReservationFrom = moment.utc(rp.availableForReservation.from);
+      const availableForReservationTo = moment.utc(rp.availableForReservation.to);
+      // Rate plan is not tied to this room type
+      if (rp.roomTypeIds.indexOf(roomType.id) === -1) {
+        return false;
+      }
+      // Rate plan cannot be used today
+      if (availableForReservationTo.isBefore(now)
+        || availableForReservationFrom.isAfter(now)) {
+        return false;
+      }
+      // Rate plan is totally out of bounds
+      if (availableForTravelTo.isBefore(arrivalDate)
+        || availableForTravelFrom.isAfter(departureDate)) {
+        return false;
+      }
+      return true;
+    });
     if (!applicableRatePlans.length) {
       return {
         id: roomType.id,
@@ -28,12 +57,17 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
         currency: hotel.currency,
       };
     }
-    // TODO introduce computing magic affected by guest data, dates etc.
-    return {
-      id: roomType.id,
-      price: applicableRatePlans[0].price,
-      currency: applicableRatePlans[0].currency || hotel.currency,
-    };
+    return applicableRatePlans.reduce((acc, cur) => {
+      const currentPrice = computeTotalPrice(cur.price, guestData.numberOfGuests, departureDate.diff(arrivalDate, 'days'));
+      if (!acc.price || currentPrice <= acc.price) {
+        return {
+          id: roomType.id,
+          price: currentPrice,
+          currency: cur.currency || hotel.currency,
+        };
+      }
+      return acc;
+    }, {});
   });
   dispatch({
     type: 'SET_ESTIMATES',

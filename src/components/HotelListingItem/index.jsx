@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { HashLink } from 'react-router-hash-link';
 import ReactMarkdown from 'react-markdown';
 import ScrollAnimation from 'react-animate-on-scroll';
 
@@ -15,16 +14,18 @@ const HotelListingItem = ({ hotel, estimates }) => {
   }, {});
   return (
     <div className="col-lg-4">
-      <ScrollAnimation animateIn="fadeInUp" animateOnce={true}>
+      <ScrollAnimation animateIn="fadeInUp" animateOnce>
         <Link to={`/hotels/${hotel.id}`} className="card mb-2">
-            <img className="card-img-top" src={hotel.images[0]} alt={hotel.name} />
+          <img className="card-img-top" src={hotel.images[0]} alt={hotel.name} />
           <div className="card-body pt-1 text-muted">
             <h5 className="card-title h6">{hotel.name}</h5>
             <div className="card-text mb-1">
               <ReactMarkdown source={hotel.description} />
               {currentLowestEstimate.price && (
               <div className="mt-1 animated fadeIn text--accent">
-                <i className="mdi mdi-calendar mdi-18px text-muted"/> <strong>
+                <i className="mdi mdi-calendar mdi-18px text-muted" />
+                {' '}
+                <strong>
                   Available from
                   {' '}
                   <span className="font--alt">{currentLowestEstimate.price}</span>
@@ -35,7 +36,6 @@ const HotelListingItem = ({ hotel, estimates }) => {
               )}
             </div>
             <span className="text--link border-bottom">See detail</span>
-            {/* <HashLink to={`/hotels/${hotel.id}#hotel-map`} className="float-right">See on a map</HashLink> */}
           </div>
         </Link>
       </ScrollAnimation>

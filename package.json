@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "description": "Web app to show hotel inventory from WT api.",
   "scripts": {
-    "lint": "eslint src --ext jsx",
+    "lint": "eslint src test --ext jsx,js",
+    "test-watch": "jest --watch",
+    "test": "jest --coverage",
+    "coverage": "cat coverage/lcov.info | coveralls",
     "start": "NODE_ENV=development GIT_REV=`git rev-parse --short HEAD` WT_READ_API=https://playground-api.windingtree.com ./node_modules/.bin/webpack-dev-server",
     "build": "NODE_ENV=production ./node_modules/.bin/webpack --mode=production",
     "deploy-now-demo": "now --build-env GIT_REV=$TRAVIS_COMMIT --team windingtree --token $NOW_TOKEN --local-config=now-demo.json --docker --public",
@@ -60,20 +63,25 @@
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^9.0.0",
+    "babel-jest": "^23.4.2",
     "babel-loader": "^8.0.0",
     "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.2",
+    "coveralls": "^3.0.2",
     "css-loader": "^1.0.0",
     "cssnano": "^4.0.2",
     "eslint": "^5.4.0",
     "eslint-config-airbnb": "^17.0.0",
     "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jest": "^21.22.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.10.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^23.5.0",
     "mini-css-extract-plugin": "^0.4.1",
     "node-sass": "^4.9.2",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
@@ -81,6 +89,7 @@
     "postcss-cssnext": "^3.1.0",
     "postcss-loader": "^3.0.0",
     "precss": "^3.1.2",
+    "react-test-renderer": "^16.5.0",
     "sass-loader": "^7.0.3",
     "serve": "^10.0.0",
     "style-loader": "^0.23.0",
@@ -90,5 +99,23 @@
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4",
     "webpack-serve": "^2.0.2"
+  },
+  "jest": {
+    "testRegex": "./test/.*.spec.jsx",
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.jsx"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

@@ -9,7 +9,7 @@ import AmenitiesList from '../AmenitiesList';
 
 const RoomType = ({ roomType, estimate }) => (
   <div className="col-sm-12 col-md-6 col-lg-3 XXXd-flex">
-    <ScrollAnimation animateIn="fadeInUp" animateOnce={true}>
+    <ScrollAnimation animateIn="fadeInUp" animateOnce>
       <div className="card mb-2">
         <img className="card-img-top" src={roomType.images[0]} alt={roomType.images[0]} />
         <div className="card-body text-muted">
@@ -20,7 +20,9 @@ const RoomType = ({ roomType, estimate }) => (
           </div>
           {estimate.price && (
           <div className="mt-1 animated fadeIn text--accent">
-            <i className="mdi mdi-calendar mdi-18px text-muted"/> <strong>
+            <i className="mdi mdi-calendar mdi-18px text-muted" />
+            {' '}
+            <strong>
               Available from
               {' '}
               <span className="font--alt">

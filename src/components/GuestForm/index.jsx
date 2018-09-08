@@ -72,7 +72,7 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
             </div>
             <button type="submit" disabled={isSubmitting} className="btn btn-primary">Get estimates!</button>
 
-            <hr className="my-2"/>
+            <hr className="my-2" />
           </Form>
         )}
       </Formik>
