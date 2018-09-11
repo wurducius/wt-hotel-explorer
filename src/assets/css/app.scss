@@ -78,13 +78,13 @@ a.border-bottom {padding-bottom: 3px;}
     min-height: 100%;
   }
   body {
-    margin-bottom: 300px; /* Margin bottom by footer height */
+    margin-bottom: 315px; /* Margin bottom by footer height */
   }
   #app-footer {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 300px; /* Set the fixed height of the footer here */
+    height: 315px; /* Set the fixed height of the footer here */
   }
 }
 
