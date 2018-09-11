@@ -65,7 +65,11 @@ const HotelDetail = ({
             <div className="col-lg-4">
               <div className="box-shadow">
                 <div className="mb-2 mt-1 mt-lg-0 mb-0 map-container">
-                  <LocationMap name={hotel.name} location={hotel.location} address={hotel.address} />
+                  <LocationMap
+                    name={hotel.name}
+                    location={hotel.location}
+                    address={hotel.address}
+                  />
                 </div>
               </div>
 
