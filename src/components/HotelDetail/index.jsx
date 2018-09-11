@@ -58,14 +58,19 @@ const HotelDetail = ({
         <div className="col-md-12 bg-light p-2 rounded mt-1">
           <div className="row">
             <div className="col-lg-4">
-              <ImageList list={hotel.images} />
+              <div className="rounded box-shadow">
+                <ImageList list={hotel.images} />
+              </div>
             </div>
             <div className="col-lg-4">
-              <LocationMap name={hotel.name} location={hotel.location} address={hotel.address} />
+              <div className="box-shadow">
+                <div className="mb-2 mt-1 mt-lg-0 mb-0 map-container">
+                  <LocationMap name={hotel.name} location={hotel.location} address={hotel.address} />
+                </div>
+              </div>
 
             </div>
             <div className="col-lg-4">
-              <h5>Address</h5>
               <Address name={hotel.name} address={hotel.address} />
               <h5 className="mt-1">Contact</h5>
               <HotelContacts contacts={hotel.contacts} />
