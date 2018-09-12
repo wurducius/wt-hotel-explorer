@@ -104,6 +104,17 @@ a.border-bottom {padding-bottom: 3px;}
 }
 
 
+/* ADDITIONS */
+
+.divider {
+  border: none;
+  display: block;
+  height: 10px;
+  background: #F2F2F2;
+  border-radius: 5px;
+}
+
+
 /* HELPERS */
 .text--accent {color: #5F2987 !important;}
 .text--link {
