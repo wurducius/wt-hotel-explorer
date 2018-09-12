@@ -1,14 +1,14 @@
 import moment from 'moment';
 
-const computeDailyPrice = (dateMoment, lengthOfStay, guestData, ratePlan) => {
-  if (!ratePlan.modifiers) {
-    return ratePlan.price * guestData.numberOfGuests;
+const selectApplicableModifiers = (modifiers, dateMoment, lengthOfStay, guestData) => {
+  if (!modifiers || !modifiers.length) {
+    return [];
   }
   // Drop modifiers not fitting the overall guest data
-  let maxMinLOS; let
-    maxMinOccupants;
+  let maxMinLOS;
+  let maxMinOccupants;
   const elementsToDrop = [];
-  let applicableModifiers = ratePlan.modifiers.filter((mod) => {
+  const applicableModifiers = modifiers.filter((mod) => {
     if (!mod.conditions) {
       return false;
     }
@@ -50,22 +50,31 @@ const computeDailyPrice = (dateMoment, lengthOfStay, guestData, ratePlan) => {
     }
     return true;
   });
-  applicableModifiers = applicableModifiers.filter(mod => elementsToDrop.indexOf(mod) === -1);
+  return applicableModifiers.filter(mod => elementsToDrop.indexOf(mod) === -1);
+};
 
+// TODO move lengthOfStay into guestData
+const computeDailyPrice = (dateMoment, lengthOfStay, guestData, ratePlan) => {
+  const applicableModifiers = selectApplicableModifiers(
+    ratePlan.modifiers, dateMoment, lengthOfStay, guestData,
+  );
   if (!applicableModifiers.length) {
     return ratePlan.price * guestData.numberOfGuests;
   }
-
-  // TODO Apply modifiers separately for each guest
-  // TODO verify modifers based on each guest, such as maxAge
-
-  // Pick the best modifier and adjust the price
   applicableModifiers.sort((a, b) => (a.adjustment <= b.adjustment ? -1 : 1));
-  const selectedModifier = applicableModifiers[0].adjustment / 100;
-  const adjustment = selectedModifier * ratePlan.price;
 
-  // TODO modifier might be different for each guest
-  return (ratePlan.price + adjustment) * guestData.numberOfGuests;
+  const guestPrices = [];
+  let selectedModifier;
+  let adjustment;
+  for (let i = 0; i < guestData.numberOfGuests; i += 1) {
+    // Pick the best modifier and adjust the price
+    // TODO work with information specific for each guest
+    selectedModifier = applicableModifiers[0].adjustment / 100;
+    adjustment = selectedModifier * ratePlan.price;
+    guestPrices.push(ratePlan.price + adjustment);
+  }
+  // THIS IS SO WRONG! TODO fix #23
+  return parseFloat((guestPrices.reduce((a, b) => a + b, 0)).toFixed(2), 10);
 };
 
 
