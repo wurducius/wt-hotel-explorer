@@ -1,7 +1,7 @@
 import moment from 'moment';
 import pricingAlgorithm from '../../src/actions/pricing-algorithm';
 
-describe('action.pricing-algorithm', () => {
+describe.only('action.pricing-algorithm', () => {
   let guestData;
   let hotel;
 
@@ -10,6 +10,11 @@ describe('action.pricing-algorithm', () => {
       arrival: '2018-01-03',
       departure: '2018-01-05',
       numberOfGuests: 1,
+      helpers: {
+        arrivalDateMoment: moment.utc('2018-01-03'),
+        departureDateMoment: moment.utc('2018-01-05'),
+        lengthOfStay: 2,
+      },
     };
     hotel = {
       id: '0x933198455e38925bccb4bfe9fb59bac31d00b4d3',
@@ -56,8 +61,7 @@ describe('action.pricing-algorithm', () => {
       };
       const result = pricingAlgorithm.getApplicableRatePlansFor(
         hotel.roomTypes.rtb,
-        moment.utc(guestData.arrival),
-        moment.utc(guestData.departure),
+        guestData,
         [hotel.ratePlans.rpa],
       );
       expect(result.length).toBe(0);
@@ -71,8 +75,7 @@ describe('action.pricing-algorithm', () => {
       };
       const result = pricingAlgorithm.getApplicableRatePlansFor(
         hotel.roomTypes.rtb,
-        moment.utc(guestData.arrival),
-        moment.utc(guestData.departure),
+        guestData,
         [hotel.ratePlans.rpa],
       );
       expect(result.length).toBe(0);
@@ -81,8 +84,7 @@ describe('action.pricing-algorithm', () => {
     it('should return the only fitting rate plan', () => {
       const result = pricingAlgorithm.getApplicableRatePlansFor(
         hotel.roomTypes.rtb,
-        moment.utc(guestData.arrival),
-        moment.utc(guestData.departure),
+        guestData,
         [hotel.ratePlans.rpa],
       );
       expect(result.length).toBe(1);
@@ -105,8 +107,7 @@ describe('action.pricing-algorithm', () => {
       };
       const result = pricingAlgorithm.getApplicableRatePlansFor(
         hotel.roomTypes.rtb,
-        moment.utc(guestData.arrival),
-        moment.utc(guestData.departure),
+        guestData,
         Object.values(hotel.ratePlans),
       );
       expect(result.length).toBe(2);
@@ -131,8 +132,6 @@ describe('action.pricing-algorithm', () => {
 
       const result = pricingAlgorithm.computeDailyPrices(
         hotel.currency,
-        moment.utc(guestData.arrival),
-        moment.utc(guestData.departure),
         guestData,
         Object.values(hotel.ratePlans),
       );
@@ -170,12 +169,15 @@ describe('action.pricing-algorithm', () => {
         arrival: '2018-10-02',
         departure: '2018-10-10',
         numberOfGuests: 3,
+        helpers: {
+          arrivalDateMoment: moment.utc('2018-10-02'),
+          departureDateMoment: moment.utc('2018-10-10'),
+          lengthOfStay: 8,
+        },
       });
 
       const result = pricingAlgorithm.computeDailyPrices(
         hotel.currency,
-        moment.utc(guestData.arrival),
-        moment.utc(guestData.departure),
         guestData,
         Object.values(hotel.ratePlans),
       );
@@ -218,11 +220,14 @@ describe('action.pricing-algorithm', () => {
       guestData = Object.assign({}, guestData, {
         arrival: '2018-10-02',
         departure: '2018-10-10',
+        helpers: {
+          arrivalDateMoment: moment.utc('2018-10-02'),
+          departureDateMoment: moment.utc('2018-10-10'),
+          lengthOfStay: 8,
+        },
       });
       const result = pricingAlgorithm.computeDailyPrices(
         hotel.currency,
-        moment.utc(guestData.arrival),
-        moment.utc(guestData.departure),
         guestData,
         Object.values(hotel.ratePlans),
       );
@@ -272,12 +277,15 @@ describe('action.pricing-algorithm', () => {
       guestData = Object.assign({}, guestData, {
         arrival: '2018-10-02',
         departure: '2018-10-10',
+        helpers: {
+          arrivalDateMoment: moment.utc('2018-10-02'),
+          departureDateMoment: moment.utc('2018-10-10'),
+          lengthOfStay: 8,
+        },
       });
 
       const result = pricingAlgorithm.computeDailyPrices(
         hotel.currency,
-        moment.utc(guestData.arrival),
-        moment.utc(guestData.departure),
         guestData,
         Object.values(hotel.ratePlans),
       );
@@ -295,15 +303,16 @@ describe('action.pricing-algorithm', () => {
       expect(result.EUR[7]).toBe(21);
     });
   });
+
   describe('computeDailyPrice', () => {
     describe('modifier selection', () => {
       it('should return base price if rate plan has no modifiers', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, { price: 10 })).toBe(10);
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 71 }, { price: 10 })).toBe(710);
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, { price: 10 })).toBe(10);
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 71, helpers: { lengthOfStay: 3 } }, { price: 10 })).toBe(710);
       });
 
       it('should pick the most pro-customer modifier (all positive)', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: 25, conditions: {} },
@@ -313,7 +322,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should pick the most pro-customer modifier (all negative)', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: {} },
@@ -323,7 +332,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should pick the most pro-customer modifier (mixed)', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: {} },
@@ -337,7 +346,7 @@ describe('action.pricing-algorithm', () => {
 
     describe('time interval from, to', () => {
       it('in an interval', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             {
@@ -352,7 +361,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('starting on a stay date', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 10,
           modifiers: [
             {
@@ -367,7 +376,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('ending on a stay date', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 10,
           modifiers: [
             {
@@ -382,7 +391,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('does not apply when outside', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 10,
           modifiers: [
             {
@@ -397,7 +406,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('only from is set and stay date is in', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 10,
           modifiers: [
             {
@@ -411,7 +420,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('only from is set and stay date is out', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 10,
           modifiers: [
             {
@@ -425,7 +434,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('only to is set and stay date is in', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 10,
           modifiers: [
             {
@@ -439,7 +448,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('only to is set and stay date is out', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2019-12-09', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2019-12-09', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 10,
           modifiers: [
             {
@@ -455,7 +464,7 @@ describe('action.pricing-algorithm', () => {
 
     describe('minLengthOfStay', () => {
       it('should not apply modifier if LOS is shorter', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
@@ -464,7 +473,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should apply modifier if LOS is equal', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { minLengthOfStay: 3 } },
@@ -473,7 +482,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should apply modifier if LOS is longer', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 7, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 7 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
@@ -482,21 +491,21 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should apply modifier with the biggest applicable LOS', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 7, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 7 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
             { adjustment: -10, conditions: { minLengthOfStay: 7 } },
           ],
         })).toBe(7.2);
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 7, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 7 } }, {
           price: 8,
           modifiers: [
             { adjustment: -10, conditions: { minLengthOfStay: 7 } },
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
           ],
         })).toBe(7.2);
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 7, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 7 } }, {
           price: 8,
           modifiers: [
             { adjustment: -50, conditions: { minLengthOfStay: 6 } },
@@ -509,7 +518,7 @@ describe('action.pricing-algorithm', () => {
 
     describe('minOccupants', () => {
       it('should not apply modifier if number of guests is smaller', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 1, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { minOccupants: 5 } },
@@ -518,7 +527,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should apply modifier if number of guests is equal', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 3 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 3, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { minOccupants: 3 } },
@@ -527,7 +536,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should apply modifier if number of guests is larger', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 10 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 10, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { minOccupants: 5 } },
@@ -536,7 +545,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should apply modifier with the biggest applicable minOccupants', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 7 }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { numberOfGuests: 7, helpers: { lengthOfStay: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { minOccupants: 5 } },

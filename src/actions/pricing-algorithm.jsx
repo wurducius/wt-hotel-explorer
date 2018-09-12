@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-const selectApplicableModifiers = (modifiers, dateMoment, lengthOfStay, guestData) => {
+const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
   if (!modifiers || !modifiers.length) {
     return [];
   }
@@ -19,7 +19,7 @@ const selectApplicableModifiers = (modifiers, dateMoment, lengthOfStay, guestDat
       return false;
     }
     if (mod.conditions.minLengthOfStay) {
-      if (mod.conditions.minLengthOfStay > lengthOfStay) {
+      if (mod.conditions.minLengthOfStay > guestData.helpers.lengthOfStay) {
         return false;
       }
       if (maxMinLOS
@@ -53,10 +53,9 @@ const selectApplicableModifiers = (modifiers, dateMoment, lengthOfStay, guestDat
   return applicableModifiers.filter(mod => elementsToDrop.indexOf(mod) === -1);
 };
 
-// TODO move lengthOfStay into guestData
-const computeDailyPrice = (dateMoment, lengthOfStay, guestData, ratePlan) => {
+const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
   const applicableModifiers = selectApplicableModifiers(
-    ratePlan.modifiers, dateMoment, lengthOfStay, guestData,
+    ratePlan.modifiers, dateMoment, guestData,
   );
   if (!applicableModifiers.length) {
     return ratePlan.price * guestData.numberOfGuests;
@@ -78,14 +77,12 @@ const computeDailyPrice = (dateMoment, lengthOfStay, guestData, ratePlan) => {
 };
 
 
-const computeDailyPrices = (hotelCurrency, arrivalDateMoment, departureDateMoment,
-  guestData, applicableRatePlans) => {
-  const lengthOfStay = departureDateMoment.diff(arrivalDateMoment, 'days');
-  const currentDate = moment.utc(arrivalDateMoment);
+const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
+  const currentDate = moment.utc(guestData.helpers.arrivalDateMoment);
   const dailyPrices = {};
   dailyPrices[hotelCurrency] = [];
   // Find an appropriate rate plan for every day
-  for (let i = 0; i < lengthOfStay; i += 1) {
+  for (let i = 0; i < guestData.helpers.lengthOfStay; i += 1) {
     let currentRatePlan;
     let currentCurrency;
     const bestDailyPrice = {};
@@ -102,7 +99,7 @@ const computeDailyPrices = (hotelCurrency, arrivalDateMoment, departureDateMomen
       // Deal with a rate plan ending sometimes during the stay
       if (currentDate >= availableForTravelFrom && currentDate <= availableForTravelTo) {
         const currentDailyPrice = computeDailyPrice(
-          currentDate, lengthOfStay, guestData, currentRatePlan,
+          currentDate, guestData, currentRatePlan,
         );
         if (!bestDailyPrice[currentCurrency]
           || currentDailyPrice <= bestDailyPrice[currentCurrency]) {
@@ -122,7 +119,7 @@ const computeDailyPrices = (hotelCurrency, arrivalDateMoment, departureDateMomen
   let currency;
   for (let i = 0; i < allCurrencies.length; i += 1) {
     currency = allCurrencies[i];
-    if (dailyPrices[currency].length < lengthOfStay
+    if (dailyPrices[currency].length < guestData.helpers.lengthOfStay
       || dailyPrices[currency].indexOf(undefined) > -1) {
       delete dailyPrices[currency];
     }
@@ -130,7 +127,7 @@ const computeDailyPrices = (hotelCurrency, arrivalDateMoment, departureDateMomen
   return dailyPrices;
 };
 
-const getApplicableRatePlansFor = (roomType, arrivalDateMoment, departureDateMoment, ratePlans) => {
+const getApplicableRatePlansFor = (roomType, guestData, ratePlans) => {
   const now = moment.utc();
   // filter out rateplans that are totally out of bounds
   return ratePlans.filter((rp) => {
@@ -148,8 +145,8 @@ const getApplicableRatePlansFor = (roomType, arrivalDateMoment, departureDateMom
       return false;
     }
     // Rate plan is totally out of bounds of travel dates
-    if (availableForTravelTo.isBefore(arrivalDateMoment)
-        || availableForTravelFrom.isAfter(departureDateMoment)) {
+    if (availableForTravelTo.isBefore(guestData.helpers.arrivalDateMoment)
+        || availableForTravelFrom.isAfter(guestData.helpers.departureDateMoment)) {
       return false;
     }
     return true;
@@ -160,12 +157,10 @@ const computePrices = (hotel, guestData) => {
   let { roomTypes, ratePlans } = hotel;
   roomTypes = Object.values(roomTypes);
   ratePlans = Object.values(ratePlans);
-  const arrivalDateMoment = moment.utc(guestData.arrival);
-  const departureDateMoment = moment.utc(guestData.departure);
 
   return roomTypes.map((roomType) => {
     const applicableRatePlans = getApplicableRatePlansFor(
-      roomType, arrivalDateMoment, departureDateMoment, ratePlans,
+      roomType, guestData, ratePlans,
     );
 
     // no rate plans available at all, bail
@@ -178,7 +173,7 @@ const computePrices = (hotel, guestData) => {
     }
 
     const dailyPrices = computeDailyPrices(
-      hotel.currency, arrivalDateMoment, departureDateMoment, guestData, applicableRatePlans,
+      hotel.currency, guestData, applicableRatePlans,
     );
     // TODO keep estimates in multiple currencies
     // for now, randomly pick a currency
