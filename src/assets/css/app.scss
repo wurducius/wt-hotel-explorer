@@ -1,4 +1,5 @@
 /* OVERRIDES */
+
 .alert {border-width: 2px!important;}
 .badge {
   padding: 6px 10px;
@@ -12,11 +13,15 @@
 
 a.border-bottom {padding-bottom: 3px;}
 
+
 /* CONTAINERS */
+
+/* Hero */
 #app-hero {
   h2 {margin-bottom: 10px;}
 }
 
+/* Crop for carousel images */
 .img-crop {
   height: 300px;
   overflow: hidden;
@@ -29,8 +34,41 @@ a.border-bottom {padding-bottom: 3px;}
   img {visibility: hidden;}
 }
 
+
 .hotel-description {
   font-size: 19px;
+}
+
+// Map popup
+.map-popup {
+  text-align: center;
+  p {
+    margin: 3px 0!important;
+    font-size: 14px;
+  }
+}
+
+.leaflet-popup-content {
+  margin: 15px 8px;
+}
+
+.map-container {
+  margin: 0 auto;
+  overflow: hidden;
+
+  border-radius: 5px;
+
+  &, > div {
+    height: 300px;
+  }
+
+  @media all and (min-width: 400px) {
+
+    &, > div {
+      width: 100%;
+    }
+
+  }
 }
 
 /* Sticky footer styles */
@@ -40,22 +78,24 @@ a.border-bottom {padding-bottom: 3px;}
     min-height: 100%;
   }
   body {
-    margin-bottom: 300px; /* Margin bottom by footer height */
+    margin-bottom: 315px; /* Margin bottom by footer height */
   }
   #app-footer {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 300px; /* Set the fixed height of the footer here */
+    height: 315px; /* Set the fixed height of the footer here */
   }
 }
 
 
 /* HELPERS */
-.text--accent {color: #5F2987!important;}
+.text--accent {color: #5F2987 !important;}
 .text--link {
   color: #164FDD;
   &:hover {
     color: #0F3697;
   }
 }
+.box-shadow {box-shadow: 1px 5px 5px rgba(0,0,0,.2) !important;}
+
