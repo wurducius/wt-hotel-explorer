@@ -1,8 +1,106 @@
 import moment from 'moment';
 
-export const computeDailyPrice = (basePrice, numberOfGuests) => basePrice * numberOfGuests;
+/*
+from  string($date)
+example: 2018-01-30
+First day the modifier is applied to (including)
 
-export const getApplicableRatePlansFor = (roomType, arrivalDate, departureDate, ratePlans) => {
+to  string($date)
+example: 2018-02-20
+Last day the modifier is applied to (including)
+
+minLengthOfStay integer
+Minimal length of stay the modifer is applicable to. If there are multiple modifiers with lengthOfStay condition matching the minimal length of stay, the price for the longest length of stay is used.
+
+maxAge  integer
+The modifier is applicable to occupants of this age or younger at the time of arrival to the stay. If multiple modifiers are specified with different maxAge, the modifier with the highest fitting limit is applied.
+
+minOccupants  integer
+The modifier is applicable if there are at least this number of persons staying in a room. If multiple modifiers are specified with different minOccupants, the modifier with the highest fitting limit is applied.
+*/
+
+const computeDailyPrice = (date, lengthOfStay, guestData, ratePlan) => {
+  if (!ratePlan.modifiers) {
+    return ratePlan.price * guestData.numberOfGuests;
+  }
+  // Drop modifiers not fitting the overall guest data
+  const applicableModifiers = ratePlan.modifier.filter((rp) => {
+    if (!rp.conditions) {
+      return false;
+    }
+    if (rp.conditions.from) {
+    }
+    if (rp.conditions.to) {
+    }
+    if (rp.conditions.minLengthOfStay) {
+    }
+    if (rp.conditions.minOccupants) {
+    }
+    return true;
+  });
+
+  // TODO Apply modifiers separately for each guest
+  // TODO verify modifers based on each guest, such as maxAge
+
+  // Apply all modifiers and pick the lowest price
+
+  return ratePlan.price * guestData.numberOfGuests;
+};
+
+
+const computeDailyPrices = (hotelCurrency, arrivalDateMoment, departureDateMoment,
+  guestData, applicableRatePlans) => {
+  const lengthOfStay = departureDateMoment.diff(arrivalDateMoment, 'days');
+  const currentDate = moment(arrivalDateMoment);
+  const dailyPrices = {};
+  dailyPrices[hotelCurrency] = [];
+  // Find an appropriate rate plan for every day
+  for (let i = 0; i < lengthOfStay; i += 1) {
+    let currentRatePlan;
+    let currentCurrency;
+    const bestDailyPrice = {};
+
+    // loop over all rate plans and find the most fitting one for that day in all currencies
+    for (let j = 0; j < applicableRatePlans.length; j += 1) {
+      currentRatePlan = applicableRatePlans[j];
+      currentCurrency = currentRatePlan.currency || hotelCurrency;
+      if (!dailyPrices[currentCurrency]) {
+        dailyPrices[currentCurrency] = [];
+      }
+      const availableForTravelFrom = moment.utc(currentRatePlan.availableForTravel.from);
+      const availableForTravelTo = moment.utc(currentRatePlan.availableForTravel.to);
+      // Deal with a rate plan ending sometimes during the stay
+      if (currentDate >= availableForTravelFrom && currentDate <= availableForTravelTo) {
+        const currentDailyPrice = computeDailyPrice(
+          currentDate, lengthOfStay, guestData, currentRatePlan,
+        );
+        if (!bestDailyPrice[currentCurrency]
+          || currentDailyPrice <= bestDailyPrice[currentCurrency]) {
+          bestDailyPrice[currentCurrency] = currentDailyPrice;
+        }
+      }
+    }
+    const currencies = Object.keys(bestDailyPrice);
+    for (let j = 0; j < currencies.length; j += 1) {
+      dailyPrices[currencies[j]].push(bestDailyPrice[currencies[j]]);
+    }
+    currentDate.add(1, 'day');
+  }
+
+  // Filter out currencies that do not cover the whole stay range
+  const allCurrencies = Object.keys(dailyPrices);
+  let currency;
+  for (let i = 0; i < allCurrencies.length; i += 1) {
+    currency = allCurrencies[i];
+    if (dailyPrices[currency].length < lengthOfStay
+      || dailyPrices[currency].indexOf(undefined) > -1) {
+      delete dailyPrices[currency];
+    }
+  }
+  return dailyPrices;
+};
+
+const getApplicableRatePlansFor = (roomType, arrivalDateMoment, departureDateMoment, ratePlans) => {
   const now = moment.utc();
   // filter out rateplans that are totally out of bounds
   return ratePlans.filter((rp) => {
@@ -20,70 +118,24 @@ export const getApplicableRatePlansFor = (roomType, arrivalDate, departureDate, 
       return false;
     }
     // Rate plan is totally out of bounds of travel dates
-    if (availableForTravelTo.isBefore(arrivalDate)
-        || availableForTravelFrom.isAfter(departureDate)) {
+    if (availableForTravelTo.isBefore(arrivalDateMoment)
+        || availableForTravelFrom.isAfter(departureDateMoment)) {
       return false;
     }
     return true;
   });
 };
 
-export const computeDailyPrices = (hotelCurrency, arrivalDate, departureDate,
-  numberOfGuests, applicableRatePlans) => {
-  const lengthOfStay = departureDate.diff(arrivalDate, 'days');
-  const currentDate = moment(arrivalDate);
-  const dailyPrices = {};
-  dailyPrices[hotelCurrency] = [];
-  // Find an appropriate rate plan for every day
-  for (let i = 0; i < lengthOfStay; i += 1) {
-    let currentRatePlan;
-    let currentCurrency = hotelCurrency;
-    const bestDailyPrice = {};
-    for (let j = 0; j < applicableRatePlans.length; j += 1) {
-      currentRatePlan = applicableRatePlans[j];
-      currentCurrency = currentRatePlan.currency || hotelCurrency;
-      if (!dailyPrices[currentCurrency]) {
-        dailyPrices[currentCurrency] = [];
-      }
-      const availableForTravelFrom = moment.utc(currentRatePlan.availableForTravel.from);
-      const availableForTravelTo = moment.utc(currentRatePlan.availableForTravel.to);
-      // Deal with a rate plan ending sometimes during the stay
-      if (currentDate >= availableForTravelFrom && currentDate <= availableForTravelTo) {
-        const currentPrice = computeDailyPrice(currentRatePlan.price, numberOfGuests);
-        if (!bestDailyPrice[currentCurrency] || currentPrice <= bestDailyPrice[currentCurrency]) {
-          bestDailyPrice[currentCurrency] = currentPrice;
-        }
-      }
-    }
-    if (bestDailyPrice[currentCurrency] === undefined) {
-      bestDailyPrice[currentCurrency] = -1;
-    }
-    dailyPrices[currentCurrency].push(bestDailyPrice[currentCurrency]);
-    currentDate.add(1, 'day');
-  }
-
-  // Filter out currencies that do not cover the whole stay range
-  const allCurrencies = Object.keys(dailyPrices);
-  let currency;
-  for (let i = 0; i < allCurrencies.length; i += 1) {
-    currency = allCurrencies[i];
-    if (dailyPrices[currency].length < lengthOfStay || dailyPrices[currency].indexOf(-1) > -1) {
-      delete dailyPrices[currency];
-    }
-  }
-  return dailyPrices;
-};
-
-export const computePrices = (hotel, guestData) => {
+const computePrices = (hotel, guestData) => {
   let { roomTypes, ratePlans } = hotel;
   roomTypes = Object.values(roomTypes);
   ratePlans = Object.values(ratePlans);
-  const arrivalDate = moment.utc(guestData.arrival);
-  const departureDate = moment.utc(guestData.departure);
+  const arrivalDateMoment = moment.utc(guestData.arrival);
+  const departureDateMoment = moment.utc(guestData.departure);
 
   return roomTypes.map((roomType) => {
     const applicableRatePlans = getApplicableRatePlansFor(
-      roomType, arrivalDate, departureDate, ratePlans,
+      roomType, arrivalDateMoment, departureDateMoment, ratePlans,
     );
 
     // no rate plans available at all, bail
@@ -96,7 +148,7 @@ export const computePrices = (hotel, guestData) => {
     }
 
     const dailyPrices = computeDailyPrices(
-      hotel.currency, arrivalDate, departureDate, guestData.numberOfGuests, applicableRatePlans,
+      hotel.currency, arrivalDateMoment, departureDateMoment, guestData, applicableRatePlans,
     );
     // TODO keep estimates in multiple currencies
     // for now, randomly pick a currency
@@ -112,4 +164,12 @@ export const computePrices = (hotel, guestData) => {
       currency: eligibleCurrencies[0] || hotel.currency,
     };
   });
+};
+
+
+export default {
+  getApplicableRatePlansFor,
+  computeDailyPrices,
+  computePrices,
+  computeDailyPrice,
 };
