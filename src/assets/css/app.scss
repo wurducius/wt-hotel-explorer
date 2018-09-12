@@ -14,6 +14,20 @@
 a.border-bottom {padding-bottom: 3px;}
 
 
+/* GRID */
+
+/* Masonry grid */
+.masonry-grid {
+  display: flex;
+  margin-left: -30px; /* gutter size offset */
+  width: auto;
+}
+.masonry-grid__col {
+  padding-left: 30px; /* gutter size */
+  background-clip: padding-box;
+}
+
+
 /* CONTAINERS */
 
 /* Hero */
@@ -21,11 +35,12 @@ a.border-bottom {padding-bottom: 3px;}
   h2 {margin-bottom: 10px;}
 }
 
-/* Crop for carousel images */
+/* Crop for card and carousel images */
 .img-crop {
-  height: 300px;
   overflow: hidden;
-  border-radius: 5px;
+
+  padding-bottom: 65%;
+  height: 0;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -39,18 +54,7 @@ a.border-bottom {padding-bottom: 3px;}
   font-size: 19px;
 }
 
-// Map popup
-.map-popup {
-  text-align: center;
-  p {
-    margin: 3px 0!important;
-    font-size: 14px;
-  }
-}
-
-.leaflet-popup-content {
-  margin: 15px 8px;
-}
+/* Map Container */
 
 .map-container {
   margin: 0 auto;
@@ -70,6 +74,19 @@ a.border-bottom {padding-bottom: 3px;}
 
   }
 }
+
+.map-popup {
+  text-align: center;
+  p {
+    margin: 3px 0!important;
+    font-size: 14px;
+  }
+}
+
+.leaflet-popup-content {
+  margin: 15px 8px;
+}
+
 
 /* Sticky footer styles */
 @media all and (min-width: 768px) {
@@ -97,5 +114,7 @@ a.border-bottom {padding-bottom: 3px;}
     color: #0F3697;
   }
 }
-.box-shadow {box-shadow: 1px 5px 5px rgba(0,0,0,.2) !important;}
+.box-shadow {
+  box-shadow: 1px 5px 5px rgba(0,0,0,.2) !important;
+}
 
