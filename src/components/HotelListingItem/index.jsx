@@ -15,9 +15,7 @@ const HotelListingItem = ({ hotel, estimates }) => {
   return (
       <ScrollAnimation animateIn="fadeInUp" animateOnce>
         <Link to={`/hotels/${hotel.id}`} className="card mb-2">
-        <div className="card-img-top">
           <img src={hotel.images[0]} alt={hotel.name} className="card-img-top" />
-        </div>
           <div className="card-body pt-1 text-muted block-fade">
             <h5 className="card-title h6">{hotel.name}</h5>
             <div className="card-text">

@@ -10,7 +10,7 @@ import AmenitiesList from '../AmenitiesList';
 const RoomType = ({ roomType, estimate }) => (
 
   <div className="card mb-2">
-    <div className="img-crop" style={{backgroundImage: `URL(${roomType.images[0]})`}}>
+    <div className="card-img-top img-crop" style={{backgroundImage: `URL(${roomType.images[0]})`}}>
       <img src={roomType.images[0]} alt={roomType.images[0]}/>
     </div>
     <div className="card-body text-muted"  style={{minHeight: 200}}>
