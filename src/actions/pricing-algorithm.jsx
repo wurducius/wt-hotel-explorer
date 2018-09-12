@@ -1,57 +1,78 @@
 import moment from 'moment';
 
-/*
-from  string($date)
-example: 2018-01-30
-First day the modifier is applied to (including)
-
-to  string($date)
-example: 2018-02-20
-Last day the modifier is applied to (including)
-
-minLengthOfStay integer
-Minimal length of stay the modifer is applicable to. If there are multiple modifiers with lengthOfStay condition matching the minimal length of stay, the price for the longest length of stay is used.
-
-maxAge  integer
-The modifier is applicable to occupants of this age or younger at the time of arrival to the stay. If multiple modifiers are specified with different maxAge, the modifier with the highest fitting limit is applied.
-
-minOccupants  integer
-The modifier is applicable if there are at least this number of persons staying in a room. If multiple modifiers are specified with different minOccupants, the modifier with the highest fitting limit is applied.
-*/
-
-const computeDailyPrice = (date, lengthOfStay, guestData, ratePlan) => {
+const computeDailyPrice = (dateMoment, lengthOfStay, guestData, ratePlan) => {
   if (!ratePlan.modifiers) {
     return ratePlan.price * guestData.numberOfGuests;
   }
   // Drop modifiers not fitting the overall guest data
-  const applicableModifiers = ratePlan.modifier.filter((rp) => {
-    if (!rp.conditions) {
+  let maxMinLOS; let
+    maxMinOccupants;
+  const elementsToDrop = [];
+  let applicableModifiers = ratePlan.modifiers.filter((mod) => {
+    if (!mod.conditions) {
       return false;
     }
-    if (rp.conditions.from) {
+    if (mod.conditions.from && moment.utc(mod.conditions.from).diff(dateMoment, 'days') > 0) {
+      return false;
     }
-    if (rp.conditions.to) {
+    if (mod.conditions.to && moment.utc(mod.conditions.to).diff(dateMoment, 'days') < 0) {
+      return false;
     }
-    if (rp.conditions.minLengthOfStay) {
+    if (mod.conditions.minLengthOfStay) {
+      if (mod.conditions.minLengthOfStay > lengthOfStay) {
+        return false;
+      }
+      if (maxMinLOS
+        && mod.conditions.minLengthOfStay < maxMinLOS.conditions.minLengthOfStay
+      ) {
+        return false;
+      }
+      if (maxMinLOS) {
+        elementsToDrop.push(maxMinLOS);
+      }
+      maxMinLOS = mod;
+      return true;
     }
-    if (rp.conditions.minOccupants) {
+    if (mod.conditions.minOccupants) {
+      if (mod.conditions.minOccupants > guestData.numberOfGuests) {
+        return false;
+      }
+      if (maxMinOccupants
+        && mod.conditions.minOccupants < maxMinOccupants.conditions.minOccupants
+      ) {
+        return false;
+      }
+      if (maxMinOccupants) {
+        elementsToDrop.push(maxMinOccupants);
+      }
+      maxMinOccupants = mod;
+      return true;
     }
     return true;
   });
+  applicableModifiers = applicableModifiers.filter(mod => elementsToDrop.indexOf(mod) === -1);
+
+  if (!applicableModifiers.length) {
+    return ratePlan.price * guestData.numberOfGuests;
+  }
 
   // TODO Apply modifiers separately for each guest
   // TODO verify modifers based on each guest, such as maxAge
 
-  // Apply all modifiers and pick the lowest price
+  // Pick the best modifier and adjust the price
+  applicableModifiers.sort((a, b) => (a.adjustment <= b.adjustment ? -1 : 1));
+  const selectedModifier = applicableModifiers[0].adjustment / 100;
+  const adjustment = selectedModifier * ratePlan.price;
 
-  return ratePlan.price * guestData.numberOfGuests;
+  // TODO modifier might be different for each guest
+  return (ratePlan.price + adjustment) * guestData.numberOfGuests;
 };
 
 
 const computeDailyPrices = (hotelCurrency, arrivalDateMoment, departureDateMoment,
   guestData, applicableRatePlans) => {
   const lengthOfStay = departureDateMoment.diff(arrivalDateMoment, 'days');
-  const currentDate = moment(arrivalDateMoment);
+  const currentDate = moment.utc(arrivalDateMoment);
   const dailyPrices = {};
   dailyPrices[hotelCurrency] = [];
   // Find an appropriate rate plan for every day

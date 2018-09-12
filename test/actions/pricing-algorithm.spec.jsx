@@ -295,5 +295,265 @@ describe('action.pricing-algorithm', () => {
       expect(result.EUR[7]).toBe(21);
     });
   });
-// TODO guest age and other modifiers
+  describe('computeDailyPrice', () => {
+    describe('modifier selection', () => {
+      it('should return base price if rate plan has no modifiers', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, { price: 10 })).toBe(10);
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 71 }, { price: 10 })).toBe(710);
+      });
+
+      it('should pick the most pro-customer modifier (all positive)', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: 25, conditions: {} },
+            { adjustment: 50, conditions: {} },
+          ],
+        })).toBe(10);
+      });
+
+      it('should pick the most pro-customer modifier (all negative)', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: {} },
+            { adjustment: -50, conditions: {} },
+          ],
+        })).toBe(4);
+      });
+
+      it('should pick the most pro-customer modifier (mixed)', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: {} },
+            { adjustment: -10, conditions: {} },
+            { adjustment: 13, conditions: {} },
+            { adjustment: 50, conditions: {} },
+          ],
+        })).toBe(6);
+      });
+    });
+
+    describe('time interval from, to', () => {
+      it('in an interval', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-01-09',
+                to: '2018-09-20',
+              },
+            },
+          ],
+        })).toBe(6);
+      });
+
+      it('starting on a stay date', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 10,
+          modifiers: [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-12',
+                to: '2018-09-20',
+              },
+            },
+          ],
+        })).toBe(7.5);
+      });
+
+      it('ending on a stay date', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 10,
+          modifiers: [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-10',
+                to: '2018-09-12',
+              },
+            },
+          ],
+        })).toBe(7.5);
+      });
+
+      it('does not apply when outside', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', 3, { numberOfGuests: 1 }, {
+          price: 10,
+          modifiers: [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-01',
+                to: '2018-20-09',
+              },
+            },
+          ],
+        })).toBe(10);
+      });
+
+      it('only from is set and stay date is in', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 10,
+          modifiers: [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-01',
+              },
+            },
+          ],
+        })).toBe(7.5);
+      });
+
+      it('only from is set and stay date is out', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', 3, { numberOfGuests: 1 }, {
+          price: 10,
+          modifiers: [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-01',
+              },
+            },
+          ],
+        })).toBe(10);
+      });
+
+      it('only to is set and stay date is in', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2017-12-09', 3, { numberOfGuests: 1 }, {
+          price: 10,
+          modifiers: [
+            {
+              adjustment: 25,
+              conditions: {
+                to: '2018-09-20',
+              },
+            },
+          ],
+        })).toBe(12.5);
+      });
+
+      it('only to is set and stay date is out', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2019-12-09', 3, { numberOfGuests: 1 }, {
+          price: 10,
+          modifiers: [
+            {
+              adjustment: -25,
+              conditions: {
+                to: '2018-09-20',
+              },
+            },
+          ],
+        })).toBe(10);
+      });
+    });
+
+    describe('minLengthOfStay', () => {
+      it('should not apply modifier if LOS is shorter', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+          ],
+        })).toBe(8);
+      });
+
+      it('should apply modifier if LOS is equal', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { minLengthOfStay: 3 } },
+          ],
+        })).toBe(6);
+      });
+
+      it('should apply modifier if LOS is longer', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 7, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+          ],
+        })).toBe(6);
+      });
+
+      it('should apply modifier with the biggest applicable LOS', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 7, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+            { adjustment: -10, conditions: { minLengthOfStay: 7 } },
+          ],
+        })).toBe(7.2);
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 7, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -10, conditions: { minLengthOfStay: 7 } },
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+          ],
+        })).toBe(7.2);
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 7, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -50, conditions: { minLengthOfStay: 6 } },
+            { adjustment: -10, conditions: { minLengthOfStay: 7 } },
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+          ],
+        })).toBe(7.2);
+      });
+    });
+
+    describe('minOccupants', () => {
+      it('should not apply modifier if number of guests is smaller', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 1 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { minOccupants: 5 } },
+          ],
+        })).toBe(8 * 1);
+      });
+
+      it('should apply modifier if number of guests is equal', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 3 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { minOccupants: 3 } },
+          ],
+        })).toBe(6 * 3);
+      });
+
+      it('should apply modifier if number of guests is larger', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 10 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { minOccupants: 5 } },
+          ],
+        })).toBe(6 * 10);
+      });
+
+      it('should apply modifier with the biggest applicable minOccupants', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', 3, { numberOfGuests: 7 }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { minOccupants: 5 } },
+            { adjustment: -10, conditions: { minOccupants: 7 } },
+          ],
+        })).toBe(7.2 * 7);
+      });
+    });
+
+    // TODO describe('maxAge', () => {});
+
+
+    /*
+maxAge  integer
+The modifier is applicable to occupants of this age or younger at the time
+of arrival to the stay. If multiple modifiers are specified with different
+maxAge, the modifier with the highest fitting limit is applied.
+*/
+  });
 });
