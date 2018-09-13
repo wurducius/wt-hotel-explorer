@@ -19,11 +19,7 @@ const HotelDetail = ({
       <div className="col-md-12">
 
         <div className="text-center">
-          <h1 className="mt-1">
-            {' '}
-            {hotel.name}
-            {' '}
-          </h1>
+          <h1 className="mt-1">{hotel.name}</h1>
           <div className="row">
             <div className="col-md-10 mx-auto">
               <ReactMarkdown source={hotel.description} className="hotel-description mb-1" />
@@ -46,18 +42,22 @@ const HotelDetail = ({
       <div className="col-md-12">
         <h3 className="mb-1 h4">Hotel Rooms</h3>
         <div className="row">
-          <RoomTypes map={hotel.roomTypes} estimates={estimates} />
+          <RoomTypes
+            map={hotel.roomTypes}
+            estimates={estimates}
+            availableRoomTypes={Object.keys(hotel.roomTypes).length}
+          />
         </div>
       </div>
     </div>
 
-    <ScrollAnimation animateIn="fadeIn" animateOnce>
+    <ScrollAnimation animateIn="fadeIn" animateOnce className="col">
       <div className="row">
-        <div className="col-md-12 bg-light p-2 rounded mt-1">
+        <div className="col-md-12 bg-light rounded p-2 mt-1">
           <div className="row">
             <div className="col-lg-4">
-              <div className="rounded box-shadow">
-                <ImageList list={hotel.images} />
+              <div className="rounded box-shadow" style={{ overflow: 'hidden' }}>
+                <ImageList list={hotel.images} height={300} />
               </div>
             </div>
             <div className="col-lg-4">
@@ -81,7 +81,6 @@ const HotelDetail = ({
         </div>
       </div>
     </ScrollAnimation>
-
   </React.Fragment>
 );
 
