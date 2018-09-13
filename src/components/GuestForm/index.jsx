@@ -1,17 +1,65 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { Formik, Form, Field } from 'formik';
+import {
+  Formik, Form, Field, FieldArray,
+} from 'formik';
+
+const GuestAgeForm = ({
+  push, remove, form,
+}) => (
+  <div>
+    <h5>
+Information about guests
+      <button
+        type="button"
+        className="btn btn-secondary btn-sm"
+        onClick={() => push('')}
+      >
+        Add another guest
+      </button>
+    </h5>
+    {form.values.guestAges && form.values.guestAges.map((guestAge, index) => (
+      /* eslint-disable-next-line react/no-array-index-key */
+      <div key={`guestAges.${index}`} className="form-inline">
+        <label htmlFor={`guestAges.${index}`}>
+Age of guest #
+          {index + 1}
+        </label>
+        <Field
+          type="number"
+          className="form-control"
+          name={`guestAges.${index}`}
+          id={`guestAges.${index}`}
+          min="0"
+        />
+        <button
+          type="button"
+          className="btn btn-danger btn-sm"
+          onClick={() => remove(index)}
+        >
+        -
+        </button>
+      </div>
+    ))}
+  </div>
+);
+
+GuestAgeForm.propTypes = {
+  push: PropTypes.func.isRequired,
+  remove: PropTypes.func.isRequired,
+  form: PropTypes.instanceOf(Object).isRequired,
+};
 
 const GuestForm = ({ handleSubmit, initialValues }) => {
   const validate = (values) => {
     const errors = {};
     // formats
-    if (!Number.isInteger(values.numberOfGuests)) {
-      errors.numberOfGuests = 'We need at least one traveller!';
+    if (!values.guestAges || values.guestAges.length < 1) {
+      errors.guestAges = 'We need information about at least one guest!';
     }
-    if (values.numberOfGuests <= 0) {
-      errors.numberOfGuests = 'We need at least one traveller!';
+    if (values.guestAges.filter(x => Number.isInteger(x)).length < 1) {
+      errors.guestAges = 'We need information about at least one guest!';
     }
     // This is throwing warnings from momentjs but we don't really mind
     const normalizedArrival = moment(values.arrival);
@@ -33,7 +81,7 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
 
   const doSubmit = (values, formActions) => {
     const result = {};
-    result.numberOfGuests = values.numberOfGuests;
+    result.guestAges = values.guestAges.map(x => parseInt(x, 10));
     result.arrival = moment(values.arrival).format('YYYY-MM-DD');
     result.departure = moment(values.departure).format('YYYY-MM-DD');
     result.formActions = {
@@ -53,23 +101,28 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
         {({ isSubmitting, errors, touched }) => (
           <Form className="mb-1">
             <div className="form-row mb-1">
-              <div className="form-group col-md-4">
+              <div className="form-group col-md-6">
                 <label htmlFor="arrival">Date of arrival</label>
                 <Field type="text" className="form-control" name="arrival" id="arrival" placeholder="Date of arrival" />
                 {errors.arrival && touched.arrival && <small className="text-danger">{errors.arrival}</small>}
 
               </div>
-              <div className="form-group col-md-4">
+              <div className="form-group col-md-6">
                 <label htmlFor="departure">Date of departure</label>
                 <Field type="text" className="form-control" name="departure" id="departure" placeholder="Date of departure" />
                 {errors.departure && touched.departure && <small className="text-danger">{errors.departure}</small>}
               </div>
+            </div>
+            <div className="form-row mb-1">
               <div className="form-group col-md-4">
-                <label htmlFor="numberOfGuests">Number of guests</label>
-                <Field type="number" className="form-control" min="1" name="numberOfGuests" id="numberOfGuests" placeholder="Number of guests" />
-                {errors.numberOfGuests && touched.numberOfGuests && <small className="text-danger">{errors.numberOfGuests}</small>}
+                <FieldArray
+                  name="guestAges"
+                  component={GuestAgeForm}
+                />
+                {errors.guestAges && touched.guestAges && <small className="text-danger">{errors.guestAges}</small>}
               </div>
             </div>
+
             <button type="submit" disabled={isSubmitting} className="btn btn-primary">Get estimates!</button>
 
             <hr className="my-2" />
@@ -88,7 +141,7 @@ GuestForm.defaultProps = {
   initialValues: {
     arrival: defaultArrival,
     departure: defaultDeparture,
-    numberOfGuests: 1,
+    guestAges: [''],
   },
 };
 

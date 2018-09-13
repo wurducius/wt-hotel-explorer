@@ -34,7 +34,7 @@ const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
       return true;
     }
     if (mod.conditions.minOccupants) {
-      if (mod.conditions.minOccupants > guestData.numberOfGuests) {
+      if (mod.conditions.minOccupants > guestData.helpers.numberOfGuests) {
         return false;
       }
       if (maxMinOccupants
@@ -58,14 +58,14 @@ const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
     ratePlan.modifiers, dateMoment, guestData,
   );
   if (!applicableModifiers.length) {
-    return ratePlan.price * guestData.numberOfGuests;
+    return ratePlan.price * guestData.helpers.numberOfGuests;
   }
   applicableModifiers.sort((a, b) => (a.adjustment <= b.adjustment ? -1 : 1));
 
   const guestPrices = [];
   let selectedModifier;
   let adjustment;
-  for (let i = 0; i < guestData.numberOfGuests; i += 1) {
+  for (let i = 0; i < guestData.helpers.numberOfGuests; i += 1) {
     // Pick the best modifier and adjust the price
     // TODO work with information specific for each guest
     selectedModifier = applicableModifiers[0].adjustment / 100;

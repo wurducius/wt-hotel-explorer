@@ -8,8 +8,9 @@ const defaultState = {
   guestData: {
     arrival: defaultArrival.format('YYYY-MM-DD'),
     departure: defaultDeparture.format('YYYY-MM-DD'),
-    numberOfGuests: 1,
+    guestAges: [],
     helpers: {
+      numberOfGuests: 0,
       lengthOfStay: defaultDeparture.diff(defaultArrival, 'days'),
       arrivalDateMoment: defaultArrival,
       departureDateMoment: defaultDeparture,
@@ -22,15 +23,18 @@ const reducer = (state = defaultState, action) => {
   let arrivalDateMoment;
   let departureDateMoment;
   let lengthOfStay;
+  let numberOfGuests;
   switch (action.type) {
     case 'SET_GUEST_DATA':
       arrivalDateMoment = moment.utc(action.payload.arrival);
       departureDateMoment = moment.utc(action.payload.departure);
       lengthOfStay = departureDateMoment.diff(arrivalDateMoment, 'days');
+      numberOfGuests = action.payload.guestAges.length;
       return Object.assign({}, state, {
         guestData: {
           ...action.payload,
           helpers: {
+            numberOfGuests,
             lengthOfStay,
             arrivalDateMoment,
             departureDateMoment,

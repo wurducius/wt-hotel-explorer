@@ -15,7 +15,7 @@ describe('action.estimates', () => {
           guestData: {
             arrival: '2018-01-03',
             departure: '2018-01-05',
-            numberOfGuests: 1,
+            guestAges: [18],
           },
         },
         hotels: {
@@ -85,7 +85,7 @@ describe('action.estimates', () => {
       expect(getStateMock.mock.calls.length).toBe(1);
     });
 
-    it('should not do anything when numberOfGuests is missing', () => {
+    it('should not do anything when guestAges are missing', () => {
       exampleState.estimates.guestData = {
         arrival: '2018-01-01',
         departure: '2018-04-01',
@@ -96,10 +96,22 @@ describe('action.estimates', () => {
       expect(getStateMock.mock.calls.length).toBe(1);
     });
 
+    it('should not do anything when guestAges is empty', () => {
+      exampleState.estimates.guestData = {
+        arrival: '2018-01-01',
+        departure: '2018-04-01',
+        guestAges: [],
+      };
+      getStateMock.mockReturnValue(exampleState);
+      action(dispatchMock, getStateMock);
+      expect(dispatchMock.mock.calls.length).toBe(0);
+      expect(getStateMock.mock.calls.length).toBe(1);
+    });
+
     it('should not do anything when arrival is missing', () => {
       exampleState.estimates.guestData = {
         departure: '2018-01-01',
-        numberOfGuests: 1,
+        guestAges: [18],
       };
       getStateMock.mockReturnValue(exampleState);
       action(dispatchMock, getStateMock);
@@ -110,7 +122,7 @@ describe('action.estimates', () => {
     it('should not do anything when departure is missing', () => {
       exampleState.estimates.guestData = {
         arrival: '2018-01-01',
-        numberOfGuests: 1,
+        guestAges: [18],
       };
       getStateMock.mockReturnValue(exampleState);
       action(dispatchMock, getStateMock);

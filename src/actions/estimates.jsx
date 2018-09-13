@@ -15,7 +15,13 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
     return;
   }
   const { guestData } = state.estimates;
-  if (!guestData || !guestData.arrival || !guestData.departure || !guestData.numberOfGuests) {
+  if (
+    !guestData
+    || !guestData.arrival
+    || !guestData.departure
+    || !guestData.guestAges
+    || !guestData.guestAges.length
+  ) {
     return;
   }
   const data = pricingAlgorithm.computePrices(hotel, guestData);
@@ -49,14 +55,14 @@ const fetchAndComputeHotelEstimates = ({ id, ratePlans, roomTypes }) => (dispatc
 };
 
 const recomputeAllPrices = ({
-  arrival, departure, numberOfGuests, formActions,
+  arrival, departure, guestAges, formActions,
 }) => (dispatch, getState) => {
   dispatch({
     type: 'SET_GUEST_DATA',
     payload: {
       arrival,
       departure,
-      numberOfGuests,
+      guestAges,
     },
   });
 
