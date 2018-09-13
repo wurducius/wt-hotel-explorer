@@ -1,6 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-
 
 export default () => (
   <div className="row animated fadeIn">
@@ -11,18 +9,37 @@ export default () => (
           <i className="mdi mdi-close" />
         </button>
 
-        <h4 className="alert-heading text-dark">Disclaimer</h4>
         <p>
-            This is a demo application showcasing current capabilities
-            of
+          <strong>Demo application</strong>
           {' '}
-          <a href="https://windingtree.com" className="alert-link">Winding Tree</a>
+showing possibilities of
+          {' '}<a href="https://windingtree.com">Winding Tree platform</a>
+.
+          If you want to know more look
           {' '}
-            platform. If you are interested in this,
-            read about
+          <a href="https://windingtree.com">here</a>
+. If you are an IT developer
+          interested in creating your own application using WT platform,
+          read
           {' '}
-          <Link to="/join-the-platform" className="alert-link">joining the platform</Link>
-            .
+          <a href="https://windingtree.com">Beginners guide</a>
+          {' '}
+or jump directly to
+          {' '}
+          <a href="https://windingtree.com">technical documentation</a>
+.
+          If you want your hotel to appear here or any innovation
+          created on top of Winding Tree platform, please, read
+          {' '}
+          <a href="https://windingtree.com">
+How to join
+          Winding Tree
+          </a>
+. Or are you OTA and want to increase your
+          portfolio, look on document
+          {' '}
+          <a href="https://windingtree.com">Winding Tree platform overview for OTA</a>
+.
         </p>
 
       </div>
