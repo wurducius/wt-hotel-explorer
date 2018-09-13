@@ -157,6 +157,39 @@ const getApplicableRatePlansFor = (roomType, guestData, ratePlans) => {
   const now = moment.utc();
   // filter out rateplans that are totally out of bounds
   return ratePlans.filter((rp) => {
+    // apply general restrictions if any
+    if (rp.restrictions) {
+      if (rp.restrictions.bookingCutOff) {
+        if (rp.restrictions.bookingCutOff.min
+          && moment.utc(guestData.helpers.arrivalDateMoment)
+            .subtract(rp.restrictions.bookingCutOff.min, 'days')
+            .isBefore(now)
+        ) {
+          return false;
+        }
+
+        if (rp.restrictions.bookingCutOff.max
+          && moment.utc(guestData.helpers.arrivalDateMoment)
+            .subtract(rp.restrictions.bookingCutOff.max, 'days')
+            .isAfter(now)
+        ) {
+          return false;
+        }
+      }
+      if (rp.restrictions.lengthOfStay) {
+        if (rp.restrictions.lengthOfStay.min
+          && rp.restrictions.lengthOfStay.min > guestData.helpers.lengthOfStay
+        ) {
+          return false;
+        }
+
+        if (rp.restrictions.lengthOfStay.max
+          && rp.restrictions.lengthOfStay.max < guestData.helpers.lengthOfStay
+        ) {
+          return false;
+        }
+      }
+    }
     const availableForTravelFrom = moment.utc(rp.availableForTravel.from);
     const availableForTravelTo = moment.utc(rp.availableForTravel.to);
     const availableForReservationFrom = moment.utc(rp.availableForReservation.from);

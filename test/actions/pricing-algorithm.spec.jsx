@@ -114,6 +114,146 @@ describe('action.pricing-algorithm', () => {
       );
       expect(result.length).toBe(2);
     });
+
+    describe('restrictions', () => {
+      let currentGuestData;
+      let ratePlans;
+      let today;
+
+      beforeEach(() => {
+        today = moment();
+        currentGuestData = {
+          arrival: moment(today).add(5, 'days').format('YYYY-MM-DD'),
+          departure: moment(today).add(7, 'days').format('YYYY-MM-DD'),
+          guestAges: [18],
+          helpers: {
+            arrivalDateMoment: moment(today).add(5, 'days'),
+            departureDateMoment: moment(today).add(7, 'days'),
+            lengthOfStay: 2,
+            numberOfGuests: 1,
+          },
+        };
+        ratePlans = [
+          {
+            id: 'rpb',
+            price: 60,
+            roomTypeIds: ['rtb'],
+            availableForReservation: {
+              from: moment(today).subtract(20, 'days').format('YYYY-MM-DD'),
+              to: moment(today).add(20, 'days').format('YYYY-MM-DD'),
+            },
+            availableForTravel: {
+              from: moment(today).subtract(20, 'days').format('YYYY-MM-DD'),
+              to: moment(today).add(20, 'days').format('YYYY-MM-DD'),
+            },
+          },
+          {
+            id: 'rpc',
+            price: 100,
+            roomTypeIds: ['rtb'],
+            availableForReservation: {
+              from: moment(today).subtract(20, 'days').format('YYYY-MM-DD'),
+              to: moment(today).add(20, 'days').format('YYYY-MM-DD'),
+            },
+            availableForTravel: {
+              from: moment(today).subtract(20, 'days').format('YYYY-MM-DD'),
+              to: moment(today).add(20, 'days').format('YYYY-MM-DD'),
+            },
+          },
+        ];
+      });
+
+      describe('bookingCutOff', () => {
+        it('should drop rate plan if booking happens after min bookingCutOff', () => {
+          ratePlans[0].restrictions = {
+            bookingCutOff: {
+              min: 20,
+            },
+          };
+          const result = pricingAlgorithm.getApplicableRatePlansFor(
+            hotel.roomTypes.rtb,
+            currentGuestData,
+            ratePlans,
+          );
+          expect(result.length).toBe(1);
+        });
+
+        it('should drop rate plan if booking happens before max bookingCutOff', () => {
+          ratePlans[0].restrictions = {
+            bookingCutOff: {
+              max: 2,
+            },
+          };
+          const result = pricingAlgorithm.getApplicableRatePlansFor(
+            hotel.roomTypes.rtb,
+            currentGuestData,
+            ratePlans,
+          );
+          expect(result.length).toBe(1);
+        });
+
+        it('should keep rate plan if booking happens in the desired cut off interval', () => {
+          ratePlans[0].restrictions = {
+            bookingCutOff: {
+              min: 4,
+              max: 8,
+            },
+          };
+          const result = pricingAlgorithm.getApplicableRatePlansFor(
+            hotel.roomTypes.rtb,
+            currentGuestData,
+            ratePlans,
+          );
+          expect(result.length).toBe(2);
+        });
+      });
+
+
+      describe('lengthOfStay', () => {
+        it('should drop rate plan if stay does not have min lengthOfStay', () => {
+          ratePlans[0].restrictions = {
+            lengthOfStay: {
+              min: 4,
+            },
+          };
+          const result = pricingAlgorithm.getApplicableRatePlansFor(
+            hotel.roomTypes.rtb,
+            currentGuestData,
+            ratePlans,
+          );
+          expect(result.length).toBe(1);
+        });
+
+        it('should drop rate plan if stay is longer than max lengthOfStay', () => {
+          ratePlans[0].restrictions = {
+            lengthOfStay: {
+              max: 1,
+            },
+          };
+          const result = pricingAlgorithm.getApplicableRatePlansFor(
+            hotel.roomTypes.rtb,
+            currentGuestData,
+            ratePlans,
+          );
+          expect(result.length).toBe(1);
+        });
+
+        it('should keep rate plan if stay is in between the desired lengthOfStay', () => {
+          ratePlans[0].restrictions = {
+            lengthOfStay: {
+              min: 2,
+              max: 10,
+            },
+          };
+          const result = pricingAlgorithm.getApplicableRatePlansFor(
+            hotel.roomTypes.rtb,
+            currentGuestData,
+            ratePlans,
+          );
+          expect(result.length).toBe(2);
+        });
+      });
+    });
   });
 
   describe('computeDailyPrices', () => {
