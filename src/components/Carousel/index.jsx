@@ -5,7 +5,7 @@ const Carousel = ({ list, height }) => {
   const randomId = `carousel-${Math.random().toString(36).substring(7)}`;
   const imageList = list.map((image, index) => (
     <div className={`carousel-item ${index === 0 ? 'active' : ''}`} key={`carousel-${randomId}-item-${image}`}>
-      <div className="img-crop" style={{ backgroundImage: `url(${image})`, height: height }}>
+      <div className="img-crop" style={{ backgroundImage: `url(${image})`, height }}>
         <img className="img-fluid w-100 rounded" src={image} alt={image} />
       </div>
     </div>
@@ -30,6 +30,7 @@ const Carousel = ({ list, height }) => {
 
 Carousel.propTypes = {
   list: PropTypes.instanceOf(Array).isRequired,
+  height: PropTypes.number.isRequired,
 };
 
 export default Carousel;

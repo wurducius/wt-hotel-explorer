@@ -16,7 +16,7 @@ const HotelListing = ({
     default: 3,
     1200: 3,
     992: 2,
-    768: 1
+    768: 1,
   };
 
   return (
@@ -26,7 +26,8 @@ const HotelListing = ({
           <Masonry
             breakpointCols={breakpointColumnsObj}
             className="masonry-grid"
-            columnClassName="masonry-grid__col">
+            columnClassName="masonry-grid__col"
+          >
             {hotelItems}
           </Masonry>
         )

@@ -13,35 +13,35 @@ const HotelListingItem = ({ hotel, estimates }) => {
     return acc;
   }, {});
   return (
-      <ScrollAnimation animateIn="fadeInUp" animateOnce>
-        <Link to={`/hotels/${hotel.id}`} className="card mb-2">
-          <img src={hotel.images[0]} alt={hotel.name} className="card-img-top" />
-          <div className="card-body pt-1 text-muted block-fade">
-            <h5 className="card-title h6">{hotel.name}</h5>
-            <div className="card-text">
-              <ReactMarkdown source={hotel.description} />
-            </div>
+    <ScrollAnimation animateIn="fadeInUp" animateOnce>
+      <Link to={`/hotels/${hotel.id}`} className="card mb-2">
+        <img src={hotel.images[0]} alt={hotel.name} className="card-img-top" />
+        <div className="card-body pt-1 text-muted block-fade">
+          <h5 className="card-title h6">{hotel.name}</h5>
+          <div className="card-text">
+            <ReactMarkdown source={hotel.description} />
           </div>
-          {currentLowestEstimate.price && (
-            <div className="card-footer bg-white pt-0">
-              <div className="animated fadeIn text--accent">
-                <i className="mdi mdi-calendar mdi-18px text-muted" />
-                {' '}
-                <strong>
+        </div>
+        {currentLowestEstimate.price && (
+        <div className="card-footer bg-white pt-0">
+          <div className="animated fadeIn text--accent">
+            <i className="mdi mdi-calendar mdi-18px text-muted" />
+            {' '}
+            <strong>
                   Available from
-                  {' '}
-                  <span className="font--alt">{currentLowestEstimate.price}</span>
-                  {' '}
-                  {currentLowestEstimate.currency}
-                </strong>
-              </div>
-            </div>
-          )}
-          <div className="card-footer bg-white pt-0">
-            <span className="text--link border-bottom">See detail</span>
+              {' '}
+              <span className="font--alt">{currentLowestEstimate.price}</span>
+              {' '}
+              {currentLowestEstimate.currency}
+            </strong>
           </div>
-        </Link>
-      </ScrollAnimation>
+        </div>
+        )}
+        <div className="card-footer bg-white pt-0">
+          <span className="text--link border-bottom">See detail</span>
+        </div>
+      </Link>
+    </ScrollAnimation>
   );
 };
 

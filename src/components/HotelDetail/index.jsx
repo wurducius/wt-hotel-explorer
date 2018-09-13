@@ -42,7 +42,11 @@ const HotelDetail = ({
       <div className="col-md-12">
         <h3 className="mb-1 h4">Hotel Rooms</h3>
         <div className="row">
-          <RoomTypes map={hotel.roomTypes} estimates={estimates} availableRooms={Object.keys(hotel.roomTypes).length}/>
+          <RoomTypes
+            map={hotel.roomTypes}
+            estimates={estimates}
+            availableRoomTypes={Object.keys(hotel.roomTypes).length}
+          />
         </div>
       </div>
     </div>
@@ -52,7 +56,7 @@ const HotelDetail = ({
         <div className="col-md-12 bg-light rounded p-2 mt-1">
           <div className="row">
             <div className="col-lg-4">
-              <div className="rounded box-shadow" style={{overflow: 'hidden'}}>
+              <div className="rounded box-shadow" style={{ overflow: 'hidden' }}>
                 <ImageList list={hotel.images} height={300} />
               </div>
             </div>
