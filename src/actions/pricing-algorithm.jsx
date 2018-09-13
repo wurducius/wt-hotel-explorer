@@ -1,4 +1,5 @@
 import moment from 'moment';
+import currency from 'currency.js';
 
 const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
   if (!modifiers || !modifiers.length) {
@@ -84,7 +85,7 @@ const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
     ratePlan.modifiers, dateMoment, guestData,
   );
   if (!applicableModifiers.length) {
-    return ratePlan.price * guestData.helpers.numberOfGuests;
+    return currency(ratePlan.price).multiply(guestData.helpers.numberOfGuests);
   }
 
   const guestPrices = [];
@@ -99,8 +100,7 @@ const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
     }
     guestPrices.push(ratePlan.price + adjustment);
   }
-  // THIS IS SO WRONG! TODO fix #23
-  return parseFloat((guestPrices.reduce((a, b) => a + b, 0)).toFixed(2), 10);
+  return guestPrices.reduce((a, b) => a.add(currency(b)), currency(0));
 };
 
 
@@ -128,8 +128,9 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
         const currentDailyPrice = computeDailyPrice(
           currentDate, guestData, currentRatePlan,
         );
+
         if (!bestDailyPrice[currentCurrency]
-          || currentDailyPrice <= bestDailyPrice[currentCurrency]) {
+          || currentDailyPrice.subtract(bestDailyPrice[currentCurrency]) <= 0) {
           bestDailyPrice[currentCurrency] = currentDailyPrice;
         }
       }
@@ -143,12 +144,10 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
 
   // Filter out currencies that do not cover the whole stay range
   const allCurrencies = Object.keys(dailyPrices);
-  let currency;
   for (let i = 0; i < allCurrencies.length; i += 1) {
-    currency = allCurrencies[i];
-    if (dailyPrices[currency].length < guestData.helpers.lengthOfStay
-      || dailyPrices[currency].indexOf(undefined) > -1) {
-      delete dailyPrices[currency];
+    if (dailyPrices[allCurrencies[i]].length < guestData.helpers.lengthOfStay
+      || dailyPrices[allCurrencies[i]].indexOf(undefined) > -1) {
+      delete dailyPrices[allCurrencies[i]];
     }
   }
   return dailyPrices;
@@ -207,7 +206,8 @@ const computePrices = (hotel, guestData) => {
     const eligibleCurrencies = Object.keys(dailyPrices);
     let resultingPrice;
     if (eligibleCurrencies.length > 0) {
-      resultingPrice = dailyPrices[eligibleCurrencies[0]].reduce((a, b) => a + b, 0);
+      resultingPrice = dailyPrices[eligibleCurrencies[0]]
+        .reduce((a, b) => a.add(currency(b)), currency(0));
     }
 
     return {

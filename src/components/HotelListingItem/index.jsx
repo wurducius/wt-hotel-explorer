@@ -28,7 +28,7 @@ const HotelListingItem = ({ hotel, estimates }) => {
                 <strong>
                   Available from
                   {' '}
-                  <span className="font--alt">{currentLowestEstimate.price}</span>
+                  <span className="font--alt">{currentLowestEstimate.price.format()}</span>
                   {' '}
                   {currentLowestEstimate.currency}
                 </strong>

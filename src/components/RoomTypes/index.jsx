@@ -26,7 +26,7 @@ const RoomType = ({ roomType, estimate }) => (
               Available from
               {' '}
               <span className="font--alt">
-                {estimate.price}
+                {estimate.price.format()}
               </span>
               {' '}
               {estimate.currency}

@@ -1,4 +1,5 @@
 import moment from 'moment';
+import currency from 'currency.js';
 import pricingAlgorithm from '../../src/actions/pricing-algorithm';
 
 describe('action.pricing-algorithm', () => {
@@ -138,8 +139,8 @@ describe('action.pricing-algorithm', () => {
       );
       expect(result).toHaveProperty(hotel.currency);
       expect(result[hotel.currency].length).toBe(2);
-      expect(result[hotel.currency][0]).toBe(60);
-      expect(result[hotel.currency][1]).toBe(60);
+      expect(result[hotel.currency][0].format()).toBe(currency(60).format());
+      expect(result[hotel.currency][1].format()).toBe(currency(60).format());
     });
 
     it('should combine multiple rate plans if the stay range hits both of them', () => {
@@ -185,14 +186,14 @@ describe('action.pricing-algorithm', () => {
       );
       expect(result).toHaveProperty(hotel.currency);
       expect(result[hotel.currency].length).toBe(8);
-      expect(result[hotel.currency][0]).toBe(3 * 73); // 10-02
-      expect(result[hotel.currency][1]).toBe(3 * 73); // 10-03
-      expect(result[hotel.currency][2]).toBe(3 * 73); // 10-04
-      expect(result[hotel.currency][3]).toBe(3 * 73); // 10-05
-      expect(result[hotel.currency][4]).toBe(3 * 73); // 10-06
-      expect(result[hotel.currency][5]).toBe(3 * 60); // 10-07
-      expect(result[hotel.currency][6]).toBe(3 * 60); // 10-08
-      expect(result[hotel.currency][7]).toBe(3 * 60); // 10-09
+      expect(result[hotel.currency][0].format()).toBe(currency(3 * 73).format()); // 10-02
+      expect(result[hotel.currency][1].format()).toBe(currency(3 * 73).format()); // 10-03
+      expect(result[hotel.currency][2].format()).toBe(currency(3 * 73).format()); // 10-04
+      expect(result[hotel.currency][3].format()).toBe(currency(3 * 73).format()); // 10-05
+      expect(result[hotel.currency][4].format()).toBe(currency(3 * 73).format()); // 10-06
+      expect(result[hotel.currency][5].format()).toBe(currency(3 * 60).format()); // 10-07
+      expect(result[hotel.currency][6].format()).toBe(currency(3 * 60).format()); // 10-08
+      expect(result[hotel.currency][7].format()).toBe(currency(3 * 60).format()); // 10-09
     });
 
     it('should not return an estimate if even a single date of a stay is not covered by a valid rate plan', () => {
@@ -296,22 +297,22 @@ describe('action.pricing-algorithm', () => {
       expect(result).not.toHaveProperty(hotel.currency);
       expect(result).not.toHaveProperty('GBP');
       expect(result).toHaveProperty('EUR');
-      expect(result.EUR[0]).toBe(71);
-      expect(result.EUR[1]).toBe(71);
-      expect(result.EUR[2]).toBe(71);
-      expect(result.EUR[3]).toBe(71);
-      expect(result.EUR[4]).toBe(71);
-      expect(result.EUR[5]).toBe(21);
-      expect(result.EUR[6]).toBe(21);
-      expect(result.EUR[7]).toBe(21);
+      expect(result.EUR[0].format()).toBe(currency(71).format());
+      expect(result.EUR[1].format()).toBe(currency(71).format());
+      expect(result.EUR[2].format()).toBe(currency(71).format());
+      expect(result.EUR[3].format()).toBe(currency(71).format());
+      expect(result.EUR[4].format()).toBe(currency(71).format());
+      expect(result.EUR[5].format()).toBe(currency(21).format());
+      expect(result.EUR[6].format()).toBe(currency(21).format());
+      expect(result.EUR[7].format()).toBe(currency(21).format());
     });
   });
 
   describe('computeDailyPrice', () => {
     describe('modifier selection', () => {
       it('should return base price if rate plan has no modifiers', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { helpers: { numberOfGuests: 1, lengthOfStay: 3 } }, { price: 10 })).toBe(10);
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { helpers: { numberOfGuests: 13, lengthOfStay: 3 } }, { price: 10 })).toBe(130);
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { helpers: { numberOfGuests: 1, lengthOfStay: 3 } }, { price: 10 }).format()).toBe(currency(10).format());
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { helpers: { numberOfGuests: 13, lengthOfStay: 3 } }, { price: 10 }).format()).toBe(currency(130).format());
       });
 
       it('should pick the most pro-customer modifier (all positive)', () => {
@@ -321,7 +322,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: 25, conditions: {} },
             { adjustment: 50, conditions: {} },
           ],
-        })).toBe(10);
+        }).format()).toBe(currency(10).format());
       });
 
       it('should pick the most pro-customer modifier (all negative)', () => {
@@ -331,7 +332,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -25, conditions: {} },
             { adjustment: -50, conditions: {} },
           ],
-        })).toBe(4);
+        }).format()).toBe(currency(4).format());
       });
 
       it('should pick the most pro-customer modifier (mixed)', () => {
@@ -343,7 +344,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: 13, conditions: {} },
             { adjustment: 50, conditions: {} },
           ],
-        })).toBe(6);
+        }).format()).toBe(currency(6).format());
       });
     });
 
@@ -360,7 +361,7 @@ describe('action.pricing-algorithm', () => {
               },
             },
           ],
-        })).toBe(6);
+        }).format()).toBe(currency(6).format());
       });
 
       it('starting on a stay date', () => {
@@ -375,7 +376,7 @@ describe('action.pricing-algorithm', () => {
               },
             },
           ],
-        })).toBe(7.5);
+        }).format()).toBe(currency(7.5).format());
       });
 
       it('ending on a stay date', () => {
@@ -390,7 +391,7 @@ describe('action.pricing-algorithm', () => {
               },
             },
           ],
-        })).toBe(7.5);
+        }).format()).toBe(currency(7.5).format());
       });
 
       it('does not apply when outside', () => {
@@ -405,7 +406,7 @@ describe('action.pricing-algorithm', () => {
               },
             },
           ],
-        })).toBe(10);
+        }).format()).toBe(currency(10).format());
       });
 
       it('only from is set and stay date is in', () => {
@@ -419,7 +420,7 @@ describe('action.pricing-algorithm', () => {
               },
             },
           ],
-        })).toBe(7.5);
+        }).format()).toBe(currency(7.5).format());
       });
 
       it('only from is set and stay date is out', () => {
@@ -433,7 +434,7 @@ describe('action.pricing-algorithm', () => {
               },
             },
           ],
-        })).toBe(10);
+        }).format()).toBe(currency(10).format());
       });
 
       it('only to is set and stay date is in', () => {
@@ -447,7 +448,7 @@ describe('action.pricing-algorithm', () => {
               },
             },
           ],
-        })).toBe(12.5);
+        }).format()).toBe(currency(12.5).format());
       });
 
       it('only to is set and stay date is out', () => {
@@ -461,7 +462,7 @@ describe('action.pricing-algorithm', () => {
               },
             },
           ],
-        })).toBe(10);
+        }).format()).toBe(currency(10).format());
       });
     });
 
@@ -472,7 +473,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
           ],
-        })).toBe(8);
+        }).format()).toBe(currency(8).format());
       });
 
       it('should apply modifier if LOS is equal', () => {
@@ -481,7 +482,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { minLengthOfStay: 3 } },
           ],
-        })).toBe(6);
+        }).format()).toBe(currency(6).format());
       });
 
       it('should apply modifier if LOS is longer', () => {
@@ -490,7 +491,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
           ],
-        })).toBe(6);
+        }).format()).toBe(currency(6).format());
       });
 
       it('should apply modifier with the biggest applicable LOS', () => {
@@ -500,14 +501,14 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
             { adjustment: -10, conditions: { minLengthOfStay: 7 } },
           ],
-        })).toBe(7.2);
+        }).format()).toBe(currency(7.2).format());
         expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } }, {
           price: 8,
           modifiers: [
             { adjustment: -10, conditions: { minLengthOfStay: 7 } },
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
           ],
-        })).toBe(7.2);
+        }).format()).toBe(currency(7.2).format());
         expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } }, {
           price: 8,
           modifiers: [
@@ -515,7 +516,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -10, conditions: { minLengthOfStay: 7 } },
             { adjustment: -25, conditions: { minLengthOfStay: 5 } },
           ],
-        })).toBe(7.2);
+        }).format()).toBe(currency(7.2).format());
       });
     });
 
@@ -526,7 +527,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { minOccupants: 5 } },
           ],
-        })).toBe(8 * 1);
+        }).format()).toBe(currency(8 * 1).format());
       });
 
       it('should apply modifier if number of guests is equal', () => {
@@ -535,7 +536,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { minOccupants: 3 } },
           ],
-        })).toBe(6 * 3);
+        }).format()).toBe(currency(6 * 3).format());
       });
 
       it('should apply modifier if number of guests is larger', () => {
@@ -544,7 +545,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { minOccupants: 5 } },
           ],
-        })).toBe(6 * 10);
+        }).format()).toBe(currency(6 * 10).format());
       });
 
       it('should apply modifier with the biggest applicable minOccupants', () => {
@@ -554,7 +555,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -25, conditions: { minOccupants: 5 } },
             { adjustment: -10, conditions: { minOccupants: 7 } },
           ],
-        })).toBe(7.2 * 7);
+        }).format()).toBe(currency(7.2 * 7).format());
       });
     });
 
@@ -565,7 +566,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { maxAge: 10 } },
           ],
-        })).toBe(8 * 3);
+        }).format()).toBe(currency(8 * 3).format());
       });
 
       it('should apply modifier to all guests under the limit', () => {
@@ -574,7 +575,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { maxAge: 31 } },
           ],
-        })).toBe(6 * 3);
+        }).format()).toBe(currency(6 * 3).format());
       });
 
       it('should apply modifier to some of the guests if they are under or on par with the limit', () => {
@@ -583,7 +584,7 @@ describe('action.pricing-algorithm', () => {
           modifiers: [
             { adjustment: -25, conditions: { maxAge: 18 } },
           ],
-        })).toBe(8 * 1 + 6 * 2);
+        }).format()).toBe(currency(8 * 1 + 6 * 2).format());
       });
 
       it('should apply modifier with the highest fitting limit', () => {
@@ -594,7 +595,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -50, conditions: { maxAge: 18 } },
             { adjustment: -25, conditions: { maxAge: 16 } },
           ],
-        })).toBe(7.2);
+        }).format()).toBe(currency(7.2).format());
       });
 
       it('should apply a fitting modifier to each guests', () => {
@@ -605,7 +606,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -50, conditions: { maxAge: 18 } },
             { adjustment: -25, conditions: { maxAge: 16 } },
           ],
-        })).toBe(7.2 + 4 + 6);
+        }).format()).toBe(currency(7.2 + 4 + 6).format());
       });
 
       it('should apply a fitting modifier with best adjustment', () => {
@@ -617,7 +618,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -50, conditions: { maxAge: 18 } },
             { adjustment: -10, conditions: { maxAge: 16 } },
           ],
-        })).toBe(2 + 6);
+        }).format()).toBe(currency(2 + 6).format());
       });
     });
 
@@ -629,7 +630,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -75, conditions: { minOccupants: 2 } },
             { adjustment: -50, conditions: { lengthOfStay: 3 } },
           ],
-        })).toBe(2 * 2);
+        }).format()).toBe(currency(2 * 2).format());
       });
 
       it('should pick the guest-specific modifier if multiple are applicable', () => {
@@ -640,7 +641,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -10, conditions: { lengthOfStay: 3 } },
             { adjustment: -20, conditions: { maxAge: 16 } },
           ],
-        })).toBe(8 + 7.5);
+        }).format()).toBe(currency(8 + 7.5).format());
       });
 
       it('combine maxAge + minOccupants', () => {
@@ -650,7 +651,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -20, conditions: { minOccupants: 2, maxAge: 16 } },
             { adjustment: -25, conditions: { minOccupants: 3, maxAge: 16 } },
           ],
-        })).toBe(10 + 8);
+        }).format()).toBe(currency(10 + 8).format());
       });
 
       it('combine maxAge + lengthOfStay', () => {
@@ -660,7 +661,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -20, conditions: { lengthOfStay: 2, maxAge: 16 } },
             { adjustment: -25, conditions: { lengthOfStay: 3, maxAge: 16 } },
           ],
-        })).toBe(10 + 7.5);
+        }).format()).toBe(currency(10 + 7.5).format());
       });
 
       it('combine maxAge + lengthOfStay + minOccupants', () => {
@@ -672,7 +673,7 @@ describe('action.pricing-algorithm', () => {
             { adjustment: -30, conditions: { lengthOfStay: 3, minOccupants: 2, maxAge: 16 } },
             { adjustment: -40, conditions: { lengthOfStay: 2, minOccupants: 3, maxAge: 16 } },
           ],
-        })).toBe(10 + 7);
+        }).format()).toBe(currency(10 + 7).format());
       });
     });
   });
