@@ -598,7 +598,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should apply a fitting modifier to each guests', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [25, 18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [25, 18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 3 } }, {
           price: 8,
           modifiers: [
             { adjustment: -10, conditions: { maxAge: 25 } },
@@ -609,7 +609,7 @@ describe('action.pricing-algorithm', () => {
       });
 
       it('should apply a fitting modifier with best adjustment', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
           price: 8,
           modifiers: [
             { adjustment: -75, conditions: { maxAge: 18 } },
@@ -622,7 +622,58 @@ describe('action.pricing-algorithm', () => {
     });
 
     describe('modifier combinations', () => {
+      it('should pick the modifier with the best price if multiple are applicable', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -75, conditions: { minOccupants: 2 } },
+            { adjustment: -50, conditions: { lengthOfStay: 3 } },
+          ],
+        })).toBe(2 * 2);
+      });
 
+      it('should pick the guest-specific modifier if multiple are applicable', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+          price: 10,
+          modifiers: [
+            { adjustment: -25, conditions: { minOccupants: 2 } },
+            { adjustment: -10, conditions: { lengthOfStay: 3 } },
+            { adjustment: -20, conditions: { maxAge: 16 } },
+          ],
+        })).toBe(8 + 7.5);
+      });
+
+      it('combine maxAge + minOccupants', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+          price: 10,
+          modifiers: [
+            { adjustment: -20, conditions: { minOccupants: 2, maxAge: 16 } },
+            { adjustment: -25, conditions: { minOccupants: 3, maxAge: 16 } },
+          ],
+        })).toBe(10 + 8);
+      });
+
+      it('combine maxAge + lengthOfStay', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+          price: 10,
+          modifiers: [
+            { adjustment: -20, conditions: { lengthOfStay: 2, maxAge: 16 } },
+            { adjustment: -25, conditions: { lengthOfStay: 3, maxAge: 16 } },
+          ],
+        })).toBe(10 + 7.5);
+      });
+
+      it('combine maxAge + lengthOfStay + minOccupants', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+          price: 10,
+          modifiers: [
+            { adjustment: -10, conditions: { lengthOfStay: 2, minOccupants: 2, maxAge: 16 } },
+            { adjustment: -20, conditions: { lengthOfStay: 3, minOccupants: 3, maxAge: 16 } },
+            { adjustment: -30, conditions: { lengthOfStay: 3, minOccupants: 2, maxAge: 16 } },
+            { adjustment: -40, conditions: { lengthOfStay: 2, minOccupants: 3, maxAge: 16 } },
+          ],
+        })).toBe(10 + 7);
+      });
     });
   });
 });
