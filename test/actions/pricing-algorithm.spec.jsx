@@ -1,7 +1,7 @@
 import moment from 'moment';
 import pricingAlgorithm from '../../src/actions/pricing-algorithm';
 
-describe.only('action.pricing-algorithm', () => {
+describe('action.pricing-algorithm', () => {
   let guestData;
   let hotel;
 
@@ -558,14 +558,71 @@ describe.only('action.pricing-algorithm', () => {
       });
     });
 
-    // TODO describe('maxAge', () => {});
+    describe('maxAge', () => {
+      it('should not apply modifier to any guest over the limit', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [11, 18, 30], helpers: { lengthOfStay: 3, numberOfGuests: 3 } }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { maxAge: 10 } },
+          ],
+        })).toBe(8 * 3);
+      });
 
+      it('should apply modifier to all guests under the limit', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [11, 18, 30], helpers: { lengthOfStay: 3, numberOfGuests: 3 } }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { maxAge: 31 } },
+          ],
+        })).toBe(6 * 3);
+      });
 
-    /*
-maxAge  integer
-The modifier is applicable to occupants of this age or younger at the time
-of arrival to the stay. If multiple modifiers are specified with different
-maxAge, the modifier with the highest fitting limit is applied.
-*/
+      it('should apply modifier to some of the guests if they are under or on par with the limit', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [11, 18, 30], helpers: { lengthOfStay: 3, numberOfGuests: 3 } }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -25, conditions: { maxAge: 18 } },
+          ],
+        })).toBe(8 * 1 + 6 * 2);
+      });
+
+      it('should apply modifier with the highest fitting limit', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [25], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -10, conditions: { maxAge: 25 } },
+            { adjustment: -50, conditions: { maxAge: 18 } },
+            { adjustment: -25, conditions: { maxAge: 16 } },
+          ],
+        })).toBe(7.2);
+      });
+
+      it('should apply a fitting modifier to each guests', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [25, 18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -10, conditions: { maxAge: 25 } },
+            { adjustment: -50, conditions: { maxAge: 18 } },
+            { adjustment: -25, conditions: { maxAge: 16 } },
+          ],
+        })).toBe(7.2 + 4 + 6);
+      });
+
+      it('should apply a fitting modifier with best adjustment', () => {
+        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, {
+          price: 8,
+          modifiers: [
+            { adjustment: -75, conditions: { maxAge: 18 } },
+            { adjustment: -25, conditions: { maxAge: 16 } },
+            { adjustment: -50, conditions: { maxAge: 18 } },
+            { adjustment: -10, conditions: { maxAge: 16 } },
+          ],
+        })).toBe(2 + 6);
+      });
+    });
+
+    describe('modifier combinations', () => {
+
+    });
   });
 });

@@ -53,6 +53,32 @@ const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
   return applicableModifiers.filter(mod => elementsToDrop.indexOf(mod) === -1);
 };
 
+const selectGuestSpecificModifier = (modifiers, age) => {
+  const ageModifiers = modifiers.filter(mod => mod.conditions.maxAge !== undefined);
+  const selectedAgeModifier = ageModifiers.reduce((best, current) => {
+    if (current.conditions.maxAge >= age && ( // guest is under the bar
+      !best // no best has yet been setup
+      // current has a closer limit than the best
+      || best.conditions.maxAge > current.conditions.maxAge
+      || ( // the limit is the same, but current has better price adjustment
+        best.conditions.maxAge === current.conditions.maxAge
+        && best.adjustment > current.adjustment
+      )
+    )) {
+      return current;
+    }
+    return best;
+  }, undefined);
+  if (selectedAgeModifier) {
+    return selectedAgeModifier;
+  }
+
+  const genericModifiers = modifiers
+    .filter(mod => mod.conditions.maxAge === undefined)
+    .sort((a, b) => (a.adjustment <= b.adjustment ? -1 : 1));
+  return genericModifiers[0];
+};
+
 const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
   const applicableModifiers = selectApplicableModifiers(
     ratePlan.modifiers, dateMoment, guestData,
@@ -60,16 +86,17 @@ const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
   if (!applicableModifiers.length) {
     return ratePlan.price * guestData.helpers.numberOfGuests;
   }
-  applicableModifiers.sort((a, b) => (a.adjustment <= b.adjustment ? -1 : 1));
 
   const guestPrices = [];
   let selectedModifier;
   let adjustment;
-  for (let i = 0; i < guestData.helpers.numberOfGuests; i += 1) {
-    // Pick the best modifier and adjust the price
-    // TODO work with information specific for each guest
-    selectedModifier = applicableModifiers[0].adjustment / 100;
-    adjustment = selectedModifier * ratePlan.price;
+  for (let i = 0; i < guestData.guestAges.length; i += 1) {
+    adjustment = 0;
+    // Pick the best modifier for each guest and adjust the price
+    selectedModifier = selectGuestSpecificModifier(applicableModifiers, guestData.guestAges[i]);
+    if (selectedModifier) {
+      adjustment = (selectedModifier.adjustment / 100) * ratePlan.price;
+    }
     guestPrices.push(ratePlan.price + adjustment);
   }
   // THIS IS SO WRONG! TODO fix #23
