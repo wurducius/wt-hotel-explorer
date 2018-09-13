@@ -20,7 +20,7 @@ const reducer = (state = defaultState, action) => {
       if (!action.payload.items) {
         return state;
       }
-      // TODO somehow handle errored hotels
+      // TODO somehow handle errored hotels #21
       modifiedList = state.list;
       existingIds = state.list.map(h => h.id).reduce((acc, cur, i) => {
         acc[cur] = i;

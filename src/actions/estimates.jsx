@@ -1,5 +1,5 @@
 import hotelActions from './hotels';
-import { computePrices } from './pricing-algorithm';
+import pricingAlgorithm from './pricing-algorithm';
 
 const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   const state = getState();
@@ -18,7 +18,7 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   if (!guestData || !guestData.arrival || !guestData.departure || !guestData.numberOfGuests) {
     return;
   }
-  const data = computePrices(hotel, guestData);
+  const data = pricingAlgorithm.computePrices(hotel, guestData);
   dispatch({
     type: 'SET_ESTIMATES',
     payload: {
