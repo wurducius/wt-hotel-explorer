@@ -79,7 +79,6 @@ const HotelDetail = ({
         </div>
       </div>
     </ScrollAnimation>
-
   </React.Fragment>
 );
 
