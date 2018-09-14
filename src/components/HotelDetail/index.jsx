@@ -57,7 +57,7 @@ const HotelDetail = ({
           <div className="row">
             <div className="col-lg-4">
               <div className="rounded box-shadow" style={{ overflow: 'hidden' }}>
-                <ImageList list={hotel.images} height={300} />
+                <ImageList list={hotel.images} height={300}/>
               </div>
             </div>
             <div className="col-lg-4">

@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 
 import Carousel from '../Carousel';
 
-const ImageList = ({ list, height }) => <Carousel list={list} height={height} />;
+const ImageList = ({ list, height, withIndicators }) => <Carousel list={list} height={height} withIndicators={withIndicators} />;
 
 ImageList.propTypes = {
-  list: PropTypes.instanceOf(Array).isRequired,
-  height: PropTypes.number.isRequired,
+  list: PropTypes.instanceOf(Array).isRequired
 };
 
 export default ImageList;
