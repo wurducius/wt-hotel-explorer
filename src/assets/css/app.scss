@@ -88,6 +88,9 @@ a.border-bottom {padding-bottom: 3px;}
   }
 }
 
+.input-group-text--btn:not(:hover) {
+  .mdi {opacity: .7;}
+}
 
 /* HELPERS */
 .text--accent {color: #5F2987 !important;}
@@ -98,4 +101,3 @@ a.border-bottom {padding-bottom: 3px;}
   }
 }
 .box-shadow {box-shadow: 1px 5px 5px rgba(0,0,0,.2) !important;}
-
