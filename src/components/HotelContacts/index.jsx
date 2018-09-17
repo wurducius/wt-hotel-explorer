@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// TODO incorporate most common additional contacts
+// TODO incorporate most common additional contacts #22
 const HotelContact = ({ contact }) => {
   const additionalContacts = contact.additionalContacts && contact.additionalContacts.map(c => (
     <li key={c.title}>
