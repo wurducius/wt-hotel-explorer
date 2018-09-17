@@ -9,7 +9,7 @@ import AmenitiesList from '../AmenitiesList';
 // TODO use properties, totalQuantity and occupancy
 
 const RoomType = ({
-  roomType, estimate, index
+  roomType, estimate, index,
 }) => (
   <React.Fragment>
     <div className="col-sm-12 col-md-6 col-lg-4 d-flex">
@@ -67,7 +67,7 @@ const RoomType = ({
             </button>
           </div>
           <div className="modal-body d-flex align-items-center animated fadeIn">
-            <ImageList list={roomType.images}  withIndicators />
+            <ImageList list={roomType.images} withIndicators />
           </div>
         </div>
       </div>

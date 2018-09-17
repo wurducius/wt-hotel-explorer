@@ -2,38 +2,40 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Carousel = ({ list, height, withIndicators }) => {
-
   const randomId = `carousel-${Math.random().toString(36).substring(7)}`;
 
   const imageList = list.map((image, index) => (
     <div className={`carousel-item ${index === 0 ? 'active' : ''}`} key={`carousel-${randomId}-item-${image}`}>
       {
-        height ?
-          <div className="img-crop" style={{ backgroundImage: `url(${image})`, height }}>
-            <img className="img-fluid w-100" src={image} alt={image} />
-          </div>
-        :
-        <img className="img-fluid w-100 " src={image} alt={image} />
+        height
+          ? (
+            <div className="img-crop" style={{ backgroundImage: `url(${image})`, height }}>
+              <img className="img-fluid w-100" src={image} alt={image} />
+            </div>
+          )
+          : <img className="img-fluid w-100 " src={image} alt={image} />
       }
     </div>
   ));
 
   const indicators = list.map((image, index) => (
     <li
-      key={`carousel-${randomId}-indicator-${index}`}
+      key={`carousel-${randomId}-indicator-${image}`}
       data-target={`#${randomId}`}
       data-slide-to={index}
       className={index === 0 ? 'active' : ''}
-    ></li>
+    />
   ));
 
   return (
     <div id={randomId} className="carousel carousel-fade slide" data-ride="carousel" data-interval="0">
 
-      { withIndicators &&
+      { withIndicators
+        && (
         <ol className="carousel-indicators animated fadeIn">
           {indicators}
         </ol>
+        )
       }
 
       <div className="carousel-inner animated zoomIn">
@@ -51,8 +53,15 @@ const Carousel = ({ list, height, withIndicators }) => {
   );
 };
 
+Carousel.defaultProps = {
+  height: undefined,
+  withIndicators: false,
+};
+
 Carousel.propTypes = {
-  list: PropTypes.instanceOf(Array).isRequired
+  list: PropTypes.instanceOf(Array).isRequired,
+  height: PropTypes.number,
+  withIndicators: PropTypes.bool,
 };
 
 export default Carousel;
