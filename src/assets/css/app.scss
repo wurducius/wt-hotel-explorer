@@ -47,7 +47,6 @@ a.border-bottom {padding-bottom: 3px;}
   img {visibility: hidden;}
 }
 
-
 .hotel-description {
   font-size: 19px;
 }
@@ -175,22 +174,109 @@ a.border-bottom {padding-bottom: 3px;}
       background-color: rgba(95, 41, 135, .9);
 
       .carousel {
-        width: 1200px;
+        width: 990px;
         max-width: 80%;
         margin: 0 auto;
       }
       .carousel-inner {
-        border: 15px solid #fff;
-        box-shadow: 1px 5px 5px rgba(0,0,0,.2)
+        margin-top: -80px;
+        overflow: visible;
+
+        .carousel-item {
+          height: 750px;
+          height: calc(100vh - 350px);
+
+          img {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+
+            filter: drop-shadow(10px 10px 10px rgba(0,0,0,.4));
+            // Replaces ↓ (not working well with object-fit)
+            // border: 15px solid #fff;
+            // box-shadow: 1px 5px 5px rgba(0,0,0,.2);
+          }
+        }
       }
-      .carousel-control-prev {position: fixed; left: 0;}
-      .carousel-control-next {position: fixed; right: 0;}
+      .carousel-control-prev,
+      .carousel-control-next {
+        position: fixed;
+        top: -80px;
+      }
+      .carousel-control-prev {left: 0;}
+      .carousel-control-next {right: 0;}
+
+      .carousel-indicators {
+        position: fixed;
+        bottom: 80px;
+
+        & > li {
+          height: 4px;
+          margin: 0 5px;
+        }
+      }
+
+      @media all and (max-width: 768px) {
+        .carousel-control-prev,
+        .carousel-control-next {
+          top: auto;
+          bottom: 150px;
+          width: 50%;
+        }
+        .carousel-control-prev {
+          border-right: 1px solid rgba(255,255,255,.3);
+        }
+      }
+
+      @media all and (max-height: 768px) {
+        .carousel-inner {
+          margin-top: -20px;
+        }
+        .carousel-item {
+          height: 250px !important;
+          height: calc(100vh - 160px)!important;
+          height: 100vh;
+        }
+        .carousel-control-prev,
+        .carousel-control-next {
+          top: auto;
+          bottom: 40px;
+          width: 50%;
+        }
+        .carousel-control-prev {
+          border-right: 1px solid rgba(255,255,255,.3);
+        }
+        .carousel-indicators { display:none;}
+      }
+
     }
     .modal-header {
       position: absolute;
       top: 0; left: 0; right: 0;
       border: none;
-      .modal-title {color: #fff; }
+      .modal-title {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 130px;
+        color: #fff;
+        text-align:center;
+        @media all and (max-height: 768px) {
+          position: static;
+          font-size: 18px;
+        }
+
+        @media all and (max-width: 768px) {
+          position: static;
+          font-size: 18px;
+        }
+      }
       .close {
         position: relative;
         z-index: 1;
