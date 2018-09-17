@@ -8,41 +8,60 @@ import {
 const GuestAgeForm = ({
   push, remove, form,
 }) => (
-  <div>
-    <h5>
-Information about guests
+  <React.Fragment>
+    <h5 className="mb-1">Guests information</h5>
+    <div className="row">
+
+      <div className="col-12">
+        <p className="mb-1">
+          Enter the age of each guest
+        </p>
+      </div>
+
+      {form.values.guestAges && form.values.guestAges.map((guestAge, index) => (
+        /* eslint-disable-next-line react/no-array-index-key */
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+          <label htmlFor={`guestAges.${index}`} className="sr-only">
+            Age of guest #
+            {index + 1}
+          </label>
+
+          <div key={`guestAges.${index}`} className="mb-1">
+            <div className="input-group">
+              <Field
+                placeholder={`Age of guest #${index + 1}`}
+                aria-label={`Age of guest #${index + 1}`}
+                type="number"
+                className={`form-control ${index !== 0 && "border-right-0"}`}
+                name={`guestAges.${index}`}
+                id={`guestAges.${index}`}
+                min="0"
+              />
+              {index !== 0 &&
+                <span className="input-group-append">
+                  <div
+                  className="input-group-text input-group-text--btn border-left-0 bg-white text-muted"
+                  title="Remove guest"
+                  onClick={() => remove(index)}
+                  >
+                  <i className="mdi mdi-close-circle"/>
+                  </div>
+              </span>}
+            </div>
+          </div>
+
+        </div>
+      ))}
+      </div>
+
       <button
         type="button"
-        className="btn btn-secondary btn-sm"
+        className="btn btn-outline-dark btn-sm"
         onClick={() => push('')}
       >
-        Add another guest
-      </button>
-    </h5>
-    {form.values.guestAges && form.values.guestAges.map((guestAge, index) => (
-      /* eslint-disable-next-line react/no-array-index-key */
-      <div key={`guestAges.${index}`} className="form-inline">
-        <label htmlFor={`guestAges.${index}`}>
-Age of guest #
-          {index + 1}
-        </label>
-        <Field
-          type="number"
-          className="form-control"
-          name={`guestAges.${index}`}
-          id={`guestAges.${index}`}
-          min="0"
-        />
-        <button
-          type="button"
-          className="btn btn-danger btn-sm"
-          onClick={() => remove(index)}
-        >
-        -
-        </button>
-      </div>
-    ))}
-  </div>
+        Add a guest
+    </button>
+  </React.Fragment>
 );
 
 GuestAgeForm.propTypes = {
@@ -91,7 +110,7 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
     handleSubmit(result);
   };
   return (
-    <div>
+    <React.Fragment>
       <h2 className="my-1 h3">Get an estimate</h2>
       <Formik
         initialValues={initialValues}
@@ -114,12 +133,16 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
               </div>
             </div>
             <div className="form-row mb-1">
-              <div className="form-group col-md-4">
+              <div className="form-group col-12">
                 <FieldArray
                   name="guestAges"
                   component={GuestAgeForm}
                 />
-                {errors.guestAges && touched.guestAges && <small className="text-danger">{errors.guestAges}</small>}
+                {errors.guestAges && touched.guestAges &&
+                  <small className="text-danger ml-1">
+                    {errors.guestAges}
+                  </small>
+                }
               </div>
             </div>
 
@@ -129,7 +152,7 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
           </Form>
         )}
       </Formik>
-    </div>
+    </React.Fragment>
   );
 };
 
