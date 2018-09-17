@@ -10,35 +10,20 @@ export default () => (
         </button>
 
         <p>
-          <strong>Demo application</strong>
+This is a demo application showing possibilities of the Winding Tree platform.
+If you would like more information about Winding Tree check
           {' '}
-showing possibilities of
-          {' '}<a href="https://windingtree.com">Winding Tree platform</a>
+          <a href="https://windingtree.com/">here</a>
+. If you are an IT developer interested in creating your own application
+using the Winding Tree platform, you can go directly to the
+          {' '}
+          <a href="https://github.com/windingtree/wiki/blob/master/developer-resources.md">Beginners guide</a>
 .
-          If you want to know more look
+
+If you are a hospitality provider, an OTA or a startup dealing with travel
+and interested in an integration with us, please send us an email to
           {' '}
-          <a href="https://windingtree.com">here</a>
-. If you are an IT developer
-          interested in creating your own application using WT platform,
-          read
-          {' '}
-          <a href="https://windingtree.com">Beginners guide</a>
-          {' '}
-or jump directly to
-          {' '}
-          <a href="https://windingtree.com">technical documentation</a>
-.
-          If you want your hotel to appear here or any innovation
-          created on top of Winding Tree platform, please, read
-          {' '}
-          <a href="https://windingtree.com">
-How to join
-          Winding Tree
-          </a>
-. Or are you OTA and want to increase your
-          portfolio, look on document
-          {' '}
-          <a href="https://windingtree.com">Winding Tree platform overview for OTA</a>
+          <a href="mailto:info@windingtree.com">info@windingtree.com</a>
 .
         </p>
 
