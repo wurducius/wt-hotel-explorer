@@ -30,17 +30,6 @@ const LoadableHome = Loadable({
   },
 });
 
-const LoadableJoin = Loadable({
-  loader: () => import(
-    /* webpackChunkName: "Join-page" */
-    /* webpackMode: "lazy" */
-    './Join',
-  ),
-  loading() {
-    return <Loader block={200} label="Loading..." />;
-  },
-});
-
 // Setup redux
 const history = createHistory();
 const routerMiddlewareInst = routerMiddleware(history);
@@ -65,7 +54,6 @@ const AppContainer = () => (
         <Switch>
           <Route exact path="/" component={LoadableHome} />
           <Route exact path="/hotels/:hotelId" component={Hotel} />
-          <Route exact path="/join-the-platform" component={LoadableJoin} />
         </Switch>
       </div>
     </div>

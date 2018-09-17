@@ -1,17 +1,87 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { Formik, Form, Field } from 'formik';
+import {
+  Formik, Form, Field, FieldArray,
+} from 'formik';
+
+const GuestAgeForm = ({
+  push, remove, form,
+}) => (
+  <React.Fragment>
+    <h5 className="mb-1">Guests information</h5>
+    <div className="row">
+
+      <div className="col-12">
+        <p className="mb-1">
+          Enter the age of each guest
+        </p>
+      </div>
+
+      {form.values.guestAges && form.values.guestAges.map((guestAge, index) => (
+        /* eslint-disable-next-line react/no-array-index-key */
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+          <label htmlFor={`guestAges.${index}`} className="sr-only">
+            Age of guest #
+            {index + 1}
+          </label>
+          {/* eslint-disable-next-line react/no-array-index-key */}
+          <div key={`guestAges.${index}`} className="mb-1">
+            <div className="input-group">
+              <Field
+                placeholder={`Age of guest #${index + 1}`}
+                aria-label={`Age of guest #${index + 1}`}
+                type="number"
+                className={`form-control ${index !== 0 && 'border-right-0'}`}
+                name={`guestAges.${index}`}
+                id={`guestAges.${index}`}
+                min="0"
+              />
+              {index !== 0
+                && (
+                <span className="input-group-append">
+                  <button
+                    type="button"
+                    className="input-group-text input-group-text--btn border-left-0 bg-white text-muted"
+                    title="Remove guest"
+                    onClick={() => remove(index)}
+                  >
+                    <i className="mdi mdi-close-circle" />
+                  </button>
+                </span>
+                )}
+            </div>
+          </div>
+
+        </div>
+      ))}
+    </div>
+
+    <button
+      type="button"
+      className="btn btn-outline-dark btn-sm"
+      onClick={() => push('')}
+    >
+        Add a guest
+    </button>
+  </React.Fragment>
+);
+
+GuestAgeForm.propTypes = {
+  push: PropTypes.func.isRequired,
+  remove: PropTypes.func.isRequired,
+  form: PropTypes.instanceOf(Object).isRequired,
+};
 
 const GuestForm = ({ handleSubmit, initialValues }) => {
   const validate = (values) => {
     const errors = {};
     // formats
-    if (!Number.isInteger(values.numberOfGuests)) {
-      errors.numberOfGuests = 'We need at least one traveller!';
+    if (!values.guestAges || values.guestAges.length < 1) {
+      errors.guestAges = 'We need information about at least one guest!';
     }
-    if (values.numberOfGuests <= 0) {
-      errors.numberOfGuests = 'We need at least one traveller!';
+    if (values.guestAges.filter(x => Number.isInteger(x)).length < 1) {
+      errors.guestAges = 'We need information about at least one guest!';
     }
     // This is throwing warnings from momentjs but we don't really mind
     const normalizedArrival = moment(values.arrival);
@@ -33,7 +103,7 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
 
   const doSubmit = (values, formActions) => {
     const result = {};
-    result.numberOfGuests = values.numberOfGuests;
+    result.guestAges = values.guestAges.map(x => parseInt(x, 10));
     result.arrival = moment(values.arrival).format('YYYY-MM-DD');
     result.departure = moment(values.departure).format('YYYY-MM-DD');
     result.formActions = {
@@ -43,7 +113,7 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
     handleSubmit(result);
   };
   return (
-    <div>
+    <React.Fragment>
       <h2 className="my-1 h3">Get an estimate</h2>
       <Formik
         initialValues={initialValues}
@@ -53,30 +123,41 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
         {({ isSubmitting, errors, touched }) => (
           <Form className="mb-1">
             <div className="form-row mb-1">
-              <div className="form-group col-md-4">
+              <div className="form-group col-md-6">
                 <label htmlFor="arrival">Date of arrival</label>
                 <Field type="text" className="form-control" name="arrival" id="arrival" placeholder="Date of arrival" />
                 {errors.arrival && touched.arrival && <small className="text-danger">{errors.arrival}</small>}
 
               </div>
-              <div className="form-group col-md-4">
+              <div className="form-group col-md-6">
                 <label htmlFor="departure">Date of departure</label>
                 <Field type="text" className="form-control" name="departure" id="departure" placeholder="Date of departure" />
                 {errors.departure && touched.departure && <small className="text-danger">{errors.departure}</small>}
               </div>
-              <div className="form-group col-md-4">
-                <label htmlFor="numberOfGuests">Number of guests</label>
-                <Field type="number" className="form-control" min="1" name="numberOfGuests" id="numberOfGuests" placeholder="Number of guests" />
-                {errors.numberOfGuests && touched.numberOfGuests && <small className="text-danger">{errors.numberOfGuests}</small>}
+            </div>
+            <div className="form-row mb-1">
+              <div className="form-group col-12">
+                <FieldArray
+                  name="guestAges"
+                  component={GuestAgeForm}
+                />
+                {errors.guestAges && touched.guestAges
+                  && (
+                  <small className="text-danger ml-1">
+                    {errors.guestAges}
+                  </small>
+                  )
+                }
               </div>
             </div>
+
             <button type="submit" disabled={isSubmitting} className="btn btn-primary">Get estimates!</button>
 
             <hr className="my-2" />
           </Form>
         )}
       </Formik>
-    </div>
+    </React.Fragment>
   );
 };
 
@@ -88,7 +169,7 @@ GuestForm.defaultProps = {
   initialValues: {
     arrival: defaultArrival,
     departure: defaultDeparture,
-    numberOfGuests: 1,
+    guestAges: [''],
   },
 };
 

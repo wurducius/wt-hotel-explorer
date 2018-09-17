@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Masonry from 'react-masonry-css';
+
 import HotelListingItem from '../HotelListingItem';
 
 const HotelListing = ({
@@ -10,13 +12,24 @@ const HotelListing = ({
     <HotelListingItem key={hotel.id} hotel={hotel} estimates={estimates[hotel.id]} />
   ));
 
+  const breakpointColumnsObj = {
+    default: 3,
+    1200: 3,
+    992: 2,
+    768: 1,
+  };
+
   return (
     <div>
       {hotels.length
         ? (
-          <div className="row">
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="masonry-grid"
+            columnClassName="masonry-grid__col"
+          >
             {hotelItems}
-          </div>
+          </Masonry>
         )
         : <h2 className="h3 text-muted text-center">No hotels here at the moment.</h2>
       }
