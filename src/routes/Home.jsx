@@ -19,7 +19,7 @@ class Home extends React.PureComponent {
   render() {
     const {
       hotels, estimates, next, areHotelsInitialized, isLoadingMore, fetchHotelsData,
-      handleGuestFormSubmit,
+      handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
     return (
       <div className="row">
@@ -28,7 +28,10 @@ class Home extends React.PureComponent {
             ? <Loader block={200} label="Loading hotels from API..." />
             : (
               <React.Fragment>
-                <GuestForm handleSubmit={handleGuestFormSubmit} />
+                <GuestForm
+                  handleSubmit={handleGuestFormSubmit}
+                  initialValues={guestFormInitialValues}
+                />
                 <HotelListing
                   hotels={hotels || []}
                   estimates={estimates || {}}
@@ -56,12 +59,14 @@ Home.propTypes = {
   areHotelsInitialized: PropTypes.bool.isRequired,
   isLoadingMore: PropTypes.bool.isRequired,
   handleGuestFormSubmit: PropTypes.func.isRequired,
+  guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default connect(
   state => ({
     hotels: state.hotels.list,
     estimates: state.estimates.current,
+    guestFormInitialValues: state.estimates.guestData,
     next: state.hotels.next,
     areHotelsInitialized: state.hotels.hotelsInitialized,
     isLoadingMore: state.hotels.hotelsLoading,
