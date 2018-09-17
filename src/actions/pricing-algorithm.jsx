@@ -1,4 +1,5 @@
 import moment from 'moment';
+import currency from 'currency.js';
 
 const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
   if (!modifiers || !modifiers.length) {
@@ -34,7 +35,7 @@ const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
       return true;
     }
     if (mod.conditions.minOccupants) {
-      if (mod.conditions.minOccupants > guestData.numberOfGuests) {
+      if (mod.conditions.minOccupants > guestData.helpers.numberOfGuests) {
         return false;
       }
       if (maxMinOccupants
@@ -53,27 +54,53 @@ const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
   return applicableModifiers.filter(mod => elementsToDrop.indexOf(mod) === -1);
 };
 
+const selectGuestSpecificModifier = (modifiers, age) => {
+  const ageModifiers = modifiers.filter(mod => mod.conditions.maxAge !== undefined);
+  const selectedAgeModifier = ageModifiers.reduce((best, current) => {
+    if (current.conditions.maxAge >= age && ( // guest is under the bar
+      !best // no best has yet been setup
+      // current has a closer limit than the best
+      || best.conditions.maxAge > current.conditions.maxAge
+      || ( // the limit is the same, but current has better price adjustment
+        best.conditions.maxAge === current.conditions.maxAge
+        && best.adjustment > current.adjustment
+      )
+    )) {
+      return current;
+    }
+    return best;
+  }, undefined);
+  if (selectedAgeModifier) {
+    return selectedAgeModifier;
+  }
+
+  const genericModifiers = modifiers
+    .filter(mod => mod.conditions.maxAge === undefined)
+    .sort((a, b) => (a.adjustment <= b.adjustment ? -1 : 1));
+  return genericModifiers[0];
+};
+
 const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
   const applicableModifiers = selectApplicableModifiers(
     ratePlan.modifiers, dateMoment, guestData,
   );
   if (!applicableModifiers.length) {
-    return ratePlan.price * guestData.numberOfGuests;
+    return currency(ratePlan.price).multiply(guestData.helpers.numberOfGuests);
   }
-  applicableModifiers.sort((a, b) => (a.adjustment <= b.adjustment ? -1 : 1));
 
   const guestPrices = [];
   let selectedModifier;
   let adjustment;
-  for (let i = 0; i < guestData.numberOfGuests; i += 1) {
-    // Pick the best modifier and adjust the price
-    // TODO work with information specific for each guest
-    selectedModifier = applicableModifiers[0].adjustment / 100;
-    adjustment = selectedModifier * ratePlan.price;
+  for (let i = 0; i < guestData.guestAges.length; i += 1) {
+    adjustment = 0;
+    // Pick the best modifier for each guest and adjust the price
+    selectedModifier = selectGuestSpecificModifier(applicableModifiers, guestData.guestAges[i]);
+    if (selectedModifier) {
+      adjustment = (selectedModifier.adjustment / 100) * ratePlan.price;
+    }
     guestPrices.push(ratePlan.price + adjustment);
   }
-  // THIS IS SO WRONG! TODO fix #23
-  return parseFloat((guestPrices.reduce((a, b) => a + b, 0)).toFixed(2), 10);
+  return guestPrices.reduce((a, b) => a.add(currency(b)), currency(0));
 };
 
 
@@ -101,8 +128,9 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
         const currentDailyPrice = computeDailyPrice(
           currentDate, guestData, currentRatePlan,
         );
+
         if (!bestDailyPrice[currentCurrency]
-          || currentDailyPrice <= bestDailyPrice[currentCurrency]) {
+          || currentDailyPrice.subtract(bestDailyPrice[currentCurrency]) <= 0) {
           bestDailyPrice[currentCurrency] = currentDailyPrice;
         }
       }
@@ -116,12 +144,10 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
 
   // Filter out currencies that do not cover the whole stay range
   const allCurrencies = Object.keys(dailyPrices);
-  let currency;
   for (let i = 0; i < allCurrencies.length; i += 1) {
-    currency = allCurrencies[i];
-    if (dailyPrices[currency].length < guestData.helpers.lengthOfStay
-      || dailyPrices[currency].indexOf(undefined) > -1) {
-      delete dailyPrices[currency];
+    if (dailyPrices[allCurrencies[i]].length < guestData.helpers.lengthOfStay
+      || dailyPrices[allCurrencies[i]].indexOf(undefined) > -1) {
+      delete dailyPrices[allCurrencies[i]];
     }
   }
   return dailyPrices;
@@ -131,6 +157,39 @@ const getApplicableRatePlansFor = (roomType, guestData, ratePlans) => {
   const now = moment.utc();
   // filter out rateplans that are totally out of bounds
   return ratePlans.filter((rp) => {
+    // apply general restrictions if any
+    if (rp.restrictions) {
+      if (rp.restrictions.bookingCutOff) {
+        if (rp.restrictions.bookingCutOff.min
+          && moment.utc(guestData.helpers.arrivalDateMoment)
+            .subtract(rp.restrictions.bookingCutOff.min, 'days')
+            .isBefore(now)
+        ) {
+          return false;
+        }
+
+        if (rp.restrictions.bookingCutOff.max
+          && moment.utc(guestData.helpers.arrivalDateMoment)
+            .subtract(rp.restrictions.bookingCutOff.max, 'days')
+            .isAfter(now)
+        ) {
+          return false;
+        }
+      }
+      if (rp.restrictions.lengthOfStay) {
+        if (rp.restrictions.lengthOfStay.min
+          && rp.restrictions.lengthOfStay.min > guestData.helpers.lengthOfStay
+        ) {
+          return false;
+        }
+
+        if (rp.restrictions.lengthOfStay.max
+          && rp.restrictions.lengthOfStay.max < guestData.helpers.lengthOfStay
+        ) {
+          return false;
+        }
+      }
+    }
     const availableForTravelFrom = moment.utc(rp.availableForTravel.from);
     const availableForTravelTo = moment.utc(rp.availableForTravel.to);
     const availableForReservationFrom = moment.utc(rp.availableForReservation.from);
@@ -180,7 +239,8 @@ const computePrices = (hotel, guestData) => {
     const eligibleCurrencies = Object.keys(dailyPrices);
     let resultingPrice;
     if (eligibleCurrencies.length > 0) {
-      resultingPrice = dailyPrices[eligibleCurrencies[0]].reduce((a, b) => a + b, 0);
+      resultingPrice = dailyPrices[eligibleCurrencies[0]]
+        .reduce((a, b) => a.add(currency(b)), currency(0));
     }
 
     return {
