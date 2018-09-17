@@ -25,40 +25,43 @@ const GuestAgeForm = ({
             Age of guest #
             {index + 1}
           </label>
-
+          {/* eslint-disable-next-line react/no-array-index-key */}
           <div key={`guestAges.${index}`} className="mb-1">
             <div className="input-group">
               <Field
                 placeholder={`Age of guest #${index + 1}`}
                 aria-label={`Age of guest #${index + 1}`}
                 type="number"
-                className={`form-control ${index !== 0 && "border-right-0"}`}
+                className={`form-control ${index !== 0 && 'border-right-0'}`}
                 name={`guestAges.${index}`}
                 id={`guestAges.${index}`}
                 min="0"
               />
-              {index !== 0 &&
+              {index !== 0
+                && (
                 <span className="input-group-append">
-                  <div
-                  className="input-group-text input-group-text--btn border-left-0 bg-white text-muted"
-                  title="Remove guest"
-                  onClick={() => remove(index)}
+                  <button
+                    type="button"
+                    className="input-group-text input-group-text--btn border-left-0 bg-white text-muted"
+                    title="Remove guest"
+                    onClick={() => remove(index)}
                   >
-                  <i className="mdi mdi-close-circle"/>
-                  </div>
-              </span>}
+                    <i className="mdi mdi-close-circle" />
+                  </button>
+                </span>
+                )}
             </div>
           </div>
 
         </div>
       ))}
-      </div>
+    </div>
 
-      <button
-        type="button"
-        className="btn btn-outline-dark btn-sm"
-        onClick={() => push('')}
-      >
+    <button
+      type="button"
+      className="btn btn-outline-dark btn-sm"
+      onClick={() => push('')}
+    >
         Add a guest
     </button>
   </React.Fragment>
@@ -138,10 +141,12 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
                   name="guestAges"
                   component={GuestAgeForm}
                 />
-                {errors.guestAges && touched.guestAges &&
+                {errors.guestAges && touched.guestAges
+                  && (
                   <small className="text-danger ml-1">
                     {errors.guestAges}
                   </small>
+                  )
                 }
               </div>
             </div>
