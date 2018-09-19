@@ -10,6 +10,7 @@ const packageJson = require('../package');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+const targetRouter = process.env.HASH_ROUTED_BUILD ? 'hash-router' : 'connected-router';
 const publicPath = 'public';
 
 // the path(s) that should be cleaned
@@ -36,6 +37,13 @@ const plugins = [
       'git-rev': process.env.GIT_REV,
     },
   }),
+  new webpack.NormalModuleReplacementPlugin(
+    /(.*)\.TARGET_ROUTER(\.*)/,
+    function(resource) {
+      resource.request = resource.request
+        .replace(/\.TARGET_ROUTER/, `.${targetRouter}`);
+    }
+  )
 ];
 
 if (isProduction) {
