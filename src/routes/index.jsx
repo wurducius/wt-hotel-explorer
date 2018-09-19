@@ -5,9 +5,8 @@ import {
   createStore, combineReducers, compose, applyMiddleware,
 } from 'redux';
 import thunk from 'redux-thunk';
-import { Provider } from 'react-redux';
 import createHistory from 'history/createBrowserHistory';
-import { ConnectedRouter, connectRouter, routerMiddleware } from 'connected-react-router';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { Route, Switch } from 'react-router-dom';
 
 import reducers from '../reducers';
@@ -17,6 +16,10 @@ import Hotel from './Hotel';
 import {
   Header, Footer, Disclaimer, Loader,
 } from '../components';
+
+// The folloing import path is interpreted by webpack
+// eslint-disable-next-line import/no-unresolved
+import createApp from './app.TARGET_ROUTER';
 
 // Lazy loaded routes
 const LoadableHome = Loadable({
@@ -61,12 +64,4 @@ const AppContainer = () => (
   </React.Fragment>
 );
 
-const App = () => (
-  <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <AppContainer />
-    </ConnectedRouter>
-  </Provider>
-);
-
-export default hot(module)(App);
+export default hot(module)(createApp({ store, history, AppContainer }));

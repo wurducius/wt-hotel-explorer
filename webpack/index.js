@@ -20,7 +20,7 @@ const settings = {
   output: {
     filename: 'js/[name].[hash].js',
     path: resolve(__dirname, '..', 'public'),
-    publicPath: '/',
+    publicPath: process.env.HASH_ROUTED_BUILD ? '' : '/',
   },
   module: {
     rules,
