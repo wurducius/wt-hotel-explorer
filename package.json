@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint src test --ext jsx,js",
     "test-watch": "jest --watch",
-    "test": "jest --coverage",
+    "test": "rimraf coverage && jest --coverage",
     "coverage": "cat coverage/lcov.info | coveralls",
     "start": "NODE_ENV=development GIT_REV=`git rev-parse --short HEAD` WT_READ_API=https://playground-api.windingtree.com ./node_modules/.bin/webpack-dev-server",
     "build": "NODE_ENV=production ./node_modules/.bin/webpack --mode=production",
@@ -93,6 +93,7 @@
     "postcss-loader": "^3.0.0",
     "precss": "^3.1.2",
     "react-test-renderer": "^16.5.0",
+    "rimraf": "^2.6.2",
     "sass-loader": "^7.0.3",
     "serve": "^10.0.0",
     "style-loader": "^0.23.0",
