@@ -53,7 +53,7 @@ describe('services.pricing-algorithm.index', () => {
     });
   });
 
-  describe('computeDailyPrices', () => {
+  describe('computeStayPrices', () => {
     it('should return the lowest price if no modifiers are present and multiple rate plans fit', () => {
       hotel.ratePlans.rpb = {
         id: 'rpb',
@@ -69,7 +69,7 @@ describe('services.pricing-algorithm.index', () => {
         },
       };
 
-      const result = pricingAlgorithm.computeDailyPrices(
+      const result = pricingAlgorithm.computeStayPrices(
         guestData,
         hotel.currency,
         Object.values(hotel.ratePlans),
@@ -116,7 +116,7 @@ describe('services.pricing-algorithm.index', () => {
         },
       });
 
-      const result = pricingAlgorithm.computeDailyPrices(
+      const result = pricingAlgorithm.computeStayPrices(
         guestData,
         hotel.currency,
         Object.values(hotel.ratePlans),
@@ -166,7 +166,7 @@ describe('services.pricing-algorithm.index', () => {
           lengthOfStay: 8,
         },
       });
-      const result = pricingAlgorithm.computeDailyPrices(
+      const result = pricingAlgorithm.computeStayPrices(
         guestData,
         hotel.currency,
         Object.values(hotel.ratePlans),
@@ -225,7 +225,7 @@ describe('services.pricing-algorithm.index', () => {
         },
       });
 
-      const result = pricingAlgorithm.computeDailyPrices(
+      const result = pricingAlgorithm.computeStayPrices(
         guestData,
         hotel.currency,
         Object.values(hotel.ratePlans),

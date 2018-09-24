@@ -1,6 +1,10 @@
 import dayjs from 'dayjs';
 import currency from 'currency.js';
-import { selectApplicableModifiers, selectGuestSpecificModifier, getApplicableRatePlansFor } from './rate-plans';
+import {
+  selectApplicableModifiers,
+  selectBestGuestModifier,
+  getApplicableRatePlans,
+} from './rate-plans';
 
 const computeDailyPrice = (guestData, dateDayjs, ratePlan) => {
   const applicableModifiers = selectApplicableModifiers(
@@ -16,7 +20,7 @@ const computeDailyPrice = (guestData, dateDayjs, ratePlan) => {
   for (let i = 0; i < guestData.guestAges.length; i += 1) {
     adjustment = 0;
     // Pick the best modifier for each guest and adjust the price
-    selectedModifier = selectGuestSpecificModifier(applicableModifiers, guestData.guestAges[i]);
+    selectedModifier = selectBestGuestModifier(applicableModifiers, guestData.guestAges[i]);
     if (selectedModifier) {
       adjustment = (selectedModifier.adjustment / 100) * ratePlan.price;
     }
@@ -25,7 +29,7 @@ const computeDailyPrice = (guestData, dateDayjs, ratePlan) => {
   return guestPrices.reduce((a, b) => a.add(currency(b)), currency(0));
 };
 
-const computeDailyPrices = (guestData, hotelCurrency, applicableRatePlans) => {
+const computeStayPrices = (guestData, hotelCurrency, applicableRatePlans) => {
   const dailyPrices = {};
   let currentDate = dayjs(guestData.helpers.arrivalDateDayjs);
   dailyPrices[hotelCurrency] = [];
@@ -80,7 +84,7 @@ const computePrices = (guestData, hotel) => {
   ratePlans = Object.values(ratePlans);
 
   return roomTypes.map((roomType) => {
-    const applicableRatePlans = getApplicableRatePlansFor(
+    const applicableRatePlans = getApplicableRatePlans(
       guestData, roomType, ratePlans,
     );
 
@@ -93,7 +97,7 @@ const computePrices = (guestData, hotel) => {
       };
     }
 
-    const dailyPrices = computeDailyPrices(
+    const dailyPrices = computeStayPrices(
       guestData, hotel.currency, applicableRatePlans,
     );
     // TODO keep estimates in multiple currencies
@@ -113,9 +117,8 @@ const computePrices = (guestData, hotel) => {
   });
 };
 
-
 export default {
-  computeDailyPrices,
+  computeStayPrices,
   computePrices,
   computeDailyPrice,
 };

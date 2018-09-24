@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import {
   selectApplicableModifiers,
-  selectGuestSpecificModifier,
-  getApplicableRatePlansFor,
+  selectBestGuestModifier,
+  getApplicableRatePlans,
 } from '../../../src/services/pricing-algorithm/rate-plans';
 
 describe('services.pricing-algorithm.index', () => {
@@ -46,14 +46,14 @@ describe('services.pricing-algorithm.index', () => {
     };
   });
 
-  describe('getApplicableRatePlansFor', () => {
+  describe('getApplicableRatePlans', () => {
     it('should not use a rate plan if it is not available for reservation based on current date', () => {
       // make sure the rate plan for rtb does not work for today
       hotel.ratePlans.rpa.availableForReservation = {
         from: '2015-01-01',
         to: '2015-10-10',
       };
-      const result = getApplicableRatePlansFor(
+      const result = getApplicableRatePlans(
         guestData,
         hotel.roomTypes.rtb,
         [hotel.ratePlans.rpa],
@@ -67,7 +67,7 @@ describe('services.pricing-algorithm.index', () => {
         from: '2015-01-01',
         to: '2015-10-10',
       };
-      const result = getApplicableRatePlansFor(
+      const result = getApplicableRatePlans(
         guestData,
         hotel.roomTypes.rtb,
         [hotel.ratePlans.rpa],
@@ -76,7 +76,7 @@ describe('services.pricing-algorithm.index', () => {
     });
 
     it('should return the only fitting rate plan', () => {
-      const result = getApplicableRatePlansFor(
+      const result = getApplicableRatePlans(
         guestData,
         hotel.roomTypes.rtb,
         [hotel.ratePlans.rpa],
@@ -99,7 +99,7 @@ describe('services.pricing-algorithm.index', () => {
           to: '2020-09-30',
         },
       };
-      const result = getApplicableRatePlansFor(
+      const result = getApplicableRatePlans(
         guestData,
         hotel.roomTypes.rtb,
         Object.values(hotel.ratePlans),
@@ -162,7 +162,7 @@ describe('services.pricing-algorithm.index', () => {
               min: 20,
             },
           };
-          const result = getApplicableRatePlansFor(
+          const result = getApplicableRatePlans(
             currentGuestData,
             hotel.roomTypes.rtb,
             ratePlans,
@@ -176,7 +176,7 @@ describe('services.pricing-algorithm.index', () => {
               max: 2,
             },
           };
-          const result = getApplicableRatePlansFor(
+          const result = getApplicableRatePlans(
             currentGuestData,
             hotel.roomTypes.rtb,
             ratePlans,
@@ -191,7 +191,7 @@ describe('services.pricing-algorithm.index', () => {
               max: 8,
             },
           };
-          const result = getApplicableRatePlansFor(
+          const result = getApplicableRatePlans(
             currentGuestData,
             hotel.roomTypes.rtb,
             ratePlans,
@@ -208,7 +208,7 @@ describe('services.pricing-algorithm.index', () => {
               min: 4,
             },
           };
-          const result = getApplicableRatePlansFor(
+          const result = getApplicableRatePlans(
             currentGuestData,
             hotel.roomTypes.rtb,
             ratePlans,
@@ -222,7 +222,7 @@ describe('services.pricing-algorithm.index', () => {
               max: 1,
             },
           };
-          const result = getApplicableRatePlansFor(
+          const result = getApplicableRatePlans(
             currentGuestData,
             hotel.roomTypes.rtb,
             ratePlans,
@@ -237,7 +237,7 @@ describe('services.pricing-algorithm.index', () => {
               max: 10,
             },
           };
-          const result = getApplicableRatePlansFor(
+          const result = getApplicableRatePlans(
             currentGuestData,
             hotel.roomTypes.rtb,
             ratePlans,
@@ -511,31 +511,31 @@ describe('services.pricing-algorithm.index', () => {
     });
   });
 
-  describe('selectGuestSpecificModifier', () => {
+  describe('selectBestGuestModifier', () => {
     describe('maxAge', () => {
       it('should not apply modifier to a guest over the limit', () => {
-        const modifier = selectGuestSpecificModifier([
+        const modifier = selectBestGuestModifier([
           { adjustment: -25, conditions: { maxAge: 10 } },
         ], 11);
         expect(modifier).toBeUndefined();
       });
 
       it('should apply modifier to a guest under the limit', () => {
-        const modifier = selectGuestSpecificModifier([
+        const modifier = selectBestGuestModifier([
           { adjustment: -25, conditions: { maxAge: 10 } },
         ], 9);
         expect(modifier).not.toBeUndefined();
       });
 
       it('should apply modifier to a guest at the limit', () => {
-        const modifier = selectGuestSpecificModifier([
+        const modifier = selectBestGuestModifier([
           { adjustment: -25, conditions: { maxAge: 10 } },
         ], 10);
         expect(modifier).not.toBeUndefined();
       });
 
       it('should apply modifier with the highest fitting limit', () => {
-        const modifier = selectGuestSpecificModifier([
+        const modifier = selectBestGuestModifier([
           { adjustment: -10, conditions: { maxAge: 25 } },
           { adjustment: -50, conditions: { maxAge: 18 } },
           { adjustment: -25, conditions: { maxAge: 16 } },
@@ -545,7 +545,7 @@ describe('services.pricing-algorithm.index', () => {
       });
 
       it('should apply a fitting modifier with best adjustment', () => {
-        const modifier = selectGuestSpecificModifier([
+        const modifier = selectBestGuestModifier([
           { adjustment: -75, conditions: { maxAge: 18 } },
           { adjustment: -25, conditions: { maxAge: 16 } },
           { adjustment: -50, conditions: { maxAge: 18 } },

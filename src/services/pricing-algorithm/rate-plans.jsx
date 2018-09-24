@@ -7,17 +7,23 @@ export const selectApplicableModifiers = (guestData, modifiers, dateDayjs) => {
   // Drop modifiers not fitting the overall guest data
   let maxMinLOS;
   let maxMinOccupants;
+  // Some modifiers might be affecting the same thing, but we can't
+  // modify the original array while iterating over it, so they
+  // get deleted later.
   const elementsToDrop = [];
   const applicableModifiers = modifiers.filter((mod) => {
+    // no conditions - no modifier
     if (!mod.conditions) {
       return false;
     }
+    // date limits
     if (mod.conditions.from && dayjs(mod.conditions.from).diff(dateDayjs, 'days') > 0) {
       return false;
     }
     if (mod.conditions.to && dayjs(mod.conditions.to).diff(dateDayjs, 'days') < 0) {
       return false;
     }
+    // LOS condition
     if (mod.conditions.minLengthOfStay) {
       if (mod.conditions.minLengthOfStay > guestData.helpers.lengthOfStay) {
         return false;
@@ -33,6 +39,7 @@ export const selectApplicableModifiers = (guestData, modifiers, dateDayjs) => {
       maxMinLOS = mod;
       return true;
     }
+    // Occupants condition
     if (mod.conditions.minOccupants) {
       if (mod.conditions.minOccupants > guestData.helpers.numberOfGuests) {
         return false;
@@ -53,7 +60,7 @@ export const selectApplicableModifiers = (guestData, modifiers, dateDayjs) => {
   return applicableModifiers.filter(mod => elementsToDrop.indexOf(mod) === -1);
 };
 
-export const selectGuestSpecificModifier = (modifiers, age) => {
+export const selectBestGuestModifier = (modifiers, age) => {
   const ageModifiers = modifiers.filter(mod => mod.conditions.maxAge !== undefined);
   const selectedAgeModifier = ageModifiers.reduce((best, current) => {
     if (current.conditions.maxAge >= age && ( // guest is under the bar
@@ -72,17 +79,37 @@ export const selectGuestSpecificModifier = (modifiers, age) => {
   if (selectedAgeModifier) {
     return selectedAgeModifier;
   }
-
+  // Fallback to a best offer, no age-specific modifier matched
   const genericModifiers = modifiers
     .filter(mod => mod.conditions.maxAge === undefined)
     .sort((a, b) => (a.adjustment <= b.adjustment ? -1 : 1));
   return genericModifiers[0];
 };
 
-export const getApplicableRatePlansFor = (guestData, roomType, ratePlans) => {
+export const getApplicableRatePlans = (guestData, roomType, ratePlans) => {
   const now = dayjs();
-  // filter out rateplans that are totally out of bounds
   return ratePlans.filter((rp) => {
+    // Rate plan is not tied to this room type
+    if (rp.roomTypeIds.indexOf(roomType.id) === -1) {
+      return false;
+    }
+
+    // Filter out rate plans by dates
+    // Rate plan cannot be used today
+    const availableForReservationFrom = dayjs(rp.availableForReservation.from);
+    const availableForReservationTo = dayjs(rp.availableForReservation.to);
+    if (availableForReservationTo.isBefore(now)
+        || availableForReservationFrom.isAfter(now)) {
+      return false;
+    }
+    // Rate plan is totally out of bounds of travel dates
+    const availableForTravelFrom = dayjs(rp.availableForTravel.from);
+    const availableForTravelTo = dayjs(rp.availableForTravel.to);
+    if (availableForTravelTo.isBefore(guestData.helpers.arrivalDateDayjs)
+        || availableForTravelFrom.isAfter(guestData.helpers.departureDateDayjs)) {
+      return false;
+    }
+
     // apply general restrictions if any
     if (rp.restrictions) {
       if (rp.restrictions.bookingCutOff) {
@@ -116,30 +143,13 @@ export const getApplicableRatePlansFor = (guestData, roomType, ratePlans) => {
         }
       }
     }
-    const availableForTravelFrom = dayjs(rp.availableForTravel.from);
-    const availableForTravelTo = dayjs(rp.availableForTravel.to);
-    const availableForReservationFrom = dayjs(rp.availableForReservation.from);
-    const availableForReservationTo = dayjs(rp.availableForReservation.to);
-    // Rate plan is not tied to this room type
-    if (rp.roomTypeIds.indexOf(roomType.id) === -1) {
-      return false;
-    }
-    // Rate plan cannot be used today
-    if (availableForReservationTo.isBefore(now)
-        || availableForReservationFrom.isAfter(now)) {
-      return false;
-    }
-    // Rate plan is totally out of bounds of travel dates
-    if (availableForTravelTo.isBefore(guestData.helpers.arrivalDateDayjs)
-        || availableForTravelFrom.isAfter(guestData.helpers.departureDateDayjs)) {
-      return false;
-    }
+
     return true;
   });
 };
 
 export default {
   selectApplicableModifiers,
-  selectGuestSpecificModifier,
-  getApplicableRatePlansFor,
+  selectBestGuestModifier,
+  getApplicableRatePlans,
 };
