@@ -48,10 +48,11 @@ export const enhancePricingEstimates = (guestData, pricingData, hotel) => {
       ) {
         dailyAvailability = [];
       }
+
       // Filter out missing data and applied restrictions
       if (dailyAvailability.length === guestData.helpers.lengthOfStay) {
         result[i].quantity = dailyAvailability.reduce((agg, da) => {
-          if (!agg) {
+          if (agg === undefined) {
             return da;
           }
           return Math.min(da, agg);

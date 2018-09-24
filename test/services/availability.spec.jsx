@@ -71,7 +71,7 @@ describe('services.availability', () => {
             rta: [
               { date: '2018-01-03', quantity: 7 },
               { date: '2018-01-04', quantity: 6 },
-              { date: '2018-01-05', quantity: 5 },
+              { date: '2018-01-05', quantity: 0 },
               { date: '2018-01-06', quantity: 3 },
               { date: '2018-01-07', quantity: 1 },
             ],
@@ -79,7 +79,7 @@ describe('services.availability', () => {
         },
       });
       expect(result.length).toBe(1);
-      expect(result[0]).toHaveProperty('quantity', 3);
+      expect(result[0]).toHaveProperty('quantity', 0);
     });
 
     it('should add undefined quantity if at least one day is missing', () => {

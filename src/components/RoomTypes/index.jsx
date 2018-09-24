@@ -6,6 +6,30 @@ import ImageList from '../ImageList';
 
 import AmenitiesList from '../AmenitiesList';
 
+const QuantityBadge = ({ quantity }) => {
+  if (quantity === 0) {
+    return <div>Sold out!</div>;
+  }
+  if (quantity < 3) {
+    return (
+      <div>
+Last
+        {quantity}
+        {' '}
+remaining!
+      </div>
+    );
+  }
+  if (quantity === undefined) {
+    return <div>Availability unknown</div>;
+  }
+  return null;
+};
+
+QuantityBadge.propTypes = {
+  quantity: PropTypes.number.isRequired,
+};
+
 // TODO use properties, totalQuantity and occupancy
 
 const RoomType = ({
@@ -48,11 +72,11 @@ const RoomType = ({
             </div>
           </div>
           )}
+          {estimate.price && (<QuantityBadge quantity={estimate.quantity} />)}
           <div className="card-footer bg-white pt-0">
             <AmenitiesList list={roomType.amenities} />
           </div>
         </div>
-
       </ScrollAnimation>
     </div>
 
