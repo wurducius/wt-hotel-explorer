@@ -15,7 +15,6 @@ const LIST_FIELDS = [
   'id',
   'name',
   'description',
-  'location',
   'images',
 ];
 
@@ -115,6 +114,16 @@ const fetchHotelRatePlans = createActionThunk('FETCH_HOTEL_RATE_PLANS', ({ id })
     }));
 });
 
+const fetchHotelAvailability = createActionThunk('FETCH_HOTEL_AVAILABILITY', ({ id }) => {
+  const url = `${process.env.WT_READ_API}/hotels/${id}/availability`;
+  return fetch(url)
+    .then(data => data.json())
+    .then(data => ({
+      data,
+      id,
+    }));
+});
+
 const fetchHotelRoomTypes = createActionThunk('FETCH_HOTEL_ROOM_TYPES', ({ id }) => {
   const url = `${process.env.WT_READ_API}/hotels/${id}/roomTypes`;
   return fetch(url)
@@ -134,6 +143,7 @@ const actions = {
   fetchHotelsList,
   fetchHotelDetail,
   fetchHotelRatePlans,
+  fetchHotelAvailability,
   fetchHotelRoomTypes,
   eventuallyResolveErroredHotels,
 };

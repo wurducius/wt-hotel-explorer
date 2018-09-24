@@ -84,6 +84,7 @@ const reducer = (state = defaultState, action) => {
         hotelsInitialized: true,
         next: action.payload.next,
       });
+    // case 'FETCH_DETAIL_ERRORED': // TODO handle #36
     case 'FETCH_DETAIL_STARTED':
       modifiedList = [].concat(state.list);
       hotel = modifiedList.find(h => h.id === action.payload[0].id);
@@ -157,6 +158,20 @@ const reducer = (state = defaultState, action) => {
       hotelIndex = modifiedList.indexOf(hotel);
       hotel = Object.assign({}, hotel, {
         ratePlans: action.payload.data,
+      });
+      modifiedList[hotelIndex] = hotel;
+      return Object.assign({}, state, {
+        list: modifiedList,
+      });
+    case 'FETCH_HOTEL_AVAILABILITY_SUCCEEDED':
+      modifiedList = [].concat(state.list);
+      hotel = modifiedList.find(h => h.id === action.payload.id);
+      if (!hotel) {
+        return state;
+      }
+      hotelIndex = modifiedList.indexOf(hotel);
+      hotel = Object.assign({}, hotel, {
+        availability: action.payload.data,
       });
       modifiedList[hotelIndex] = hotel;
       return Object.assign({}, state, {

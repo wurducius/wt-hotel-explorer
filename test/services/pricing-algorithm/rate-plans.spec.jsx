@@ -5,7 +5,7 @@ import {
   getApplicableRatePlans,
 } from '../../../src/services/pricing-algorithm/rate-plans';
 
-describe('services.pricing-algorithm.index', () => {
+describe('services.pricing-algorithm.rate-plans', () => {
   let guestData;
   let hotel;
 

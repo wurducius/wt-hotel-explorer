@@ -1,5 +1,6 @@
 import hotelActions from './hotels';
-import pricingAlgorithm from '../services/pricing-algorithm';
+import pricingAlgorithm from '../services/pricing-algorithm'; // TODO named import
+import { enhancePricingEstimates } from '../services/availability';
 
 const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   const state = getState();
@@ -7,11 +8,8 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   if (!hotel) {
     return;
   }
-  const { roomTypes, ratePlans } = hotel;
-  if (!roomTypes) {
-    return;
-  }
-  if (!ratePlans) {
+  const { roomTypes, ratePlans, availability } = hotel;
+  if (!roomTypes || !ratePlans || !availability) {
     return;
   }
   const { guestData } = state.estimates;
@@ -24,19 +22,22 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   ) {
     return;
   }
-  const data = pricingAlgorithm.computePrices(guestData, hotel);
+  const pricingEstimates = pricingAlgorithm.computePrices(guestData, hotel);
   dispatch({
     type: 'SET_ESTIMATES',
     payload: {
       id,
-      data,
+      data: enhancePricingEstimates(guestData, pricingEstimates, hotel),
     },
   });
 };
 
-const fetchAndComputeHotelEstimates = ({ id, ratePlans, roomTypes }) => (dispatch) => {
+const fetchAndComputeHotelEstimates = ({
+  id, ratePlans, roomTypes, availability,
+}) => (dispatch) => {
   let ratePlansPromise;
   let roomTypesPromise;
+  let availabilityPromise;
   // Do not hit hotels with rate plans already downloaded
   if (ratePlans) {
     ratePlansPromise = Promise.resolve();
@@ -49,8 +50,14 @@ const fetchAndComputeHotelEstimates = ({ id, ratePlans, roomTypes }) => (dispatc
   } else {
     roomTypesPromise = dispatch(hotelActions.fetchHotelRoomTypes({ id }));
   }
-  // for each hotel in parallel get rate plan, room types and recompute estimates
-  return Promise.all([ratePlansPromise, roomTypesPromise])
+  // Do not hit hotels with availability already downloaded
+  if (availability) {
+    availabilityPromise = Promise.resolve();
+  } else {
+    availabilityPromise = dispatch(hotelActions.fetchHotelAvailability({ id }));
+  }
+  // for each hotel in parallel get rate plan, room types, availability and recompute estimates
+  return Promise.all([ratePlansPromise, roomTypesPromise, availabilityPromise])
     .then(() => dispatch(recomputeHotelEstimates({ id })));
 };
 
