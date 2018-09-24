@@ -20,7 +20,7 @@ const GuestAgeForm = ({
 
       {form.values.guestAges && form.values.guestAges.map((guestAge, index) => (
         /* eslint-disable-next-line react/no-array-index-key */
-        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={`guestAges.wrapper.${index}`}>
           <label htmlFor={`guestAges.${index}`} className="sr-only">
             Age of guest #
             {index + 1}
