@@ -255,7 +255,7 @@ describe('services.pricing-algorithm', () => {
     });
   });
 
-  describe.only('computeDailyPrices', () => {
+  describe('computeDailyPrices', () => {
     it('should return the lowest price if no modifiers are present and multiple rate plans fit', () => {
       hotel.ratePlans.rpb = {
         id: 'rpb',
