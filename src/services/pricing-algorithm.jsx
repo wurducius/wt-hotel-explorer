@@ -1,7 +1,7 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import currency from 'currency.js';
 
-const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
+const selectApplicableModifiers = (modifiers, dateDayjs, guestData) => {
   if (!modifiers || !modifiers.length) {
     return [];
   }
@@ -13,10 +13,10 @@ const selectApplicableModifiers = (modifiers, dateMoment, guestData) => {
     if (!mod.conditions) {
       return false;
     }
-    if (mod.conditions.from && moment.utc(mod.conditions.from).diff(dateMoment, 'days') > 0) {
+    if (mod.conditions.from && dayjs(mod.conditions.from).diff(dateDayjs, 'days') > 0) {
       return false;
     }
-    if (mod.conditions.to && moment.utc(mod.conditions.to).diff(dateMoment, 'days') < 0) {
+    if (mod.conditions.to && dayjs(mod.conditions.to).diff(dateDayjs, 'days') < 0) {
       return false;
     }
     if (mod.conditions.minLengthOfStay) {
@@ -80,9 +80,9 @@ const selectGuestSpecificModifier = (modifiers, age) => {
   return genericModifiers[0];
 };
 
-const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
+const computeDailyPrice = (dateDayjs, guestData, ratePlan) => {
   const applicableModifiers = selectApplicableModifiers(
-    ratePlan.modifiers, dateMoment, guestData,
+    ratePlan.modifiers, dateDayjs, guestData,
   );
   if (!applicableModifiers.length) {
     return currency(ratePlan.price).multiply(guestData.helpers.numberOfGuests);
@@ -105,8 +105,8 @@ const computeDailyPrice = (dateMoment, guestData, ratePlan) => {
 
 
 const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
-  const currentDate = moment.utc(guestData.helpers.arrivalDateMoment);
   const dailyPrices = {};
+  let currentDate = dayjs(guestData.helpers.arrivalDateDayjs);
   dailyPrices[hotelCurrency] = [];
   // Find an appropriate rate plan for every day
   for (let i = 0; i < guestData.helpers.lengthOfStay; i += 1) {
@@ -121,8 +121,8 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
       if (!dailyPrices[currentCurrency]) {
         dailyPrices[currentCurrency] = [];
       }
-      const availableForTravelFrom = moment.utc(currentRatePlan.availableForTravel.from);
-      const availableForTravelTo = moment.utc(currentRatePlan.availableForTravel.to);
+      const availableForTravelFrom = dayjs(currentRatePlan.availableForTravel.from);
+      const availableForTravelTo = dayjs(currentRatePlan.availableForTravel.to);
       // Deal with a rate plan ending sometimes during the stay
       if (currentDate >= availableForTravelFrom && currentDate <= availableForTravelTo) {
         const currentDailyPrice = computeDailyPrice(
@@ -139,7 +139,7 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
     for (let j = 0; j < currencies.length; j += 1) {
       dailyPrices[currencies[j]].push(bestDailyPrice[currencies[j]]);
     }
-    currentDate.add(1, 'day');
+    currentDate = currentDate.add(1, 'day');
   }
 
   // Filter out currencies that do not cover the whole stay range
@@ -154,14 +154,14 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
 };
 
 const getApplicableRatePlansFor = (roomType, guestData, ratePlans) => {
-  const now = moment.utc();
+  const now = dayjs();
   // filter out rateplans that are totally out of bounds
   return ratePlans.filter((rp) => {
     // apply general restrictions if any
     if (rp.restrictions) {
       if (rp.restrictions.bookingCutOff) {
         if (rp.restrictions.bookingCutOff.min
-          && moment.utc(guestData.helpers.arrivalDateMoment)
+          && dayjs(guestData.helpers.arrivalDateDayjs)
             .subtract(rp.restrictions.bookingCutOff.min, 'days')
             .isBefore(now)
         ) {
@@ -169,7 +169,7 @@ const getApplicableRatePlansFor = (roomType, guestData, ratePlans) => {
         }
 
         if (rp.restrictions.bookingCutOff.max
-          && moment.utc(guestData.helpers.arrivalDateMoment)
+          && dayjs(guestData.helpers.arrivalDateDayjs)
             .subtract(rp.restrictions.bookingCutOff.max, 'days')
             .isAfter(now)
         ) {
@@ -190,10 +190,10 @@ const getApplicableRatePlansFor = (roomType, guestData, ratePlans) => {
         }
       }
     }
-    const availableForTravelFrom = moment.utc(rp.availableForTravel.from);
-    const availableForTravelTo = moment.utc(rp.availableForTravel.to);
-    const availableForReservationFrom = moment.utc(rp.availableForReservation.from);
-    const availableForReservationTo = moment.utc(rp.availableForReservation.to);
+    const availableForTravelFrom = dayjs(rp.availableForTravel.from);
+    const availableForTravelTo = dayjs(rp.availableForTravel.to);
+    const availableForReservationFrom = dayjs(rp.availableForReservation.from);
+    const availableForReservationTo = dayjs(rp.availableForReservation.to);
     // Rate plan is not tied to this room type
     if (rp.roomTypeIds.indexOf(roomType.id) === -1) {
       return false;
@@ -204,8 +204,8 @@ const getApplicableRatePlansFor = (roomType, guestData, ratePlans) => {
       return false;
     }
     // Rate plan is totally out of bounds of travel dates
-    if (availableForTravelTo.isBefore(guestData.helpers.arrivalDateMoment)
-        || availableForTravelFrom.isAfter(guestData.helpers.departureDateMoment)) {
+    if (availableForTravelTo.isBefore(guestData.helpers.arrivalDateDayjs)
+        || availableForTravelFrom.isAfter(guestData.helpers.departureDateDayjs)) {
       return false;
     }
     return true;

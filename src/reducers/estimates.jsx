@@ -1,8 +1,8 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
-const baseDate = moment().isoWeekday() <= 4 ? moment() : moment().isoWeekday(1).add(7, 'days');
-const defaultArrival = moment(baseDate).isoWeekday(5).startOf('day');
-const defaultDeparture = moment(baseDate).isoWeekday(7).startOf('day');
+const baseDate = dayjs().day() <= 3 ? dayjs() : dayjs().set('day', 0).add(7, 'days');
+const defaultArrival = dayjs(baseDate).set('day', 5).startOf('day');
+const defaultDeparture = dayjs(baseDate).set('day', 7).startOf('day');
 
 const defaultState = {
   guestData: {
@@ -12,23 +12,23 @@ const defaultState = {
     helpers: {
       numberOfGuests: 0,
       lengthOfStay: defaultDeparture.diff(defaultArrival, 'days'),
-      arrivalDateMoment: defaultArrival,
-      departureDateMoment: defaultDeparture,
+      arrivalDateDayjs: defaultArrival,
+      departureDateDayjs: defaultDeparture,
     },
   },
   current: {},
 };
 
 const reducer = (state = defaultState, action) => {
-  let arrivalDateMoment;
-  let departureDateMoment;
+  let arrivalDateDayjs;
+  let departureDateDayjs;
   let lengthOfStay;
   let numberOfGuests;
   switch (action.type) {
     case 'SET_GUEST_DATA':
-      arrivalDateMoment = moment.utc(action.payload.arrival);
-      departureDateMoment = moment.utc(action.payload.departure);
-      lengthOfStay = departureDateMoment.diff(arrivalDateMoment, 'days');
+      arrivalDateDayjs = dayjs(action.payload.arrival);
+      departureDateDayjs = dayjs(action.payload.departure);
+      lengthOfStay = departureDateDayjs.diff(arrivalDateDayjs, 'days');
       numberOfGuests = action.payload.guestAges.length;
       return Object.assign({}, state, {
         guestData: {
@@ -36,8 +36,8 @@ const reducer = (state = defaultState, action) => {
           helpers: {
             numberOfGuests,
             lengthOfStay,
-            arrivalDateMoment,
-            departureDateMoment,
+            arrivalDateDayjs,
+            departureDateDayjs,
           },
         },
       });
