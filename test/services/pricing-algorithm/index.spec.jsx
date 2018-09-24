@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import currency from 'currency.js';
-import pricingAlgorithm from '../../src/services/pricing-algorithm';
+import pricingAlgorithm from '../../../src/services/pricing-algorithm';
 
-describe('services.pricing-algorithm', () => {
+describe('services.pricing-algorithm.index', () => {
   let guestData;
   let hotel;
 
