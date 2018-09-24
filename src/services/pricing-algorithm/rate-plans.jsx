@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-export const selectApplicableModifiers = (modifiers, dateDayjs, guestData) => {
+export const selectApplicableModifiers = (guestData, modifiers, dateDayjs) => {
   if (!modifiers || !modifiers.length) {
     return [];
   }
@@ -79,7 +79,7 @@ export const selectGuestSpecificModifier = (modifiers, age) => {
   return genericModifiers[0];
 };
 
-export const getApplicableRatePlansFor = (roomType, guestData, ratePlans) => {
+export const getApplicableRatePlansFor = (guestData, roomType, ratePlans) => {
   const now = dayjs();
   // filter out rateplans that are totally out of bounds
   return ratePlans.filter((rp) => {

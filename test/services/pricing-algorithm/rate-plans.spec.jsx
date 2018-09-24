@@ -54,8 +54,8 @@ describe('services.pricing-algorithm.index', () => {
         to: '2015-10-10',
       };
       const result = getApplicableRatePlansFor(
-        hotel.roomTypes.rtb,
         guestData,
+        hotel.roomTypes.rtb,
         [hotel.ratePlans.rpa],
       );
       expect(result.length).toBe(0);
@@ -68,8 +68,8 @@ describe('services.pricing-algorithm.index', () => {
         to: '2015-10-10',
       };
       const result = getApplicableRatePlansFor(
-        hotel.roomTypes.rtb,
         guestData,
+        hotel.roomTypes.rtb,
         [hotel.ratePlans.rpa],
       );
       expect(result.length).toBe(0);
@@ -77,8 +77,8 @@ describe('services.pricing-algorithm.index', () => {
 
     it('should return the only fitting rate plan', () => {
       const result = getApplicableRatePlansFor(
-        hotel.roomTypes.rtb,
         guestData,
+        hotel.roomTypes.rtb,
         [hotel.ratePlans.rpa],
       );
       expect(result.length).toBe(1);
@@ -100,8 +100,8 @@ describe('services.pricing-algorithm.index', () => {
         },
       };
       const result = getApplicableRatePlansFor(
-        hotel.roomTypes.rtb,
         guestData,
+        hotel.roomTypes.rtb,
         Object.values(hotel.ratePlans),
       );
       expect(result.length).toBe(2);
@@ -163,8 +163,8 @@ describe('services.pricing-algorithm.index', () => {
             },
           };
           const result = getApplicableRatePlansFor(
-            hotel.roomTypes.rtb,
             currentGuestData,
+            hotel.roomTypes.rtb,
             ratePlans,
           );
           expect(result.length).toBe(1);
@@ -177,8 +177,8 @@ describe('services.pricing-algorithm.index', () => {
             },
           };
           const result = getApplicableRatePlansFor(
-            hotel.roomTypes.rtb,
             currentGuestData,
+            hotel.roomTypes.rtb,
             ratePlans,
           );
           expect(result.length).toBe(1);
@@ -192,8 +192,8 @@ describe('services.pricing-algorithm.index', () => {
             },
           };
           const result = getApplicableRatePlansFor(
-            hotel.roomTypes.rtb,
             currentGuestData,
+            hotel.roomTypes.rtb,
             ratePlans,
           );
           expect(result.length).toBe(2);
@@ -209,8 +209,8 @@ describe('services.pricing-algorithm.index', () => {
             },
           };
           const result = getApplicableRatePlansFor(
-            hotel.roomTypes.rtb,
             currentGuestData,
+            hotel.roomTypes.rtb,
             ratePlans,
           );
           expect(result.length).toBe(1);
@@ -223,8 +223,8 @@ describe('services.pricing-algorithm.index', () => {
             },
           };
           const result = getApplicableRatePlansFor(
-            hotel.roomTypes.rtb,
             currentGuestData,
+            hotel.roomTypes.rtb,
             ratePlans,
           );
           expect(result.length).toBe(1);
@@ -238,8 +238,8 @@ describe('services.pricing-algorithm.index', () => {
             },
           };
           const result = getApplicableRatePlansFor(
-            hotel.roomTypes.rtb,
             currentGuestData,
+            hotel.roomTypes.rtb,
             ratePlans,
           );
           expect(result.length).toBe(2);
@@ -250,164 +250,211 @@ describe('services.pricing-algorithm.index', () => {
 
   describe('selectApplicableModifiers', () => {
     it('should drop modifiers without conditions', () => {
-      const modifiers = selectApplicableModifiers([
-        { adjustment: 10 },
-      ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+      const modifiers = selectApplicableModifiers(
+        { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+        [
+          { adjustment: 10 },
+        ], dayjs('2018-09-12'),
+      );
       expect(modifiers.length).toBe(0);
     });
 
     it('should pass through guest specific modifiers', () => {
-      const modifiers = selectApplicableModifiers([
-        { adjustment: -25, conditions: { maxAge: 10 } },
-        { adjustment: -33, conditions: { maxAge: 12 } },
-      ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+      const modifiers = selectApplicableModifiers(
+        { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+        [
+          { adjustment: -25, conditions: { maxAge: 10 } },
+          { adjustment: -33, conditions: { maxAge: 12 } },
+        ], dayjs('2018-09-12'),
+      );
       expect(modifiers.length).toBe(2);
     });
 
     describe('time interval from, to', () => {
       it('should keep modifiers if date is within interval', () => {
-        const modifiers = selectApplicableModifiers([
-          {
-            adjustment: -25,
-            conditions: {
-              from: '2018-01-09',
-              to: '2018-09-20',
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-01-09',
+                to: '2018-09-20',
+              },
             },
-          },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should keep modifier starting on a stay date', () => {
-        const modifiers = selectApplicableModifiers([
-          {
-            adjustment: -25,
-            conditions: {
-              from: '2018-09-12',
-              to: '2018-09-20',
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-12',
+                to: '2018-09-20',
+              },
             },
-          },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should keep modifier ending on a stay date', () => {
-        const modifiers = selectApplicableModifiers([
-          {
-            adjustment: -25,
-            conditions: {
-              from: '2018-09-10',
-              to: '2018-09-12',
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-10',
+                to: '2018-09-12',
+              },
             },
-          },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should drop modidifer if stay date is not within interval', () => {
-        const modifiers = selectApplicableModifiers([
-          {
-            adjustment: -25,
-            conditions: {
-              from: '2018-09-10',
-              to: '2018-08-12',
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-10',
+                to: '2018-08-12',
+              },
             },
-          },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(0);
       });
 
       it('should keep modifier if only from is set and stay date is in', () => {
-        const modifiers = selectApplicableModifiers([
-          {
-            adjustment: -25,
-            conditions: {
-              from: '2018-09-10',
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-10',
+              },
             },
-          },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should drop modifier if only from is set and stay date is out', () => {
-        const modifiers = selectApplicableModifiers([
-          {
-            adjustment: -25,
-            conditions: {
-              from: '2018-09-16',
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            {
+              adjustment: -25,
+              conditions: {
+                from: '2018-09-16',
+              },
             },
-          },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(0);
       });
 
       it('should keep modifier if only to is set and stay date is in', () => {
-        const modifiers = selectApplicableModifiers([
-          {
-            adjustment: -25,
-            conditions: {
-              to: '2018-09-13',
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            {
+              adjustment: -25,
+              conditions: {
+                to: '2018-09-13',
+              },
             },
-          },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should drop modifier if only to is set and stay date is out', () => {
-        const modifiers = selectApplicableModifiers([
-          {
-            adjustment: -25,
-            conditions: {
-              to: '2018-09-10',
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            {
+              adjustment: -25,
+              conditions: {
+                to: '2018-09-10',
+              },
             },
-          },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(0);
       });
     });
 
     describe('minLengthOfStay', () => {
       it('should not apply modifier if LOS is shorter', () => {
-        const modifiers = selectApplicableModifiers([
-          { adjustment: -25, conditions: { minLengthOfStay: 5 } },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(0);
       });
 
       it('should apply modifier if LOS is equal', () => {
-        const modifiers = selectApplicableModifiers([
-          { adjustment: -25, conditions: { minLengthOfStay: 3 } },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            { adjustment: -25, conditions: { minLengthOfStay: 3 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should apply modifier if LOS is longer', () => {
-        const modifiers = selectApplicableModifiers([
-          { adjustment: -25, conditions: { minLengthOfStay: 5 } },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } });
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } },
+          [
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should apply modifier with the biggest applicable LOS', () => {
-        let modifiers = selectApplicableModifiers([
-          { adjustment: -25, conditions: { minLengthOfStay: 5 } },
-          { adjustment: -10, conditions: { minLengthOfStay: 7 } },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } });
+        let modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } },
+          [
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+            { adjustment: -10, conditions: { minLengthOfStay: 7 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
         expect(modifiers[0].adjustment).toBe(-10);
 
-        modifiers = selectApplicableModifiers([
-          { adjustment: -10, conditions: { minLengthOfStay: 7 } },
-          { adjustment: -25, conditions: { minLengthOfStay: 5 } },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } });
+        modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } },
+          [
+            { adjustment: -10, conditions: { minLengthOfStay: 7 } },
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
         expect(modifiers[0].adjustment).toBe(-10);
 
-        modifiers = selectApplicableModifiers([
-          { adjustment: -50, conditions: { minLengthOfStay: 6 } },
-          { adjustment: -10, conditions: { minLengthOfStay: 7 } },
-          { adjustment: -25, conditions: { minLengthOfStay: 5 } },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } });
+        modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 7, numberOfGuests: 1 } },
+          [
+            { adjustment: -50, conditions: { minLengthOfStay: 6 } },
+            { adjustment: -10, conditions: { minLengthOfStay: 7 } },
+            { adjustment: -25, conditions: { minLengthOfStay: 5 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
         expect(modifiers[0].adjustment).toBe(-10);
       });
@@ -415,39 +462,49 @@ describe('services.pricing-algorithm.index', () => {
 
     describe('minOccupants', () => {
       it('should not apply modifier if number of guests is smaller', () => {
-        const modifiers = selectApplicableModifiers([
-          { adjustment: -25, conditions: { minOccupants: 5 } },
-        ], dayjs('2018-09-12'), { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } });
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } },
+          [
+            { adjustment: -25, conditions: { minOccupants: 5 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(0);
       });
 
       it('should apply modifier if number of guests is equal', () => {
-        const modifiers = selectApplicableModifiers([
-          { adjustment: -25, conditions: { minOccupants: 3 } },
-        ], dayjs('2018-09-12'), { guestAges: [10, 20, 30], helpers: { lengthOfStay: 3, numberOfGuests: 3 } });
+        const modifiers = selectApplicableModifiers(
+          { guestAges: [10, 20, 30], helpers: { lengthOfStay: 3, numberOfGuests: 3 } },
+          [
+            { adjustment: -25, conditions: { minOccupants: 3 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should apply modifier if number of guests is larger', () => {
-        const modifiers = selectApplicableModifiers([
-          { adjustment: -25, conditions: { minOccupants: 5 } },
-        ], dayjs('2018-09-12'),
-        {
-          guestAges: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
-          helpers: { lengthOfStay: 3, numberOfGuests: 10 },
-        });
+        const modifiers = selectApplicableModifiers(
+          {
+            guestAges: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+            helpers: { lengthOfStay: 3, numberOfGuests: 10 },
+          },
+          [
+            { adjustment: -25, conditions: { minOccupants: 5 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
       });
 
       it('should apply modifier with the biggest applicable minOccupants', () => {
-        const modifiers = selectApplicableModifiers([
-          { adjustment: -10, conditions: { minOccupants: 7 } },
-          { adjustment: -25, conditions: { minOccupants: 5 } },
-        ], dayjs('2018-09-12'),
-        {
-          guestAges: [10, 11, 12, 13, 14, 15, 16],
-          helpers: { lengthOfStay: 3, numberOfGuests: 7 },
-        });
+        const modifiers = selectApplicableModifiers(
+          {
+            guestAges: [10, 11, 12, 13, 14, 15, 16],
+            helpers: { lengthOfStay: 3, numberOfGuests: 7 },
+          },
+          [
+            { adjustment: -10, conditions: { minOccupants: 7 } },
+            { adjustment: -25, conditions: { minOccupants: 5 } },
+          ], dayjs('2018-09-12'),
+        );
         expect(modifiers.length).toBe(1);
         expect(modifiers[0].adjustment).toBe(-10);
       });

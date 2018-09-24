@@ -2,9 +2,9 @@ import dayjs from 'dayjs';
 import currency from 'currency.js';
 import { selectApplicableModifiers, selectGuestSpecificModifier, getApplicableRatePlansFor } from './rate-plans';
 
-const computeDailyPrice = (dateDayjs, guestData, ratePlan) => {
+const computeDailyPrice = (guestData, dateDayjs, ratePlan) => {
   const applicableModifiers = selectApplicableModifiers(
-    ratePlan.modifiers, dateDayjs, guestData,
+    guestData, ratePlan.modifiers, dateDayjs,
   );
   if (!applicableModifiers.length) {
     return currency(ratePlan.price).multiply(guestData.helpers.numberOfGuests);
@@ -25,7 +25,7 @@ const computeDailyPrice = (dateDayjs, guestData, ratePlan) => {
   return guestPrices.reduce((a, b) => a.add(currency(b)), currency(0));
 };
 
-const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
+const computeDailyPrices = (guestData, hotelCurrency, applicableRatePlans) => {
   const dailyPrices = {};
   let currentDate = dayjs(guestData.helpers.arrivalDateDayjs);
   dailyPrices[hotelCurrency] = [];
@@ -47,7 +47,7 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
       // Deal with a rate plan ending sometimes during the stay
       if (currentDate >= availableForTravelFrom && currentDate <= availableForTravelTo) {
         const currentDailyPrice = computeDailyPrice(
-          currentDate, guestData, currentRatePlan,
+          guestData, currentDate, currentRatePlan,
         );
 
         if (!bestDailyPrice[currentCurrency]
@@ -74,14 +74,14 @@ const computeDailyPrices = (hotelCurrency, guestData, applicableRatePlans) => {
   return dailyPrices;
 };
 
-const computePrices = (hotel, guestData) => {
+const computePrices = (guestData, hotel) => {
   let { roomTypes, ratePlans } = hotel;
   roomTypes = Object.values(roomTypes);
   ratePlans = Object.values(ratePlans);
 
   return roomTypes.map((roomType) => {
     const applicableRatePlans = getApplicableRatePlansFor(
-      roomType, guestData, ratePlans,
+      guestData, roomType, ratePlans,
     );
 
     // no rate plans available at all, bail
@@ -94,7 +94,7 @@ const computePrices = (hotel, guestData) => {
     }
 
     const dailyPrices = computeDailyPrices(
-      hotel.currency, guestData, applicableRatePlans,
+      guestData, hotel.currency, applicableRatePlans,
     );
     // TODO keep estimates in multiple currencies
     // for now, randomly pick a currency

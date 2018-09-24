@@ -24,7 +24,7 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   ) {
     return;
   }
-  const data = pricingAlgorithm.computePrices(hotel, guestData);
+  const data = pricingAlgorithm.computePrices(guestData, hotel);
   dispatch({
     type: 'SET_ESTIMATES',
     payload: {

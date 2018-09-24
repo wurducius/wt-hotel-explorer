@@ -47,7 +47,7 @@ describe('services.pricing-algorithm.index', () => {
   describe('computePrices', () => {
     // TODO multiple currencies
     it('should return null price if no rate plan matches the room type', () => {
-      const result = pricingAlgorithm.computePrices(hotel, guestData);
+      const result = pricingAlgorithm.computePrices(guestData, hotel);
       expect(result.find(e => e.id === 'rta')).toHaveProperty('price', undefined);
       expect(result.find(e => e.id === 'rta')).toHaveProperty('currency', hotel.currency);
     });
@@ -70,8 +70,8 @@ describe('services.pricing-algorithm.index', () => {
       };
 
       const result = pricingAlgorithm.computeDailyPrices(
-        hotel.currency,
         guestData,
+        hotel.currency,
         Object.values(hotel.ratePlans),
       );
       expect(result).toHaveProperty(hotel.currency);
@@ -117,8 +117,8 @@ describe('services.pricing-algorithm.index', () => {
       });
 
       const result = pricingAlgorithm.computeDailyPrices(
-        hotel.currency,
         guestData,
+        hotel.currency,
         Object.values(hotel.ratePlans),
       );
       expect(result).toHaveProperty(hotel.currency);
@@ -167,8 +167,8 @@ describe('services.pricing-algorithm.index', () => {
         },
       });
       const result = pricingAlgorithm.computeDailyPrices(
-        hotel.currency,
         guestData,
+        hotel.currency,
         Object.values(hotel.ratePlans),
       );
       expect(result).not.toHaveProperty(hotel.currency);
@@ -226,8 +226,8 @@ describe('services.pricing-algorithm.index', () => {
       });
 
       const result = pricingAlgorithm.computeDailyPrices(
-        hotel.currency,
         guestData,
+        hotel.currency,
         Object.values(hotel.ratePlans),
       );
 
@@ -247,12 +247,12 @@ describe('services.pricing-algorithm.index', () => {
 
   describe('computeDailyPrice', () => {
     it('should return base price if rate plan has no modifiers', () => {
-      expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { helpers: { numberOfGuests: 1, lengthOfStay: 3 } }, { price: 10 }).format()).toBe(currency(10).format());
-      expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { helpers: { numberOfGuests: 13, lengthOfStay: 3 } }, { price: 10 }).format()).toBe(currency(130).format());
+      expect(pricingAlgorithm.computeDailyPrice({ helpers: { numberOfGuests: 1, lengthOfStay: 3 } }, '2018-09-12', { price: 10 }).format()).toBe(currency(10).format());
+      expect(pricingAlgorithm.computeDailyPrice({ helpers: { numberOfGuests: 13, lengthOfStay: 3 } }, '2018-09-12', { price: 10 }).format()).toBe(currency(130).format());
     });
 
     it('should pick the most pro-customer modifier (all positive)', () => {
-      expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, {
+      expect(pricingAlgorithm.computeDailyPrice({ guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, '2018-09-12', {
         price: 8,
         modifiers: [
           { adjustment: 25, conditions: {} },
@@ -262,7 +262,7 @@ describe('services.pricing-algorithm.index', () => {
     });
 
     it('should pick the most pro-customer modifier (all negative)', () => {
-      expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, {
+      expect(pricingAlgorithm.computeDailyPrice({ guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, '2018-09-12', {
         price: 8,
         modifiers: [
           { adjustment: -25, conditions: {} },
@@ -272,7 +272,7 @@ describe('services.pricing-algorithm.index', () => {
     });
 
     it('should pick the most pro-customer modifier (mixed)', () => {
-      expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, {
+      expect(pricingAlgorithm.computeDailyPrice({ guestAges: [18], helpers: { lengthOfStay: 3, numberOfGuests: 1 } }, '2018-09-12', {
         price: 8,
         modifiers: [
           { adjustment: -25, conditions: {} },
@@ -285,7 +285,7 @@ describe('services.pricing-algorithm.index', () => {
 
     describe('modifier combinations', () => {
       it('should pick the modifier with the best price if multiple are applicable', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+        expect(pricingAlgorithm.computeDailyPrice({ guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, '2018-09-12', {
           price: 8,
           modifiers: [
             { adjustment: -75, conditions: { minOccupants: 2 } },
@@ -295,7 +295,7 @@ describe('services.pricing-algorithm.index', () => {
       });
 
       it('should pick the guest-specific modifier if multiple are applicable', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+        expect(pricingAlgorithm.computeDailyPrice({ guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, '2018-09-12', {
           price: 10,
           modifiers: [
             { adjustment: -25, conditions: { minOccupants: 2 } },
@@ -306,7 +306,7 @@ describe('services.pricing-algorithm.index', () => {
       });
 
       it('combine maxAge + minOccupants', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+        expect(pricingAlgorithm.computeDailyPrice({ guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, '2018-09-12', {
           price: 10,
           modifiers: [
             { adjustment: -20, conditions: { minOccupants: 2, maxAge: 16 } },
@@ -316,7 +316,7 @@ describe('services.pricing-algorithm.index', () => {
       });
 
       it('combine maxAge + lengthOfStay', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+        expect(pricingAlgorithm.computeDailyPrice({ guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, '2018-09-12', {
           price: 10,
           modifiers: [
             { adjustment: -20, conditions: { lengthOfStay: 2, maxAge: 16 } },
@@ -326,7 +326,7 @@ describe('services.pricing-algorithm.index', () => {
       });
 
       it('combine maxAge + lengthOfStay + minOccupants', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, {
+        expect(pricingAlgorithm.computeDailyPrice({ guestAges: [18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 2 } }, '2018-09-12', {
           price: 10,
           modifiers: [
             { adjustment: -10, conditions: { lengthOfStay: 2, minOccupants: 2, maxAge: 16 } },
@@ -340,7 +340,7 @@ describe('services.pricing-algorithm.index', () => {
 
     describe('maxAge', () => {
       it('should apply modifier to some of the guests if they are under or on par with the limit', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [11, 18, 30], helpers: { lengthOfStay: 3, numberOfGuests: 3 } }, {
+        expect(pricingAlgorithm.computeDailyPrice({ guestAges: [11, 18, 30], helpers: { lengthOfStay: 3, numberOfGuests: 3 } }, '2018-09-12', {
           price: 8,
           modifiers: [
             { adjustment: -25, conditions: { maxAge: 18 } },
@@ -349,7 +349,7 @@ describe('services.pricing-algorithm.index', () => {
       });
 
       it('should apply a fitting modifier to each guests', () => {
-        expect(pricingAlgorithm.computeDailyPrice('2018-09-12', { guestAges: [25, 18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 3 } }, {
+        expect(pricingAlgorithm.computeDailyPrice({ guestAges: [25, 18, 16], helpers: { lengthOfStay: 3, numberOfGuests: 3 } }, '2018-09-12', {
           price: 8,
           modifiers: [
             { adjustment: -10, conditions: { maxAge: 25 } },
