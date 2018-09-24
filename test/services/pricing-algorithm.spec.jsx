@@ -1,8 +1,8 @@
 import moment from 'moment';
 import currency from 'currency.js';
-import pricingAlgorithm from '../../src/actions/pricing-algorithm';
+import pricingAlgorithm from '../../src/services/pricing-algorithm';
 
-describe('action.pricing-algorithm', () => {
+describe('services.pricing-algorithm', () => {
   let guestData;
   let hotel;
 

@@ -1,5 +1,5 @@
 import hotelActions from './hotels';
-import pricingAlgorithm from './pricing-algorithm';
+import pricingAlgorithm from '../services/pricing-algorithm';
 
 const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   const state = getState();
