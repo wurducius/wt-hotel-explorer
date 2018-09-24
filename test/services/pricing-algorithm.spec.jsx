@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import currency from 'currency.js';
 import pricingAlgorithm from '../../src/services/pricing-algorithm';
 
@@ -12,8 +12,8 @@ describe('services.pricing-algorithm', () => {
       departure: '2018-01-05',
       guestAges: [18],
       helpers: {
-        arrivalDateMoment: moment.utc('2018-01-03'),
-        departureDateMoment: moment.utc('2018-01-05'),
+        arrivalDateDayjs: dayjs('2018-01-03'),
+        departureDateDayjs: dayjs('2018-01-05'),
         lengthOfStay: 2,
         numberOfGuests: 1,
       },
@@ -45,7 +45,6 @@ describe('services.pricing-algorithm', () => {
 
 
   describe('computePrices', () => {
-    // TODO should compute daily prices
     // TODO multiple currencies
     it('should return null price if no rate plan matches the room type', () => {
       const result = pricingAlgorithm.computePrices(hotel, guestData);
@@ -121,14 +120,14 @@ describe('services.pricing-algorithm', () => {
       let today;
 
       beforeEach(() => {
-        today = moment();
+        today = dayjs();
         currentGuestData = {
-          arrival: moment(today).add(5, 'days').format('YYYY-MM-DD'),
-          departure: moment(today).add(7, 'days').format('YYYY-MM-DD'),
+          arrival: dayjs(today).add(5, 'days').format('YYYY-MM-DD'),
+          departure: dayjs(today).add(7, 'days').format('YYYY-MM-DD'),
           guestAges: [18],
           helpers: {
-            arrivalDateMoment: moment(today).add(5, 'days'),
-            departureDateMoment: moment(today).add(7, 'days'),
+            arrivalDateDayjs: dayjs(today).add(5, 'days'),
+            departureDateDayjs: dayjs(today).add(7, 'days'),
             lengthOfStay: 2,
             numberOfGuests: 1,
           },
@@ -139,12 +138,12 @@ describe('services.pricing-algorithm', () => {
             price: 60,
             roomTypeIds: ['rtb'],
             availableForReservation: {
-              from: moment(today).subtract(20, 'days').format('YYYY-MM-DD'),
-              to: moment(today).add(20, 'days').format('YYYY-MM-DD'),
+              from: dayjs(today).subtract(20, 'days').format('YYYY-MM-DD'),
+              to: dayjs(today).add(20, 'days').format('YYYY-MM-DD'),
             },
             availableForTravel: {
-              from: moment(today).subtract(20, 'days').format('YYYY-MM-DD'),
-              to: moment(today).add(20, 'days').format('YYYY-MM-DD'),
+              from: dayjs(today).subtract(20, 'days').format('YYYY-MM-DD'),
+              to: dayjs(today).add(20, 'days').format('YYYY-MM-DD'),
             },
           },
           {
@@ -152,12 +151,12 @@ describe('services.pricing-algorithm', () => {
             price: 100,
             roomTypeIds: ['rtb'],
             availableForReservation: {
-              from: moment(today).subtract(20, 'days').format('YYYY-MM-DD'),
-              to: moment(today).add(20, 'days').format('YYYY-MM-DD'),
+              from: dayjs(today).subtract(20, 'days').format('YYYY-MM-DD'),
+              to: dayjs(today).add(20, 'days').format('YYYY-MM-DD'),
             },
             availableForTravel: {
-              from: moment(today).subtract(20, 'days').format('YYYY-MM-DD'),
-              to: moment(today).add(20, 'days').format('YYYY-MM-DD'),
+              from: dayjs(today).subtract(20, 'days').format('YYYY-MM-DD'),
+              to: dayjs(today).add(20, 'days').format('YYYY-MM-DD'),
             },
           },
         ];
@@ -256,7 +255,7 @@ describe('services.pricing-algorithm', () => {
     });
   });
 
-  describe('computeDailyPrices', () => {
+  describe.only('computeDailyPrices', () => {
     it('should return the lowest price if no modifiers are present and multiple rate plans fit', () => {
       hotel.ratePlans.rpb = {
         id: 'rpb',
@@ -312,8 +311,8 @@ describe('services.pricing-algorithm', () => {
         departure: '2018-10-10',
         guestAges: [10, 20, 30],
         helpers: {
-          arrivalDateMoment: moment.utc('2018-10-02'),
-          departureDateMoment: moment.utc('2018-10-10'),
+          arrivalDateDayjs: dayjs('2018-10-02'),
+          departureDateDayjs: dayjs('2018-10-10'),
           lengthOfStay: 8,
           numberOfGuests: 3,
         },
@@ -364,8 +363,8 @@ describe('services.pricing-algorithm', () => {
         arrival: '2018-10-02',
         departure: '2018-10-10',
         helpers: {
-          arrivalDateMoment: moment.utc('2018-10-02'),
-          departureDateMoment: moment.utc('2018-10-10'),
+          arrivalDateDayjs: dayjs('2018-10-02'),
+          departureDateDayjs: dayjs('2018-10-10'),
           lengthOfStay: 8,
         },
       });
@@ -421,8 +420,8 @@ describe('services.pricing-algorithm', () => {
         arrival: '2018-10-02',
         departure: '2018-10-10',
         helpers: {
-          arrivalDateMoment: moment.utc('2018-10-02'),
-          departureDateMoment: moment.utc('2018-10-10'),
+          arrivalDateDayjs: dayjs('2018-10-02'),
+          departureDateDayjs: dayjs('2018-10-10'),
           lengthOfStay: 8,
           numberOfGuests: 1,
         },

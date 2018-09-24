@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import {
   Formik, Form, Field, FieldArray,
@@ -83,9 +83,8 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
     if (values.guestAges.filter(x => Number.isInteger(x)).length < 1) {
       errors.guestAges = 'We need information about at least one guest!';
     }
-    // This is throwing warnings from momentjs but we don't really mind
-    const normalizedArrival = moment(values.arrival);
-    const normalizedDeparture = moment(values.departure);
+    const normalizedArrival = dayjs(values.arrival);
+    const normalizedDeparture = dayjs(values.departure);
     if (!normalizedArrival.isValid()) {
       errors.arrival = 'Invalid arrival date!';
     }
@@ -104,8 +103,8 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
   const doSubmit = (values, formActions) => {
     const result = {};
     result.guestAges = values.guestAges.map(x => parseInt(x, 10));
-    result.arrival = moment(values.arrival).format('YYYY-MM-DD');
-    result.departure = moment(values.departure).format('YYYY-MM-DD');
+    result.arrival = dayjs(values.arrival).format('YYYY-MM-DD');
+    result.departure = dayjs(values.departure).format('YYYY-MM-DD');
     result.formActions = {
       setSubmitting: formActions.setSubmitting,
       setErrors: formActions.setErrors,
@@ -161,9 +160,9 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
   );
 };
 
-const baseDate = moment().isoWeekday() <= 4 ? moment() : moment().isoWeekday(1).add(7, 'days');
-const defaultArrival = moment(baseDate).isoWeekday(5).startOf('day').format('YYYY-MM-DD');
-const defaultDeparture = moment(baseDate).isoWeekday(7).startOf('day').format('YYYY-MM-DD');
+const baseDate = dayjs().day() <= 3 ? dayjs() : dayjs().set('day', 0).add(7, 'days');
+const defaultArrival = dayjs(baseDate).set('day', 5).startOf('day').format('YYYY-MM-DD');
+const defaultDeparture = dayjs(baseDate).set('day', 7).startOf('day').format('YYYY-MM-DD');
 
 GuestForm.defaultProps = {
   initialValues: {
