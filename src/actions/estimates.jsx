@@ -1,5 +1,5 @@
 import hotelActions from './hotels';
-import pricingAlgorithm from '../services/pricing-algorithm'; // TODO named import
+import { computePrices } from '../services/pricing-algorithm';
 import { enhancePricingEstimates } from '../services/availability';
 
 const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
@@ -22,7 +22,7 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   ) {
     return;
   }
-  const pricingEstimates = pricingAlgorithm.computePrices(guestData, hotel);
+  const pricingEstimates = computePrices(guestData, hotel);
   dispatch({
     type: 'SET_ESTIMATES',
     payload: {

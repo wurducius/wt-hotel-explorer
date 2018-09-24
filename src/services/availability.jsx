@@ -24,7 +24,7 @@ export const enhancePricingEstimates = (guestData, pricingData, hotel) => {
 
       let currentDate = dayjs(guestData.helpers.arrivalDateDayjs);
       let currentAvailability;
-      const dailyAvailability = [];
+      let dailyAvailability = [];
 
       for (let j = 0; j < guestData.helpers.lengthOfStay; j += 1) {
         currentAvailability = indexedAvailability[currentDate.format('YYYY-MM-DD')];
@@ -45,11 +45,9 @@ export const enhancePricingEstimates = (guestData, pricingData, hotel) => {
         currentAvailability
         && currentAvailability.restrictions
         && currentAvailability.restrictions.noDeparture
-        && dailyAvailability.length // to work around one-night stays
       ) {
-        dailyAvailability.push('special-no-departure-flag');
+        dailyAvailability = [];
       }
-
       // Filter out missing data and applied restrictions
       if (dailyAvailability.length === guestData.helpers.lengthOfStay) {
         result[i].quantity = dailyAvailability.reduce((agg, da) => {
