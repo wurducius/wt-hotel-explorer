@@ -18,6 +18,25 @@ const remapErroredIds = list => list
     });
   }, {});
 
+const transformAvailability = (responseData) => {
+  // re-index availability by date for easier later access
+  if (responseData.availability) {
+    const result = {};
+    const roomTypes = Object.keys(responseData.availability);
+    for (let i = 0; i < roomTypes.length; i += 1) {
+      result[roomTypes[i]] = responseData.availability[roomTypes[i]]
+        .reduce((agg, curr) => Object.assign({}, agg, {
+          [curr.date]: curr,
+        }), {});
+    }
+    return {
+      updatedAt: responseData.updatedAt,
+      availability: result,
+    };
+  }
+  return responseData;
+};
+
 const reducer = (state = defaultState, action) => {
   let modifiedList;
   let existingIds;
@@ -171,7 +190,7 @@ const reducer = (state = defaultState, action) => {
       }
       hotelIndex = modifiedList.indexOf(hotel);
       hotel = Object.assign({}, hotel, {
-        availability: action.payload.data,
+        availability: transformAvailability(action.payload.data),
       });
       modifiedList[hotelIndex] = hotel;
       return Object.assign({}, state, {

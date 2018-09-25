@@ -18,7 +18,7 @@ describe('services.availability', () => {
     };
   });
 
-  describe('enhancePricingEstimates', () => {
+  describe.only('enhancePricingEstimates', () => {
     it('should add undefined quantity if availability data is missing totally', () => {
       const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {});
       expect(result.length).toBe(1);
@@ -39,7 +39,7 @@ describe('services.availability', () => {
       const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
         availability: {
           availability: {
-            rta: [],
+            rta: {},
           },
         },
       });
@@ -51,12 +51,12 @@ describe('services.availability', () => {
       const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
         availability: {
           availability: {
-            rta: [
-              { date: '2018-01-03', quantity: 7 },
-              { date: '2018-01-04', quantity: 7 },
-              { date: '2018-01-05', quantity: 7 },
-              { date: '2018-01-06', quantity: 7 },
-            ],
+            rta: {
+              '2018-01-03': { date: '2018-01-03', quantity: 7 },
+              '2018-01-04': { date: '2018-01-04', quantity: 7 },
+              '2018-01-05': { date: '2018-01-05', quantity: 7 },
+              '2018-01-06': { date: '2018-01-06', quantity: 7 },
+            },
           },
         },
       });
@@ -68,13 +68,13 @@ describe('services.availability', () => {
       const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
         availability: {
           availability: {
-            rta: [
-              { date: '2018-01-03', quantity: 7 },
-              { date: '2018-01-04', quantity: 6 },
-              { date: '2018-01-05', quantity: 0 },
-              { date: '2018-01-06', quantity: 3 },
-              { date: '2018-01-07', quantity: 1 },
-            ],
+            rta: {
+              '2018-01-03': { date: '2018-01-03', quantity: 7 },
+              '2018-01-04': { date: '2018-01-04', quantity: 6 },
+              '2018-01-05': { date: '2018-01-05', quantity: 0 },
+              '2018-01-06': { date: '2018-01-06', quantity: 3 },
+              '2018-01-07': { date: '2018-01-07', quantity: 1 },
+            },
           },
         },
       });
@@ -86,10 +86,10 @@ describe('services.availability', () => {
       const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
         availability: {
           availability: {
-            rta: [
-              { date: '2018-01-03', quantity: 7 },
-              { date: '2018-01-06', quantity: 3 },
-            ],
+            rta: {
+              '2018-01-03': { date: '2018-01-03', quantity: 7 },
+              '2018-01-06': { date: '2018-01-06', quantity: 3 },
+            },
           },
         },
       });
@@ -101,20 +101,20 @@ describe('services.availability', () => {
       const result = enhancePricingEstimates(guestData, [{ id: 'rta' }, { id: 'rtb' }], {
         availability: {
           availability: {
-            rta: [
-              { date: '2018-01-03', quantity: 7 },
-              { date: '2018-01-04', quantity: 6 },
-              { date: '2018-01-05', quantity: 5 },
-              { date: '2018-01-06', quantity: 3 },
-              { date: '2018-01-07', quantity: 1 },
-            ],
-            rtb: [
-              { date: '2018-01-03', quantity: 17 },
-              { date: '2018-01-04', quantity: 1 },
-              { date: '2018-01-05', quantity: 15 },
-              { date: '2018-01-06', quantity: 13 },
-              { date: '2018-01-07', quantity: 11 },
-            ],
+            rta: {
+              '2018-01-03': { date: '2018-01-03', quantity: 7 },
+              '2018-01-04': { date: '2018-01-04', quantity: 6 },
+              '2018-01-05': { date: '2018-01-05', quantity: 5 },
+              '2018-01-06': { date: '2018-01-06', quantity: 3 },
+              '2018-01-07': { date: '2018-01-07', quantity: 1 },
+            },
+            rtb: {
+              '2018-01-03': { date: '2018-01-03', quantity: 17 },
+              '2018-01-04': { date: '2018-01-04', quantity: 1 },
+              '2018-01-05': { date: '2018-01-05', quantity: 15 },
+              '2018-01-06': { date: '2018-01-06', quantity: 13 },
+              '2018-01-07': { date: '2018-01-07', quantity: 11 },
+            },
           },
         },
       });
@@ -128,18 +128,18 @@ describe('services.availability', () => {
         const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
           availability: {
             availability: {
-              rta: [
-                {
+              rta: {
+                '2018-01-03': {
                   date: '2018-01-03',
                   quantity: 7,
                   restrictions: {
                     noArrival: true,
                   },
                 },
-                { date: '2018-01-04', quantity: 7 },
-                { date: '2018-01-05', quantity: 7 },
-                { date: '2018-01-06', quantity: 7 },
-              ],
+                '2018-01-04': { date: '2018-01-04', quantity: 7 },
+                '2018-01-05': { date: '2018-01-05', quantity: 7 },
+                '2018-01-06': { date: '2018-01-06', quantity: 7 },
+              },
             },
           },
         });
@@ -151,18 +151,18 @@ describe('services.availability', () => {
         const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
           availability: {
             availability: {
-              rta: [
-                { date: '2018-01-03', quantity: 7 },
-                {
+              rta: {
+                '2018-01-03': { date: '2018-01-03', quantity: 7 },
+                '2018-01-04': {
                   date: '2018-01-04',
                   quantity: 7,
                   restrictions: {
                     noArrival: true,
                   },
                 },
-                { date: '2018-01-05', quantity: 7 },
-                { date: '2018-01-06', quantity: 7 },
-              ],
+                '2018-01-05': { date: '2018-01-05', quantity: 7 },
+                '2018-01-06': { date: '2018-01-06', quantity: 7 },
+              },
             },
           },
         });
@@ -174,19 +174,19 @@ describe('services.availability', () => {
         const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
           availability: {
             availability: {
-              rta: [
-                { date: '2018-01-03', quantity: 7 },
-                { date: '2018-01-04', quantity: 7 },
-                { date: '2018-01-05', quantity: 7 },
-                { date: '2018-01-06', quantity: 7 },
-                {
+              rta: {
+                '2018-01-03': { date: '2018-01-03', quantity: 7 },
+                '2018-01-04': { date: '2018-01-04', quantity: 7 },
+                '2018-01-05': { date: '2018-01-05', quantity: 7 },
+                '2018-01-06': { date: '2018-01-06', quantity: 7 },
+                '2018-01-07': {
                   date: '2018-01-07',
                   quantity: 7,
                   restrictions: {
                     noDeparture: true,
                   },
                 },
-              ],
+              },
             },
           },
         });
@@ -198,18 +198,18 @@ describe('services.availability', () => {
         const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
           availability: {
             availability: {
-              rta: [
-                { date: '2018-01-03', quantity: 7 },
-                { date: '2018-01-04', quantity: 7 },
-                {
+              rta: {
+                '2018-01-03': { date: '2018-01-03', quantity: 7 },
+                '2018-01-04': { date: '2018-01-04', quantity: 7 },
+                '2018-01-05': {
                   date: '2018-01-05',
                   quantity: 7,
                   restrictions: {
                     noDeparture: true,
                   },
                 },
-                { date: '2018-01-06', quantity: 7 },
-              ],
+                '2018-01-06': { date: '2018-01-06', quantity: 7 },
+              },
             },
           },
         });
@@ -231,22 +231,22 @@ describe('services.availability', () => {
         }, [{ id: 'rta' }], {
           availability: {
             availability: {
-              rta: [
-                {
+              rta: {
+                '2018-08-31': {
                   date: '2018-08-31',
                   quantity: 7,
                   restrictions: {
                     noArrival: true,
                   },
                 },
-                {
+                '2018-09-01': {
                   date: '2018-09-01',
                   quantity: 7,
                   restrictions: {
                     noDeparture: true,
                   },
                 },
-              ],
+              },
             },
           },
         });

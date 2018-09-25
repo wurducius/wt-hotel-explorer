@@ -14,6 +14,7 @@ const QuantityBadge = ({ quantity }) => {
     return (
       <div>
 Last
+        {' '}
         {quantity}
         {' '}
 remaining!
@@ -26,8 +27,12 @@ remaining!
   return null;
 };
 
+QuantityBadge.defaultProps = {
+  quantity: undefined,
+};
+
 QuantityBadge.propTypes = {
-  quantity: PropTypes.number.isRequired,
+  quantity: PropTypes.number,
 };
 
 // TODO use properties, totalQuantity and occupancy
