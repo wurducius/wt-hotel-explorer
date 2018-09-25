@@ -8,12 +8,12 @@ describe('services.availability', () => {
     guestData = {
       arrival: '2018-01-03',
       departure: '2018-01-07',
-      guestAges: [18],
+      guestAges: [18, 20],
       helpers: {
         arrivalDateDayjs: dayjs('2018-01-03'),
         departureDateDayjs: dayjs('2018-01-07'),
         lengthOfStay: 4,
-        numberOfGuests: 1,
+        numberOfGuests: 2,
       },
     };
   });
@@ -252,6 +252,81 @@ describe('services.availability', () => {
         });
         expect(result.length).toBe(1);
         expect(result[0]).toHaveProperty('quantity', undefined);
+      });
+    });
+
+    describe('room type occupancy', () => {
+      it('should apply min occupancy', () => {
+        const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
+          roomTypes: {
+            rta: {
+              occupancy: {
+                min: 3,
+              },
+            },
+          },
+          availability: {
+            availability: {
+              rta: {
+                '2018-01-03': { date: '2018-01-03', quantity: 7 },
+                '2018-01-04': { date: '2018-01-04', quantity: 7 },
+                '2018-01-05': { date: '2018-01-05', quantity: 7 },
+                '2018-01-06': { date: '2018-01-06', quantity: 7 },
+              },
+            },
+          },
+        });
+        expect(result.length).toBe(1);
+        expect(result[0]).toHaveProperty('quantity', undefined);
+      });
+
+      it('should apply max occupancy', () => {
+        const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
+          roomTypes: {
+            rta: {
+              occupancy: {
+                max: 1,
+              },
+            },
+          },
+          availability: {
+            availability: {
+              rta: {
+                '2018-01-03': { date: '2018-01-03', quantity: 7 },
+                '2018-01-04': { date: '2018-01-04', quantity: 7 },
+                '2018-01-05': { date: '2018-01-05', quantity: 7 },
+                '2018-01-06': { date: '2018-01-06', quantity: 7 },
+              },
+            },
+          },
+        });
+        expect(result.length).toBe(1);
+        expect(result[0]).toHaveProperty('quantity', undefined);
+      });
+
+      it('should not apply occupancy if numberOfGuests fit', () => {
+        const result = enhancePricingEstimates(guestData, [{ id: 'rta' }], {
+          roomTypes: {
+            rta: {
+              occupancy: {
+                min: 1,
+                max: 4,
+              },
+            },
+          },
+          availability: {
+            availability: {
+              rta: {
+                '2018-01-03': { date: '2018-01-03', quantity: 7 },
+                '2018-01-04': { date: '2018-01-04', quantity: 7 },
+                '2018-01-05': { date: '2018-01-05', quantity: 7 },
+                '2018-01-06': { date: '2018-01-06', quantity: 7 },
+              },
+            },
+          },
+        });
+        expect(result.length).toBe(1);
+        expect(result[0]).toHaveProperty('quantity', 7);
       });
     });
   });
