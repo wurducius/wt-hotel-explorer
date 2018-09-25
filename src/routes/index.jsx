@@ -5,6 +5,7 @@ import {
   createStore, combineReducers, compose, applyMiddleware,
 } from 'redux';
 import thunk from 'redux-thunk';
+import { Redirect } from 'react-router';
 import createHistory from 'history/createBrowserHistory';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { Route, Switch } from 'react-router-dom';
@@ -34,6 +35,8 @@ const LoadableHome = Loadable({
   },
 });
 
+const Handle404 = () => <Redirect to="/error-page" />;
+
 // Setup redux
 const history = createHistory();
 const routerMiddlewareInst = routerMiddleware(history);
@@ -58,7 +61,8 @@ const AppContainer = () => (
         <Switch>
           <Route exact path="/" component={LoadableHome} />
           <Route exact path="/hotels/:hotelId" component={Hotel} />
-          <Route path="/error-page" component={ErrorPage} />
+          <Route exact path="/error-page" component={ErrorPage} />
+          <Route component={Handle404} />
         </Switch>
       </div>
     </div>
