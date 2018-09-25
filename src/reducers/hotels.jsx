@@ -103,7 +103,6 @@ const reducer = (state = defaultState, action) => {
         hotelsInitialized: true,
         next: action.payload.next,
       });
-    // case 'FETCH_DETAIL_ERRORED': // TODO handle #36
     case 'FETCH_DETAIL_STARTED':
       modifiedList = [].concat(state.list);
       hotel = modifiedList.find(h => h.id === action.payload[0].id);

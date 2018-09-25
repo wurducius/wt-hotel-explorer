@@ -12,7 +12,7 @@ import GuestForm from '../GuestForm';
 
 // TODO use cancellationPolicies + defaultCancellationAmount
 const HotelDetail = ({
-  hotel, estimates, handleGuestFormSubmit, guestFormInitialValues,
+  hotel, estimates, errors, handleGuestFormSubmit, guestFormInitialValues,
 }) => (
   <React.Fragment>
     <div className="row">
@@ -31,12 +31,18 @@ const HotelDetail = ({
         </div>
       </div>
     </div>
-
     <div className="row">
       <div className="col">
         <GuestForm handleSubmit={handleGuestFormSubmit} initialValues={guestFormInitialValues} />
       </div>
     </div>
+    {errors.length > 0 && (
+    <div className="row">
+      <div className="col-md-12">
+        <div className="alert alert-danger">Hotel data is not complete and price estimation might not work as expected.</div>
+      </div>
+    </div>
+    )}
 
     <div className="row">
       <div className="col-md-12">
@@ -86,11 +92,13 @@ const HotelDetail = ({
 
 HotelDetail.defaultProps = {
   estimates: [],
+  errors: [],
 };
 
 HotelDetail.propTypes = {
   hotel: PropTypes.instanceOf(Object).isRequired,
   estimates: PropTypes.instanceOf(Array),
+  errors: PropTypes.instanceOf(Array),
   handleGuestFormSubmit: PropTypes.func.isRequired,
   guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
 };

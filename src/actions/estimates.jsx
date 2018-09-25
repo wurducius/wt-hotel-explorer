@@ -42,19 +42,22 @@ const fetchAndComputeHotelEstimates = ({
   if (ratePlans) {
     ratePlansPromise = Promise.resolve();
   } else {
-    ratePlansPromise = dispatch(hotelActions.fetchHotelRatePlans({ id }));
+    // silent catch, the errors are dealt with in appropriate reducers
+    ratePlansPromise = dispatch(hotelActions.fetchHotelRatePlans({ id })).catch(() => {});
   }
   // Do not hit hotels with room types already downloaded
   if (roomTypes) {
     roomTypesPromise = Promise.resolve();
   } else {
-    roomTypesPromise = dispatch(hotelActions.fetchHotelRoomTypes({ id }));
+    // silent catch, the errors are dealt with in appropriate reducers
+    roomTypesPromise = dispatch(hotelActions.fetchHotelRoomTypes({ id })).catch(() => {});
   }
   // Do not hit hotels with availability already downloaded
   if (availability) {
     availabilityPromise = Promise.resolve();
   } else {
-    availabilityPromise = dispatch(hotelActions.fetchHotelAvailability({ id }));
+    // silent catch, the errors are dealt with in appropriate reducers
+    availabilityPromise = dispatch(hotelActions.fetchHotelAvailability({ id })).catch(() => {});
   }
   // for each hotel in parallel get rate plan, room types, availability and recompute estimates
   return Promise.all([ratePlansPromise, roomTypesPromise, availabilityPromise])
