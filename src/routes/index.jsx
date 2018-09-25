@@ -5,6 +5,7 @@ import {
   createStore, combineReducers, compose, applyMiddleware,
 } from 'redux';
 import thunk from 'redux-thunk';
+import { Redirect } from 'react-router';
 import createHistory from 'history/createBrowserHistory';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { Route, Switch } from 'react-router-dom';
@@ -12,6 +13,7 @@ import { Route, Switch } from 'react-router-dom';
 import reducers from '../reducers';
 // Lazy loaded route with attributes is working in a weird way
 import Hotel from './Hotel';
+import ErrorPage from './ErrorPage';
 
 import {
   Header, Footer, Disclaimer, Loader,
@@ -32,6 +34,8 @@ const LoadableHome = Loadable({
     return <Loader block={200} label="Loading..." />;
   },
 });
+
+const Handle404 = () => <Redirect to="/error-page" />;
 
 // Setup redux
 const history = createHistory();
@@ -57,6 +61,8 @@ const AppContainer = () => (
         <Switch>
           <Route exact path="/" component={LoadableHome} />
           <Route exact path="/hotels/:hotelId" component={Hotel} />
+          <Route exact path="/error-page" component={ErrorPage} />
+          <Route component={Handle404} />
         </Switch>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
 
 import hotelActions from '../actions/hotels';
@@ -8,10 +9,19 @@ import Loader from '../components/Loader';
 import HotelDetail from '../components/HotelDetail';
 
 class Hotel extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { shouldRedirectToError: false };
+  }
+
   componentWillMount() {
     const { fetchHotelDetail, match, hotel } = this.props;
     if (!hotel || (!hotel.hasDetailLoaded && !hotel.hasDetailLoading)) {
-      fetchHotelDetail({ id: match.params.hotelId });
+      fetchHotelDetail({ id: match.params.hotelId }).catch(() => {
+        this.setState({
+          shouldRedirectToError: true,
+        });
+      });
     }
   }
 
@@ -19,6 +29,10 @@ class Hotel extends React.PureComponent {
     const {
       hotel, estimates, handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
+    const { shouldRedirectToError } = this.state;
+    if (shouldRedirectToError) {
+      return <Redirect to="/error-page" />;
+    }
     return (
       (!hotel || hotel.hasDetailLoading)
         ? <Loader block={200} label="Loading hotel from API..." />
