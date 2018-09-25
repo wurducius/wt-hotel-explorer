@@ -11,7 +11,7 @@ class Hotel extends React.PureComponent {
   componentWillMount() {
     const { fetchHotelDetail, match, hotel } = this.props;
     if (!hotel || (!hotel.hasDetailLoaded && !hotel.hasDetailLoading)) {
-      fetchHotelDetail({ id: match.params.hotelId });
+      fetchHotelDetail({ id: match.params.hotelId }).catch(() => {}); // TODO redir to 404 page
     }
   }
 
