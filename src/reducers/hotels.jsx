@@ -75,6 +75,11 @@ const reducer = (state = defaultState, action) => {
       return Object.assign({}, state, {
         list: modifiedList,
       });
+    case 'FETCH_DETAIL_FAILED':
+      modifiedList = state.list.filter(h => h.id !== action.payload.code);
+      return Object.assign({}, state, {
+        list: modifiedList,
+      });
     case 'FETCH_HOTEL_ROOM_TYPES_SUCCEEDED':
       modifiedList = [].concat(state.list);
       hotel = modifiedList.find(h => h.id === action.payload.id);

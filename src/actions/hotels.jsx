@@ -44,7 +44,12 @@ const fetchHotelsData = createActionThunk('FETCH_LIST', ({ getState }) => {
   if (state.hotels.next) {
     url = state.hotels.next;
   }
-  return fetch(url).then(data => data.json());
+  return fetch(url).then((response) => {
+    if (response.status > 299) {
+      throw translateNetworkError(response.status, 'missingHotel', 'Cannot get hotel list!');
+    }
+    return response.json();
+  });
 });
 
 const DETAIL_FIELDS = [
@@ -65,7 +70,7 @@ const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id }) => {
   const url = `${process.env.WT_READ_API}/hotels/${id}?fields=${DETAIL_FIELDS.join(',')}`;
   return fetch(url).then((response) => {
     if (response.status > 299) {
-      throw translateNetworkError(response.status, 'missingHotel', 'Cannot get hotel detail!');
+      throw translateNetworkError(response.status, id, 'Cannot get hotel detail!');
     }
     return response.json();
   });
@@ -76,7 +81,7 @@ const fetchHotelRatePlans = createActionThunk('FETCH_HOTEL_RATE_PLANS', ({ id })
   return fetch(url)
     .then((response) => {
       if (response.status > 299) {
-        throw translateNetworkError(response.status, 'missingHotel', 'Cannot get hotel detail!');
+        throw translateNetworkError(response.status, id, 'Cannot get hotel rate plans!');
       }
       return response.json();
     })
@@ -91,7 +96,7 @@ const fetchHotelRoomTypes = createActionThunk('FETCH_HOTEL_ROOM_TYPES', ({ id })
   return fetch(url)
     .then((response) => {
       if (response.status > 299) {
-        throw translateNetworkError(response.status, 'missingHotel', 'Cannot get hotel detail!');
+        throw translateNetworkError(response.status, id, 'Cannot get hotel room types!');
       }
       return response.json();
     })
