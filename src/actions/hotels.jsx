@@ -9,6 +9,7 @@ import {
 } from '../services/errors';
 
 const LIMIT = 5;
+const ERRORED_REFRESH_TIMEOUT = 10 * 1000;
 
 const LIST_FIELDS = [
   'id',
@@ -52,13 +53,7 @@ const translateNetworkError = (status, code, message) => {
   return e;
 };
 
-const eventuallyResolveErroredHotels = () => (/* dispatch, getState */) => {
-  // fetchHotelDetail(id)
-  // console.log('dispatch a errored list refresh after a
-  // certain time if any errored hotels are returned', dispatch);
-};
-
-const fetchHotelsList = createActionThunk('FETCH_LIST', ({ dispatch, getState }) => {
+const fetchHotelsList = createActionThunk('FETCH_LIST', ({ getState }) => {
   let url = `${process.env.WT_READ_API}/hotels?fields=${LIST_FIELDS.join(',')}&limit=${LIMIT}`;
   const state = getState();
   if (state.hotels.next) {
@@ -69,28 +64,41 @@ const fetchHotelsList = createActionThunk('FETCH_LIST', ({ dispatch, getState })
       throw translateNetworkError(response.status, 'missingHotel', 'Cannot get hotel list!');
     }
     return response.json();
-  }).then((data) => {
-    if (data.errors) {
-      dispatch(eventuallyResolveErroredHotels());
-    }
-    return data;
   });
 });
 
-const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id, dispatch }) => {
+const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id }) => {
   const url = `${process.env.WT_READ_API}/hotels/${id}?fields=${DETAIL_FIELDS.join(',')}`;
   return fetch(url).then((response) => {
     if (response.status > 299) {
-      // No other HTTP status gets queued, these are the only states we might
-      // potentially recover from
-      if (response.status > 499) {
-        dispatch(eventuallyResolveErroredHotels());
-      }
       throw translateNetworkError(response.status, id, 'Cannot get hotel detail!');
     }
     return response.json();
   });
 });
+
+const eventuallyResolveErroredHotels = () => (dispatch, getState) => {
+  setTimeout(() => {
+    const { hotels } = getState();
+    const freshErroredHotelIds = Object.keys(hotels.erroredHotels).filter(id => hotels.erroredHotels[id] === 'fresh');
+    if (freshErroredHotelIds.length) {
+      for (let i = 0; i < freshErroredHotelIds.length; i += 1) {
+        dispatch({
+          type: 'REFETCH_ERRORED_HOTEL_STARTED',
+          payload: {
+            id: freshErroredHotelIds[i],
+          },
+        });
+        dispatch(fetchHotelDetail({
+          id: freshErroredHotelIds[i],
+          dispatch,
+        })).catch(() => {}); // silent catch to prevent error leaking into console
+      }
+      dispatch(eventuallyResolveErroredHotels());
+    }
+  }, ERRORED_REFRESH_TIMEOUT);
+};
+
 
 const fetchHotelRatePlans = createActionThunk('FETCH_HOTEL_RATE_PLANS', ({ id }) => {
   const url = `${process.env.WT_READ_API}/hotels/${id}/ratePlans`;
@@ -127,6 +135,7 @@ const actions = {
   fetchHotelDetail,
   fetchHotelRatePlans,
   fetchHotelRoomTypes,
+  eventuallyResolveErroredHotels,
 };
 
 export default actions;

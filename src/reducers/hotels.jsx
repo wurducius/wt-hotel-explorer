@@ -25,6 +25,14 @@ const reducer = (state = defaultState, action) => {
   let hotel;
   let hotelIndex;
   switch (action.type) {
+    case 'REFETCH_ERRORED_HOTEL_STARTED':
+      currentErroredHotels = Object.assign({}, state.erroredHotels);
+      if (currentErroredHotels[action.payload.id]) {
+        currentErroredHotels[action.payload.id] = 'in-progress';
+      }
+      return Object.assign({}, state, {
+        erroredHotels: currentErroredHotels,
+      });
     case 'FETCH_LIST_STARTED':
       return Object.assign({}, state, {
         hotelsLoading: true,

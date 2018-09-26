@@ -10,10 +10,14 @@ import GuestForm from '../components/GuestForm';
 
 class Home extends React.PureComponent {
   componentWillMount() {
-    const { fetchHotelsList, areHotelsInitialized } = this.props;
+    const {
+      fetchHotelsList, areHotelsInitialized,
+      eventuallyResolveErroredHotels,
+    } = this.props;
     if (!areHotelsInitialized) {
       fetchHotelsList();
     }
+    eventuallyResolveErroredHotels();
   }
 
   render() {
@@ -60,11 +64,12 @@ Home.propTypes = {
   isLoadingMore: PropTypes.bool.isRequired,
   handleGuestFormSubmit: PropTypes.func.isRequired,
   guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
+  eventuallyResolveErroredHotels: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default connect(
   state => ({
-    hotels: state.hotels.list,
+    hotels: state.hotels.list.filter(h => !!h.name),
     estimates: state.estimates.current,
     guestFormInitialValues: state.estimates.guestData,
     next: state.hotels.next,
@@ -73,6 +78,7 @@ export default connect(
   }),
   dispatch => ({
     fetchHotelsList: () => dispatch(hotelActions.fetchHotelsList()),
+    eventuallyResolveErroredHotels: () => dispatch(hotelActions.eventuallyResolveErroredHotels()),
     handleGuestFormSubmit: values => dispatch(estimatesActions.recomputeAllPrices(values)),
   }),
 )(Home);
