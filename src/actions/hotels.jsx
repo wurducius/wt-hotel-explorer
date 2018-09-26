@@ -18,6 +18,20 @@ const LIST_FIELDS = [
   'images',
 ];
 
+const DETAIL_FIELDS = [
+  'id',
+  'name',
+  'description',
+  'location',
+  'images',
+  'contacts',
+  'address',
+  'amenities',
+  'defaultCancellationAmount',
+  'cancellationPolicies',
+  'roomTypes',
+];
+
 const translateNetworkError = (status, code, message) => {
   if (status === 400) {
     return new HttpBadRequestError(code, message);
@@ -38,7 +52,13 @@ const translateNetworkError = (status, code, message) => {
   return e;
 };
 
-const fetchHotelsData = createActionThunk('FETCH_LIST', ({ getState }) => {
+const eventuallyResolveErroredHotels = () => (/* dispatch, getState */) => {
+  // fetchHotelDetail(id)
+  // console.log('dispatch a errored list refresh after a
+  // certain time if any errored hotels are returned', dispatch);
+};
+
+const fetchHotelsList = createActionThunk('FETCH_LIST', ({ dispatch, getState }) => {
   let url = `${process.env.WT_READ_API}/hotels?fields=${LIST_FIELDS.join(',')}&limit=${LIMIT}`;
   const state = getState();
   if (state.hotels.next) {
@@ -49,27 +69,23 @@ const fetchHotelsData = createActionThunk('FETCH_LIST', ({ getState }) => {
       throw translateNetworkError(response.status, 'missingHotel', 'Cannot get hotel list!');
     }
     return response.json();
+  }).then((data) => {
+    if (data.errors) {
+      dispatch(eventuallyResolveErroredHotels());
+    }
+    return data;
   });
 });
 
-const DETAIL_FIELDS = [
-  'id',
-  'name',
-  'description',
-  'location',
-  'images',
-  'contacts',
-  'address',
-  'amenities',
-  'defaultCancellationAmount',
-  'cancellationPolicies',
-  'roomTypes',
-];
-
-const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id }) => {
+const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id, dispatch }) => {
   const url = `${process.env.WT_READ_API}/hotels/${id}?fields=${DETAIL_FIELDS.join(',')}`;
   return fetch(url).then((response) => {
     if (response.status > 299) {
+      // No other HTTP status gets queued, these are the only states we might
+      // potentially recover from
+      if (response.status > 499) {
+        dispatch(eventuallyResolveErroredHotels());
+      }
       throw translateNetworkError(response.status, id, 'Cannot get hotel detail!');
     }
     return response.json();
@@ -107,7 +123,7 @@ const fetchHotelRoomTypes = createActionThunk('FETCH_HOTEL_ROOM_TYPES', ({ id })
 });
 
 const actions = {
-  fetchHotelsData,
+  fetchHotelsList,
   fetchHotelDetail,
   fetchHotelRatePlans,
   fetchHotelRoomTypes,

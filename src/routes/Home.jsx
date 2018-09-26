@@ -10,15 +10,15 @@ import GuestForm from '../components/GuestForm';
 
 class Home extends React.PureComponent {
   componentWillMount() {
-    const { fetchHotelsData, areHotelsInitialized } = this.props;
+    const { fetchHotelsList, areHotelsInitialized } = this.props;
     if (!areHotelsInitialized) {
-      fetchHotelsData();
+      fetchHotelsList();
     }
   }
 
   render() {
     const {
-      hotels, estimates, next, areHotelsInitialized, isLoadingMore, fetchHotelsData,
+      hotels, estimates, next, areHotelsInitialized, isLoadingMore, fetchHotelsList,
       handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
     return (
@@ -37,7 +37,7 @@ class Home extends React.PureComponent {
                   estimates={estimates || {}}
                   isLoadingMore={isLoadingMore}
                   showMore={!!next}
-                  fetchMoreHotels={fetchHotelsData}
+                  fetchMoreHotels={fetchHotelsList}
                 />
               </React.Fragment>
             )}
@@ -52,7 +52,7 @@ Home.defaultProps = {
 };
 
 Home.propTypes = {
-  fetchHotelsData: PropTypes.func.isRequired,
+  fetchHotelsList: PropTypes.func.isRequired,
   hotels: PropTypes.instanceOf(Array).isRequired,
   estimates: PropTypes.instanceOf(Object).isRequired,
   next: PropTypes.string,
@@ -72,7 +72,7 @@ export default connect(
     isLoadingMore: state.hotels.hotelsLoading,
   }),
   dispatch => ({
-    fetchHotelsData: () => dispatch(hotelActions.fetchHotelsData()),
+    fetchHotelsList: () => dispatch(hotelActions.fetchHotelsList()),
     handleGuestFormSubmit: values => dispatch(estimatesActions.recomputeAllPrices(values)),
   }),
 )(Home);
