@@ -10,15 +10,19 @@ import GuestForm from '../components/GuestForm';
 
 class Home extends React.PureComponent {
   componentWillMount() {
-    const { fetchHotelsData, areHotelsInitialized } = this.props;
+    const {
+      fetchHotelsList, areHotelsInitialized,
+      eventuallyResolveErroredHotels,
+    } = this.props;
     if (!areHotelsInitialized) {
-      fetchHotelsData();
+      fetchHotelsList();
     }
+    eventuallyResolveErroredHotels();
   }
 
   render() {
     const {
-      hotels, estimates, next, areHotelsInitialized, isLoadingMore, fetchHotelsData,
+      hotels, estimates, next, areHotelsInitialized, isLoadingMore, fetchHotelsList,
       handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
     return (
@@ -37,7 +41,7 @@ class Home extends React.PureComponent {
                   estimates={estimates || {}}
                   isLoadingMore={isLoadingMore}
                   showMore={!!next}
-                  fetchMoreHotels={fetchHotelsData}
+                  fetchMoreHotels={fetchHotelsList}
                 />
               </React.Fragment>
             )}
@@ -52,7 +56,7 @@ Home.defaultProps = {
 };
 
 Home.propTypes = {
-  fetchHotelsData: PropTypes.func.isRequired,
+  fetchHotelsList: PropTypes.func.isRequired,
   hotels: PropTypes.instanceOf(Array).isRequired,
   estimates: PropTypes.instanceOf(Object).isRequired,
   next: PropTypes.string,
@@ -60,11 +64,12 @@ Home.propTypes = {
   isLoadingMore: PropTypes.bool.isRequired,
   handleGuestFormSubmit: PropTypes.func.isRequired,
   guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
+  eventuallyResolveErroredHotels: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default connect(
   state => ({
-    hotels: state.hotels.list,
+    hotels: state.hotels.list.filter(h => !!h.name),
     estimates: state.estimates.current,
     guestFormInitialValues: state.estimates.guestData,
     next: state.hotels.next,
@@ -72,7 +77,8 @@ export default connect(
     isLoadingMore: state.hotels.hotelsLoading,
   }),
   dispatch => ({
-    fetchHotelsData: () => dispatch(hotelActions.fetchHotelsData()),
+    fetchHotelsList: () => dispatch(hotelActions.fetchHotelsList()),
+    eventuallyResolveErroredHotels: () => dispatch(hotelActions.eventuallyResolveErroredHotels()),
     handleGuestFormSubmit: values => dispatch(estimatesActions.recomputeAllPrices(values)),
   }),
 )(Home);

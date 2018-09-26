@@ -9,6 +9,7 @@ import {
 } from '../services/errors';
 
 const LIMIT = 5;
+const ERRORED_REFRESH_TIMEOUT = 10 * 1000;
 
 const LIST_FIELDS = [
   'id',
@@ -16,6 +17,20 @@ const LIST_FIELDS = [
   'description',
   'location',
   'images',
+];
+
+const DETAIL_FIELDS = [
+  'id',
+  'name',
+  'description',
+  'location',
+  'images',
+  'contacts',
+  'address',
+  'amenities',
+  'defaultCancellationAmount',
+  'cancellationPolicies',
+  'roomTypes',
 ];
 
 const translateNetworkError = (status, code, message) => {
@@ -38,7 +53,7 @@ const translateNetworkError = (status, code, message) => {
   return e;
 };
 
-const fetchHotelsData = createActionThunk('FETCH_LIST', ({ getState }) => {
+const fetchHotelsList = createActionThunk('FETCH_LIST', ({ getState }) => {
   let url = `${process.env.WT_READ_API}/hotels?fields=${LIST_FIELDS.join(',')}&limit=${LIMIT}`;
   const state = getState();
   if (state.hotels.next) {
@@ -52,20 +67,6 @@ const fetchHotelsData = createActionThunk('FETCH_LIST', ({ getState }) => {
   });
 });
 
-const DETAIL_FIELDS = [
-  'id',
-  'name',
-  'description',
-  'location',
-  'images',
-  'contacts',
-  'address',
-  'amenities',
-  'defaultCancellationAmount',
-  'cancellationPolicies',
-  'roomTypes',
-];
-
 const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id }) => {
   const url = `${process.env.WT_READ_API}/hotels/${id}?fields=${DETAIL_FIELDS.join(',')}`;
   return fetch(url).then((response) => {
@@ -75,6 +76,29 @@ const fetchHotelDetail = createActionThunk('FETCH_DETAIL', ({ id }) => {
     return response.json();
   });
 });
+
+const eventuallyResolveErroredHotels = () => (dispatch, getState) => {
+  setTimeout(() => {
+    const { hotels } = getState();
+    const freshErroredHotelIds = Object.keys(hotels.erroredHotels).filter(id => hotels.erroredHotels[id] === 'fresh');
+    if (freshErroredHotelIds.length) {
+      for (let i = 0; i < freshErroredHotelIds.length; i += 1) {
+        dispatch({
+          type: 'REFETCH_ERRORED_HOTEL_STARTED',
+          payload: {
+            id: freshErroredHotelIds[i],
+          },
+        });
+        dispatch(fetchHotelDetail({
+          id: freshErroredHotelIds[i],
+          dispatch,
+        })).catch(() => {}); // silent catch to prevent error leaking into console
+      }
+      dispatch(eventuallyResolveErroredHotels());
+    }
+  }, ERRORED_REFRESH_TIMEOUT);
+};
+
 
 const fetchHotelRatePlans = createActionThunk('FETCH_HOTEL_RATE_PLANS', ({ id }) => {
   const url = `${process.env.WT_READ_API}/hotels/${id}/ratePlans`;
@@ -107,10 +131,11 @@ const fetchHotelRoomTypes = createActionThunk('FETCH_HOTEL_ROOM_TYPES', ({ id })
 });
 
 const actions = {
-  fetchHotelsData,
+  fetchHotelsList,
   fetchHotelDetail,
   fetchHotelRatePlans,
   fetchHotelRoomTypes,
+  eventuallyResolveErroredHotels,
 };
 
 export default actions;
