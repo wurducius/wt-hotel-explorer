@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
 
 import hotelActions from '../actions/hotels';
@@ -8,17 +9,31 @@ import Loader from '../components/Loader';
 import HotelDetail from '../components/HotelDetail';
 
 class Hotel extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { shouldRedirectToError: false };
+  }
+
   componentWillMount() {
     const { fetchHotelDetail, match, hotel } = this.props;
     if (!hotel || (!hotel.hasDetailLoaded && !hotel.hasDetailLoading)) {
-      fetchHotelDetail({ id: match.params.hotelId });
+      fetchHotelDetail({ id: match.params.hotelId }).catch(() => {
+        this.setState({
+          shouldRedirectToError: true,
+        });
+      });
     }
   }
 
   render() {
     const {
-      hotel, estimates, handleGuestFormSubmit, guestFormInitialValues,
+      hotel, estimates, errors,
+      handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
+    const { shouldRedirectToError } = this.state;
+    if (shouldRedirectToError) {
+      return <Redirect to="/error-page" />;
+    }
     return (
       (!hotel || hotel.hasDetailLoading)
         ? <Loader block={200} label="Loading hotel from API..." />
@@ -26,6 +41,7 @@ class Hotel extends React.PureComponent {
           <HotelDetail
             hotel={hotel}
             estimates={estimates}
+            errors={errors}
             handleGuestFormSubmit={handleGuestFormSubmit}
             guestFormInitialValues={guestFormInitialValues}
           />
@@ -37,12 +53,14 @@ class Hotel extends React.PureComponent {
 Hotel.defaultProps = {
   hotel: undefined,
   estimates: [],
+  errors: [],
 };
 
 Hotel.propTypes = {
   match: PropTypes.instanceOf(Object).isRequired,
   hotel: PropTypes.instanceOf(Object),
   estimates: PropTypes.instanceOf(Array),
+  errors: PropTypes.instanceOf(Array),
   fetchHotelDetail: PropTypes.func.isRequired,
   handleGuestFormSubmit: PropTypes.func.isRequired,
   guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
@@ -52,6 +70,7 @@ export default connect(
   (state, ownProps) => ({
     hotel: state.hotels.list.find(hotel => hotel.id === ownProps.match.params.hotelId),
     estimates: state.estimates.current[ownProps.match.params.hotelId],
+    errors: state.errors.hotels[ownProps.match.params.hotelId],
     guestFormInitialValues: state.estimates.guestData,
   }),
   dispatch => ({
