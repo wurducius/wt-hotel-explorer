@@ -289,13 +289,26 @@ a.border-bottom {padding-bottom: 3px;}
 }
 
 
+.room-price {
+  min-height: 75px;
+}
+
 /* HELPERS */
 .text--accent {color: #5F2987 !important;}
 .text--link {
-  color: #164FDD;
+  color: #164FDD !important;
   &:hover {
-    color: #0F3697;
+    color: #0F3697 !important;
   }
+}
+.text--weight-normal {
+  &, & b, & strong {
+    font-weight: normal !important;
+  }
+}
+.text--deleted {
+  opacity: .8 !important;
+  text-decoration: line-through !important;
 }
 
 .box-shadow {

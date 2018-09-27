@@ -8,21 +8,22 @@ import AmenitiesList from '../AmenitiesList';
 
 const QuantityBadge = ({ quantity }) => {
   if (quantity === 0) {
-    return <div>Sold out!</div>;
+    return (
+      <React.Fragment>
+        <i className="mdi mdi-close-octagon text-danger"/> <em>Sold out!</em>
+      </React.Fragment>);
   }
   if (quantity < 3) {
     return (
-      <div>
-Last
-        {' '}
-        {quantity}
-        {' '}
-remaining!
-      </div>
-    );
+    <React.Fragment>
+      <i className="mdi mdi-alert-octagram text-warning"/> <em>Last {quantity} remaining!</em>
+    </React.Fragment>);
   }
   if (quantity === undefined) {
-    return <div>Availability unknown</div>;
+    return (
+    <React.Fragment>
+      <i className="mdi mdi-alert-circle-outline text-muted"/> <em>Availability unknown</em>
+    </React.Fragment>);
   }
   return null;
 };
@@ -38,7 +39,7 @@ QuantityBadge.propTypes = {
 // TODO use properties, totalQuantity and occupancy
 
 const RoomType = ({
-  roomType, estimate, index,
+  roomType, estimate, index
 }) => (
   <React.Fragment>
     <div className="col-sm-12 col-md-6 col-lg-4 d-flex">
@@ -56,29 +57,31 @@ const RoomType = ({
           </button>
 
           <div className="card-body pt-1 text-muted" style={{ minHeight: 200 }}>
-            <h5 className="card-title h6">{roomType.name}</h5>
-            <ReactMarkdown className="card-text" source={roomType.description} />
+            <h5 className="card-title h6">{roomType.name}sss</h5>
+            <ReactMarkdown className="card-text text--weight-normal" source={roomType.description} />
           </div>
 
           {estimate.price && (
-          <div className="card-footer bg-white pt-0">
-            <div className="animated fadeIn text--accent">
-              <i className="mdi mdi-calendar mdi-18px text-muted" />
-              {' '}
-              <strong>
-            Available from
+          <div className="room-price card-footer bg-white pb-0">
+            <div className="animated fadeIn">
+              <p>
+                <i className="mdi mdi-calendar mdi-18px text-muted" />
                 {' '}
-                <span className="font--alt">
-                  {estimate.price.format()}
-                </span>
-                {' '}
-                {estimate.currency}
-              </strong>
+                <strong className={`${estimate.quantity === undefined ? 'text-muted' : estimate.quantity === 0 ? 'text-muted text--deleted' : 'text--accent'}`}>
+                  Available from
+                  {' '}
+                  <span className="font--alt">
+                    {estimate.price.format()}
+                  </span>
+                  {' '}
+                  {estimate.currency}
+                </strong>
+              </p>
+              {estimate.price && (<QuantityBadge quantity={estimate.quantity} />)}
             </div>
           </div>
           )}
-          {estimate.price && (<QuantityBadge quantity={estimate.quantity} />)}
-          <div className="card-footer bg-white pt-0">
+          <div className="card-footer bg-white">
             <AmenitiesList list={roomType.amenities} />
           </div>
         </div>
