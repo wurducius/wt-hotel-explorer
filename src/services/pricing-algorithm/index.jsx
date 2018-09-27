@@ -6,7 +6,7 @@ import {
   getApplicableRatePlans,
 } from './rate-plans';
 
-const computeDailyPrice = (guestData, dateDayjs, ratePlan) => {
+export const computeDailyPrice = (guestData, dateDayjs, ratePlan) => {
   const applicableModifiers = selectApplicableModifiers(
     guestData, ratePlan.modifiers, dateDayjs,
   );
@@ -29,7 +29,7 @@ const computeDailyPrice = (guestData, dateDayjs, ratePlan) => {
   return guestPrices.reduce((a, b) => a.add(currency(b)), currency(0));
 };
 
-const computeStayPrices = (guestData, hotelCurrency, applicableRatePlans) => {
+export const computeStayPrices = (guestData, hotelCurrency, applicableRatePlans) => {
   const dailyPrices = {};
   let currentDate = dayjs(guestData.helpers.arrivalDateDayjs);
   dailyPrices[hotelCurrency] = [];
@@ -78,7 +78,7 @@ const computeStayPrices = (guestData, hotelCurrency, applicableRatePlans) => {
   return dailyPrices;
 };
 
-const computePrices = (guestData, hotel) => {
+export const computePrices = (guestData, hotel) => {
   let { roomTypes, ratePlans } = hotel;
   roomTypes = Object.values(roomTypes);
   ratePlans = Object.values(ratePlans);

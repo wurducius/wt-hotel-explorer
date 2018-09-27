@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
 import hotelActions from '../actions/hotels';
 import estimatesActions from '../actions/estimates';
@@ -9,13 +10,22 @@ import Loader from '../components/Loader';
 import GuestForm from '../components/GuestForm';
 
 class Home extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { shouldRedirectToError: false };
+  }
+
   componentWillMount() {
     const {
       fetchHotelsList, areHotelsInitialized,
       eventuallyResolveErroredHotels,
     } = this.props;
     if (!areHotelsInitialized) {
-      fetchHotelsList();
+      fetchHotelsList().catch(() => {
+        this.setState({
+          shouldRedirectToError: true,
+        });
+      });
     }
     eventuallyResolveErroredHotels();
   }
@@ -25,6 +35,10 @@ class Home extends React.PureComponent {
       hotels, estimates, next, areHotelsInitialized, isLoadingMore, fetchHotelsList,
       handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
+    const { shouldRedirectToError } = this.state;
+    if (shouldRedirectToError) {
+      return <Redirect to="/error-page" />;
+    }
     return (
       <div className="row">
         <div className="col-md-12">

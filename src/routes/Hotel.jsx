@@ -27,7 +27,8 @@ class Hotel extends React.PureComponent {
 
   render() {
     const {
-      hotel, estimates, handleGuestFormSubmit, guestFormInitialValues,
+      hotel, estimates, errors,
+      handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
     const { shouldRedirectToError } = this.state;
     if (shouldRedirectToError) {
@@ -40,6 +41,7 @@ class Hotel extends React.PureComponent {
           <HotelDetail
             hotel={hotel}
             estimates={estimates}
+            errors={errors}
             handleGuestFormSubmit={handleGuestFormSubmit}
             guestFormInitialValues={guestFormInitialValues}
           />
@@ -51,12 +53,14 @@ class Hotel extends React.PureComponent {
 Hotel.defaultProps = {
   hotel: undefined,
   estimates: [],
+  errors: [],
 };
 
 Hotel.propTypes = {
   match: PropTypes.instanceOf(Object).isRequired,
   hotel: PropTypes.instanceOf(Object),
   estimates: PropTypes.instanceOf(Array),
+  errors: PropTypes.instanceOf(Array),
   fetchHotelDetail: PropTypes.func.isRequired,
   handleGuestFormSubmit: PropTypes.func.isRequired,
   guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
@@ -66,6 +70,7 @@ export default connect(
   (state, ownProps) => ({
     hotel: state.hotels.list.find(hotel => hotel.id === ownProps.match.params.hotelId),
     estimates: state.estimates.current[ownProps.match.params.hotelId],
+    errors: state.errors.hotels[ownProps.match.params.hotelId],
     guestFormInitialValues: state.estimates.guestData,
   }),
   dispatch => ({

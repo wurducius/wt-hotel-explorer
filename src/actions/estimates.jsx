@@ -1,5 +1,6 @@
 import hotelActions from './hotels';
-import pricingAlgorithm from '../services/pricing-algorithm';
+import { computePrices } from '../services/pricing-algorithm';
+import { enhancePricingEstimates } from '../services/availability';
 
 const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   const state = getState();
@@ -7,11 +8,8 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   if (!hotel) {
     return;
   }
-  const { roomTypes, ratePlans } = hotel;
-  if (!roomTypes) {
-    return;
-  }
-  if (!ratePlans) {
+  const { roomTypes, ratePlans, availability } = hotel;
+  if (!roomTypes || !ratePlans || !availability) {
     return;
   }
   const { guestData } = state.estimates;
@@ -24,33 +22,45 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   ) {
     return;
   }
-  const data = pricingAlgorithm.computePrices(guestData, hotel);
+  const pricingEstimates = computePrices(guestData, hotel);
   dispatch({
     type: 'SET_ESTIMATES',
     payload: {
       id,
-      data,
+      data: enhancePricingEstimates(guestData, pricingEstimates, hotel),
     },
   });
 };
 
-const fetchAndComputeHotelEstimates = ({ id, ratePlans, roomTypes }) => (dispatch) => {
+const fetchAndComputeHotelEstimates = ({
+  id, ratePlans, roomTypes, availability,
+}) => (dispatch) => {
   let ratePlansPromise;
   let roomTypesPromise;
+  let availabilityPromise;
   // Do not hit hotels with rate plans already downloaded
   if (ratePlans) {
     ratePlansPromise = Promise.resolve();
   } else {
-    ratePlansPromise = dispatch(hotelActions.fetchHotelRatePlans({ id }));
+    // silent catch, the errors are dealt with in appropriate reducers
+    ratePlansPromise = dispatch(hotelActions.fetchHotelRatePlans({ id })).catch(() => {});
   }
   // Do not hit hotels with room types already downloaded
   if (roomTypes) {
     roomTypesPromise = Promise.resolve();
   } else {
-    roomTypesPromise = dispatch(hotelActions.fetchHotelRoomTypes({ id }));
+    // silent catch, the errors are dealt with in appropriate reducers
+    roomTypesPromise = dispatch(hotelActions.fetchHotelRoomTypes({ id })).catch(() => {});
   }
-  // for each hotel in parallel get rate plan, room types and recompute estimates
-  return Promise.all([ratePlansPromise, roomTypesPromise])
+  // Do not hit hotels with availability already downloaded
+  if (availability) {
+    availabilityPromise = Promise.resolve();
+  } else {
+    // silent catch, the errors are dealt with in appropriate reducers
+    availabilityPromise = dispatch(hotelActions.fetchHotelAvailability({ id })).catch(() => {});
+  }
+  // for each hotel in parallel get rate plan, room types, availability and recompute estimates
+  return Promise.all([ratePlansPromise, roomTypesPromise, availabilityPromise])
     .then(() => dispatch(recomputeHotelEstimates({ id })));
 };
 
