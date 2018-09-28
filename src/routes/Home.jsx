@@ -46,10 +46,27 @@ class Home extends React.PureComponent {
             ? <Loader block={200} label="Loading hotels from API..." />
             : (
               <React.Fragment>
+
+                <header className="row">
+                  <div className="col-md-12">
+
+                    <div className="text-center">
+                      <h1 className="mt-1">Hotel Explorer</h1>
+                      <div className="row">
+                        <div className="col-md-10 mx-auto mb-2">
+                          <p className="lead mb-1">Browse hotels, check their rooms and get availability information!</p>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </header>
+
                 <GuestForm
                   handleSubmit={handleGuestFormSubmit}
                   initialValues={guestFormInitialValues}
                 />
+
                 <HotelListing
                   hotels={hotels || []}
                   estimates={estimates || {}}
