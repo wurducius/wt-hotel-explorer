@@ -25,6 +25,9 @@ describe('selectors.hotels', () => {
     state = {
       hotels: {
         list: [{ id: 1, name: 'someHotel' }],
+        next: 'urlToNext',
+        hotelsInitialized: false,
+        isLoadingMore: true,
       },
     };
   });
@@ -47,5 +50,17 @@ describe('selectors.hotels', () => {
     state = reducer(state, updater);
     expect(getHotelById(state, 1)).toEqual({ id: 1, name: 'updatedHotel' });
     expect(getHotelById.recomputations()).toEqual(2);
+  });
+  it('getHotels', () => {
+    expect(selectors.hotels.getHotels(state)).toEqual([{ id: 1, name: 'someHotel' }]);
+  });
+  it('getNextHotel', () => {
+    expect(selectors.hotels.getNextHotel(state)).toEqual('urlToNext');
+  });
+  it('areHotelsInitialized', () => {
+    expect(selectors.hotels.areHotelsInitialized(state)).toEqual(false);
+  });
+  it('isLoadingMore', () => {
+    expect(selectors.hotels.isLoadingMore(state)).toEqual(true);
   });
 });
