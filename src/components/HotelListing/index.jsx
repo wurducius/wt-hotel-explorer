@@ -52,9 +52,13 @@ const HotelListing = ({
   );
 };
 
+HotelListing.defaultProps = {
+  isLoadingMore: false,
+};
+
 HotelListing.propTypes = {
   hotels: PropTypes.instanceOf(Array).isRequired,
-  isLoadingMore: PropTypes.bool.isRequired,
+  isLoadingMore: PropTypes.bool,
   showMore: PropTypes.bool.isRequired,
   fetchMoreHotels: PropTypes.func.isRequired,
   estimates: PropTypes.instanceOf(Object).isRequired,
