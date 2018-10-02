@@ -112,7 +112,7 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
     handleSubmit(result);
   };
   return (
-    <React.Fragment>
+    <div className="collapse" id="form-estimates">
       <h2 className="my-1 h3">Get an estimate</h2>
       <Formik
         initialValues={initialValues}
@@ -120,7 +120,7 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
         onSubmit={doSubmit}
       >
         {({ isSubmitting, errors, touched }) => (
-          <Form className="mb-1">
+          <Form className="border border-light bg-light p-2 mb-2">
             <div className="form-row mb-1">
               <div className="form-group col-md-6">
                 <label htmlFor="arrival">Date of arrival</label>
@@ -152,11 +152,10 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
 
             <button type="submit" disabled={isSubmitting} className="btn btn-primary">Get estimates!</button>
 
-            <hr className="my-2" />
           </Form>
         )}
       </Formik>
-    </React.Fragment>
+    </div>
   );
 };
 

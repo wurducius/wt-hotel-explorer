@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import ScrollAnimation from 'react-animate-on-scroll';
 
+const goToTop = () => {
+  window.scrollTo(0, 0);
+};
 
 const HotelListingItem = ({ hotel, estimates }) => {
   const currentLowestEstimate = estimates.reduce((acc, current) => {
@@ -14,7 +17,8 @@ const HotelListingItem = ({ hotel, estimates }) => {
   }, {});
   return (
     <ScrollAnimation animateIn="fadeInUp" animateOnce>
-      <Link to={`/hotels/${hotel.id}`} className="card mb-2">
+
+      <Link to={`/hotels/${hotel.id}`} onClick={goToTop} className="card mb-2">
         <img src={hotel.images[0]} alt={hotel.name} className="card-img-top" />
         <div className="card-body pt-1 text-muted block-fade">
           <h5 className="card-title h6">{hotel.name}</h5>
