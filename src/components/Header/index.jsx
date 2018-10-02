@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-var is_root = location.pathname == "/";
-
 export default () => (
   <div id="app-header">
     <nav className="navbar navbar-expand-xl navbar-light" id="navbar">

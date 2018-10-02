@@ -6,7 +6,7 @@ import ScrollAnimation from 'react-animate-on-scroll';
 
 const goToTop = () => {
   window.scrollTo(0, 0);
-}
+};
 
 const HotelListingItem = ({ hotel, estimates }) => {
   const currentLowestEstimate = estimates.reduce((acc, current) => {
