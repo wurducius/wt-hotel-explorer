@@ -27,7 +27,7 @@ describe('selectors.hotels', () => {
         list: [{ id: 1, name: 'someHotel' }],
         next: 'urlToNext',
         hotelsInitialized: false,
-        isLoadingMore: true,
+        hotelsLoading: true,
       },
     };
   });

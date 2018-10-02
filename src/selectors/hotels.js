@@ -13,7 +13,7 @@ export function areHotelsInitialized(state) {
 }
 
 export function isLoadingMore(state) {
-  return state.hotels.isLoadingMore;
+  return state.hotels.hotelsLoading;
 }
 
 export const getHotelsWithName = createSelector(
