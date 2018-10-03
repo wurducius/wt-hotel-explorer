@@ -4,6 +4,7 @@ import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
 import hotelActions from '../actions/hotels';
 import estimatesActions from '../actions/estimates';
+import selectors from '../selectors';
 
 import HotelListing from '../components/HotelListing';
 import Loader from '../components/Loader';
@@ -15,7 +16,7 @@ class Home extends React.PureComponent {
     this.state = { shouldRedirectToError: false };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       fetchHotelsList, areHotelsInitialized,
       eventuallyResolveErroredHotels,
@@ -100,12 +101,12 @@ Home.propTypes = {
 
 export default connect(
   state => ({
-    hotels: state.hotels.list.filter(h => !!h.name),
-    estimates: state.estimates.current,
-    guestFormInitialValues: state.estimates.guestData,
-    next: state.hotels.next,
-    areHotelsInitialized: state.hotels.hotelsInitialized,
-    isLoadingMore: state.hotels.hotelsLoading,
+    hotels: selectors.hotels.getHotelsWithName(state),
+    estimates: selectors.estimates.getCurrent(state),
+    guestFormInitialValues: selectors.estimates.getGuestData(state),
+    next: selectors.hotels.getNextHotel(state),
+    areHotelsInitialized: selectors.hotels.areHotelsInitialized(state),
+    isLoadingMore: selectors.hotels.isLoadingMore(state),
   }),
   dispatch => ({
     fetchHotelsList: () => dispatch(hotelActions.fetchHotelsList()),

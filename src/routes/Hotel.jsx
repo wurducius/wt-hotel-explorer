@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
 
+import selectors from '../selectors';
 import hotelActions from '../actions/hotels';
 import estimatesActions from '../actions/estimates';
 import Loader from '../components/Loader';
@@ -67,12 +68,16 @@ Hotel.propTypes = {
 };
 
 export default connect(
-  (state, ownProps) => ({
-    hotel: state.hotels.list.find(hotel => hotel.id === ownProps.match.params.hotelId),
-    estimates: state.estimates.current[ownProps.match.params.hotelId],
-    errors: state.errors.hotels[ownProps.match.params.hotelId],
-    guestFormInitialValues: state.estimates.guestData,
-  }),
+  (state, ownProps) => {
+    const getHotelById = selectors.hotels.makeGetHotelById();
+    const { hotelId } = ownProps.match.params;
+    return {
+      hotel: getHotelById(state, hotelId),
+      estimates: selectors.estimates.getCurrentByHotelId(state, hotelId),
+      errors: state.errors.hotels[hotelId],
+      guestFormInitialValues: selectors.estimates.getGuestData(state),
+    };
+  },
   dispatch => ({
     fetchHotelDetail: id => dispatch(hotelActions.fetchHotelDetail(id)),
     handleGuestFormSubmit: values => dispatch(estimatesActions.recomputeAllPrices(values)),

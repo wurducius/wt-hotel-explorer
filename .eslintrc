@@ -4,12 +4,12 @@
     "strict": 0,
     "jsx-a11y/label-has-associated-control": [ 2, {
       "controlComponents": ["Field"],
-      "depth": 3,
+      "depth": 3
     }],
     "jsx-a11y/label-has-for": [ 2, {
       "required": {
           "every": [ "id" ]
-      },
+      }
     }]
   },
   "extends": "airbnb",
