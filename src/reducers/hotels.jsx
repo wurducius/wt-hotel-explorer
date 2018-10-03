@@ -75,9 +75,9 @@ const reducer = (state = defaultState, action) => {
         currentErroredHotels = Object.assign({}, state.erroredHotels);
       }
 
-      modifiedList = state.list;
-      existingIds = state.list.map(h => h.id).reduce((acc, cur, i) => {
-        acc[cur] = i;
+      modifiedList = [...state.list];
+      existingIds = state.list.reduce((acc, h, i) => {
+        acc[h.id] = i;
         return acc;
       }, {});
       for (let i = 0; i < action.payload.items.length; i += 1) {

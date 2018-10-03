@@ -1,5 +1,9 @@
 /* OVERRIDES */
 
+[type=reset], [type=submit], button, html [type=button] {
+  -webkit-appearance: none;
+}
+
 .alert {border-width: 2px!important;}
 .badge {
   padding: 6px 10px;
@@ -64,11 +68,9 @@ a.border-bottom {padding-bottom: 3px;}
   }
 
   @media all and (min-width: 400px) {
-
     &, > div {
       width: 100%;
     }
-
   }
 }
 

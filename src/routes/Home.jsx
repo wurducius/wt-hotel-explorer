@@ -4,6 +4,7 @@ import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
 import hotelActions from '../actions/hotels';
 import estimatesActions from '../actions/estimates';
+import selectors from '../selectors';
 
 import HotelListing from '../components/HotelListing';
 import Loader from '../components/Loader';
@@ -15,7 +16,7 @@ class Home extends React.PureComponent {
     this.state = { shouldRedirectToError: false };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       fetchHotelsList, areHotelsInitialized,
       eventuallyResolveErroredHotels,
@@ -46,10 +47,27 @@ class Home extends React.PureComponent {
             ? <Loader block={200} label="Loading hotels from API..." />
             : (
               <React.Fragment>
+
+                <header className="row">
+                  <div className="col-md-12">
+
+                    <div className="text-center">
+                      <h1 className="mt-1">Hotel Explorer</h1>
+                      <div className="row">
+                        <div className="col-md-10 mx-auto mb-2">
+                          <p className="lead mb-1">Browse hotels, check their rooms and get availability information!</p>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </header>
+
                 <GuestForm
                   handleSubmit={handleGuestFormSubmit}
                   initialValues={guestFormInitialValues}
                 />
+
                 <HotelListing
                   hotels={hotels || []}
                   estimates={estimates || {}}
@@ -83,12 +101,12 @@ Home.propTypes = {
 
 export default connect(
   state => ({
-    hotels: state.hotels.list.filter(h => !!h.name),
-    estimates: state.estimates.current,
-    guestFormInitialValues: state.estimates.guestData,
-    next: state.hotels.next,
-    areHotelsInitialized: state.hotels.hotelsInitialized,
-    isLoadingMore: state.hotels.hotelsLoading,
+    hotels: selectors.hotels.getHotelsWithName(state),
+    estimates: selectors.estimates.getCurrent(state),
+    guestFormInitialValues: selectors.estimates.getGuestData(state),
+    next: selectors.hotels.getNextHotel(state),
+    areHotelsInitialized: selectors.hotels.areHotelsInitialized(state),
+    isLoadingMore: selectors.hotels.isLoadingMore(state),
   }),
   dispatch => ({
     fetchHotelsList: () => dispatch(hotelActions.fetchHotelsList()),

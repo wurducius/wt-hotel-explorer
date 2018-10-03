@@ -1,6 +1,7 @@
 language: node_js
 node_js:
 - node
+install: case $TRAVIS_BRANCH in greenkeeper*) npm i;; *) npm ci;; esac;
 cache:
   directories:
   - node_modules

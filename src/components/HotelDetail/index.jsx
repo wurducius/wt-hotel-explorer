@@ -10,12 +10,13 @@ import { Address, LocationMap } from '../HotelLocation';
 import RoomTypes from '../RoomTypes';
 import GuestForm from '../GuestForm';
 
+
 // TODO use cancellationPolicies + defaultCancellationAmount
 const HotelDetail = ({
   hotel, estimates, errors, handleGuestFormSubmit, guestFormInitialValues,
 }) => (
   <React.Fragment>
-    <div className="row">
+    <header className="row">
       <div className="col-md-12">
 
         <div className="text-center">
@@ -29,8 +30,10 @@ const HotelDetail = ({
             <AmenitiesList list={hotel.amenities} />
           </div>
         </div>
+
       </div>
-    </div>
+    </header>
+
     <div className="row">
       <div className="col">
         <GuestForm handleSubmit={handleGuestFormSubmit} initialValues={guestFormInitialValues} />
