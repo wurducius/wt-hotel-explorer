@@ -2,37 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ScrollAnimation from 'react-animate-on-scroll';
-import { Redirect } from 'react-router';
 
 class HotelListingItem extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      goToDetail: false,
-    };
-    this.goToTop = this.goToTop.bind(this);
-    this.goToTopWithKeyboard = this.goToTopWithKeyboard.bind(this);
-  }
-
-  goToTop() {
-    this.setState({ goToDetail: true });
-    window.scrollTo(0, 0);
-  }
-
-  goToTopWithKeyboard(event) {
-    if (event.key === 'Enter') {
-      this.setState({ goToDetail: true });
-      window.scrollTo(0, 0);
-    }
+  onCardClick = () => {
+    const { hotel } = this.props;
+    window.open(`/hotels/${hotel.id}`, '_self');
   }
 
   render() {
     const { hotel, estimates } = this.props;
-    const { goToDetail } = this.state;
-
-    if (goToDetail === true) {
-      return (<Redirect to={`/hotels/${hotel.id}`} />);
-    }
 
     const currentLowestEstimate = estimates.reduce((acc, current) => {
       if (!acc.price || current.price <= acc.price) {
@@ -43,7 +21,7 @@ class HotelListingItem extends React.Component {
     return (
       <ScrollAnimation animateIn="fadeInUp" animateOnce>
 
-        <div onClick={this.goToTop} onKeyPress={this.goToTopWithKeyboard} className="card mb-2 card-with-links" role="link" tabIndex="0">
+        <div onClick={this.onCardClick} onKeyPress={this.onCardClick} className="card mb-2 card-with-links" role="link" tabIndex="0">
           <img src={hotel.images[0]} alt={hotel.name} className="card-img-top" />
           <div className="card-body pt-1 text-muted block-fade">
             <h5 className="card-title h6">{hotel.name}</h5>
