@@ -6,7 +6,8 @@ export default () => (
     <nav className="navbar navbar-expand-xl navbar-light" id="navbar">
       <div className="container">
         <Link className="navbar-brand mr-2" to="/">Winding Tree</Link>
-
+        {/hotels\/.*/.test(window.location.pathname)
+        && (
         <div className="collapse navbar-collapse" id="navbar-content">
           <ul className="navbar-nav ml-auto" id="navbar-nav">
             <li className="nav-item">
@@ -14,6 +15,7 @@ export default () => (
             </li>
           </ul>
         </div>
+        )}
 
         <div className="ml-lg-1">
           <button className="btn btn-block btn-primary" id="navbar-btn" type="button" data-toggle="collapse" data-target="#form-estimates" aria-expanded="false" aria-controls="form-estimates">
