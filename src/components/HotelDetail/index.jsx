@@ -10,7 +10,6 @@ import { Address, LocationMap } from '../HotelLocation';
 import RoomTypes from '../RoomTypes';
 import GuestForm from '../GuestForm';
 
-
 // TODO use cancellationPolicies + defaultCancellationAmount
 const HotelDetail = ({
   hotel, estimates, errors, handleGuestFormSubmit, guestFormInitialValues,

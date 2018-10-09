@@ -2,11 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ScrollAnimation from 'react-animate-on-scroll';
+import { withRouter } from 'react-router-dom';
 
 class HotelListingItem extends React.Component {
   onCardClick = () => {
-    const { hotel } = this.props;
-    window.open(`/hotels/${hotel.id}`, '_self');
+    const { hotel, history } = this.props;
+    history.push(`/hotels/${hotel.id}`);
+  }
+
+  onKeyPress = (e) => {
+    if (e.key !== 'Enter') return;
+    this.onCardClick();
   }
 
   render() {
@@ -21,7 +27,7 @@ class HotelListingItem extends React.Component {
     return (
       <ScrollAnimation animateIn="fadeInUp" animateOnce>
 
-        <div onClick={this.onCardClick} onKeyPress={this.onCardClick} className="card mb-2 card-with-links" role="link" tabIndex="0">
+        <div onClick={this.onCardClick} onKeyPress={this.onKeyPress} className="card mb-2 card-with-links" role="link" tabIndex="0">
           <img src={hotel.images[0]} alt={hotel.name} className="card-img-top" />
           <div className="card-body pt-1 text-muted block-fade">
             <h5 className="card-title h6">{hotel.name}</h5>
@@ -60,6 +66,7 @@ HotelListingItem.defaultProps = {
 HotelListingItem.propTypes = {
   hotel: PropTypes.instanceOf(Object).isRequired,
   estimates: PropTypes.instanceOf(Array),
+  history: PropTypes.instanceOf(Object).isRequired,
 };
 
-export default HotelListingItem;
+export default withRouter(HotelListingItem);
