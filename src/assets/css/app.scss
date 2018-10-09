@@ -91,29 +91,15 @@ a.border-bottom {padding-bottom: 3px;}
   cursor: pointer;
 }
 
-@keyframes hvr-pulse-grow-in {
-    from {top: 0;}
-    to { top: -1.5em;}
-}
-
-@keyframes hvr-pulse-grow-out {
-  from {top: -1.5em;}
-    to { top: 0}
-}
-
 @media (min-width: 768px) {
   .card-with-links {
     position: relative;
-    transition: all .2s ease-in-all;
-    animation-name: hvr-pulse-grow-out;
-    animation-duration: .4s;
+    transition: all .2s ease-in-out;
+
   }
-  .card-with-links:hover, .card-with-links:active {
+  .card-with-links:hover, .card-with-links:focus {
     position: relative;
-    transition: all .2s ease-in-all;
-    animation-name: hvr-pulse-grow-in;
-    animation-duration: .4s;
-    top: -1.5em
+    transform: translateY(-1.5em);
   }
 }
 
