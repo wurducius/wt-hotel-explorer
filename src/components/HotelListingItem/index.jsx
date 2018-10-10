@@ -11,7 +11,7 @@ class HotelListingItem extends React.Component {
   }
 
   onKeyPress = (e) => {
-    if (e.key !== 'Enter') return;
+    if (e.key !== 'Enter') { return; }
     this.onCardClick();
   }
 
