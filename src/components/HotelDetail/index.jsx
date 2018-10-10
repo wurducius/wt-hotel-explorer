@@ -26,9 +26,11 @@ const HotelDetail = ({
               <ReactMarkdown source={hotel.description} className="hotel-description mb-1" />
             </div>
           </div>
-          <div className="mb-2">
-            <AmenitiesList list={hotel.amenities} />
-          </div>
+          {hotel.amenities && (
+            <div className="mb-2">
+              <AmenitiesList list={hotel.amenities} />
+            </div>
+          )}
         </div>
 
       </div>
@@ -64,11 +66,13 @@ const HotelDetail = ({
       <div className="row">
         <div className="col-md-12 bg-light rounded p-2 mt-1">
           <div className="row">
-            <div className="col-lg-4">
-              <div className="rounded box-shadow" style={{ overflow: 'hidden' }}>
-                <ImageList list={hotel.images} height={300} />
+            {hotel.images && (
+              <div className="col-lg-4">
+                <div className="rounded box-shadow" style={{ overflow: 'hidden' }}>
+                  <ImageList list={hotel.images} height={300} />
+                </div>
               </div>
-            </div>
+            )}
             <div className="col-lg-4">
               <div className="box-shadow">
                 <div className="mb-1 mb-lg-0 mt-1 mt-lg-0 mb-0 map-container">
