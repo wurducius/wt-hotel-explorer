@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
@@ -8,6 +8,7 @@ import hotelActions from '../actions/hotels';
 import estimatesActions from '../actions/estimates';
 import Loader from '../components/Loader';
 import HotelDetail from '../components/HotelDetail';
+import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
 
 class Hotel extends React.PureComponent {
   constructor(props) {
@@ -15,7 +16,7 @@ class Hotel extends React.PureComponent {
     this.state = { shouldRedirectToError: false };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { fetchHotelDetail, match, hotel } = this.props;
     if (!hotel || (!hotel.hasDetailLoaded && !hotel.hasDetailLoading)) {
       fetchHotelDetail({ id: match.params.hotelId }).catch(() => {
@@ -36,17 +37,20 @@ class Hotel extends React.PureComponent {
       return <Redirect to="/error-page" />;
     }
     return (
-      (!hotel || hotel.hasDetailLoading)
-        ? <Loader block={200} label="Loading hotel from API..." />
-        : (
-          <HotelDetail
-            hotel={hotel}
-            estimates={estimates}
-            errors={errors}
-            handleGuestFormSubmit={handleGuestFormSubmit}
-            guestFormInitialValues={guestFormInitialValues}
-          />
-        )
+      <Fragment>
+        <ScrollToTopOnMount />
+        {(!hotel || hotel.hasDetailLoading || !hotel.hasDetailLoaded)
+          ? <Loader block={200} label="Loading hotel from API..." />
+          : (
+            <HotelDetail
+              hotel={hotel}
+              estimates={estimates}
+              errors={errors}
+              handleGuestFormSubmit={handleGuestFormSubmit}
+              guestFormInitialValues={guestFormInitialValues}
+            />
+          )}
+      </Fragment>
     );
   }
 }
