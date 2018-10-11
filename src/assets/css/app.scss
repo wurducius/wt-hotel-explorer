@@ -87,6 +87,23 @@ a.border-bottom {padding-bottom: 3px;}
 }
 
 
+.card-with-links {
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .card-with-links {
+    position: relative;
+    transition: all .2s ease-in-out;
+
+  }
+  .card-with-links:hover, .card-with-links:focus {
+    position: relative;
+    transform: translateY(-1.5em);
+  }
+}
+
+
 /* Sticky footer styles */
 @media all and (min-width: 768px) {
   html {
