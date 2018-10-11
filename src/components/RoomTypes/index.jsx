@@ -100,9 +100,11 @@ class RoomType extends React.PureComponent {
                 </div>
               </div>
               )}
-              <div className="card-footer bg-white">
-                <AmenitiesList list={roomType.amenities} />
-              </div>
+              {roomType.amenities && (
+                <div className="card-footer bg-white">
+                  <AmenitiesList list={roomType.amenities} />
+                </div>
+              )}
             </div>
           </ScrollAnimation>
         </div>
