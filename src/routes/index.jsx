@@ -59,9 +59,9 @@ const AppContainer = () => (
       <div className="container">
         <Disclaimer />
         <Switch>
-          <Route exact path="/" component={LoadableHome} />
           <Route exact path="/hotels/:hotelId" component={Hotel} />
           <Route exact path="/error-page" component={ErrorPage} />
+          <Route exact path="/" component={LoadableHome} />
           <Route component={Handle404} />
         </Switch>
       </div>
