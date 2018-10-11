@@ -67,8 +67,11 @@ class RoomType extends React.PureComponent {
           <ScrollAnimation animateIn="fadeInUp" animateOnce delay={100 * index} className="w-100 d-flex">
             <div className="card mb-2">
               <button className="card-img-top area-btn" type="button" data-toggle="modal" data-target={`#roomModal-${index + 1}`}>
-                <div className="img-crop" style={{ backgroundImage: `URL(${roomType.images[0]})` }}>
-                  <img src={roomType.images[0]} alt={roomType.images[0]} />
+                <div className="img-crop" style={{ backgroundImage: `URL(${roomType.images && roomType.images[0]})` }}>
+                  <img
+                    src={roomType.images && roomType.images[0]}
+                    alt={roomType.images && roomType.images[0]}
+                  />
                 </div>
 
                 <div className="area-btn__btn">
