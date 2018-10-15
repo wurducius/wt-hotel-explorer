@@ -46,8 +46,14 @@ export const computeStayPrices = (guestData, hotelCurrency, applicableRatePlans)
       if (!dailyPrices[currentCurrency]) {
         dailyPrices[currentCurrency] = [];
       }
-      const availableForTravelFrom = dayjs(currentRatePlan.availableForTravel.from);
-      const availableForTravelTo = dayjs(currentRatePlan.availableForTravel.to);
+
+      // Rate plan without date restriction can be applied at any time
+      const availableForTravelFrom = currentRatePlan.availableForTravel
+        ? dayjs(currentRatePlan.availableForTravel.from)
+        : dayjs(currentDate);
+      const availableForTravelTo = currentRatePlan.availableForTravel
+        ? dayjs(currentRatePlan.availableForTravel.to)
+        : dayjs(currentDate);
       // Deal with a rate plan ending sometimes during the stay
       if (currentDate >= availableForTravelFrom && currentDate <= availableForTravelTo) {
         const currentDailyPrice = computeDailyPrice(

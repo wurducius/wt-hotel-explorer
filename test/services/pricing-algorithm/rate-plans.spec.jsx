@@ -85,6 +85,28 @@ describe('services.pricing-algorithm.rate-plans', () => {
       expect(result[0]).toHaveProperty('price', 100);
     });
 
+    it('should return rate plan without availableForTravel', () => {
+      hotel.ratePlans.rpa.availableForTravel = undefined;
+      const result = getApplicableRatePlans(
+        guestData,
+        hotel.roomTypes.rtb,
+        [hotel.ratePlans.rpa],
+      );
+      expect(result.length).toBe(1);
+      expect(result[0]).toHaveProperty('price', 100);
+    });
+
+    it('should return rate plan without availableForReservation', () => {
+      hotel.ratePlans.rpa.availableForReservation = undefined;
+      const result = getApplicableRatePlans(
+        guestData,
+        hotel.roomTypes.rtb,
+        [hotel.ratePlans.rpa],
+      );
+      expect(result.length).toBe(1);
+      expect(result[0]).toHaveProperty('price', 100);
+    });
+
     it('should return multiple fitting rate plans', () => {
       hotel.ratePlans.rpb = {
         id: 'rpb',

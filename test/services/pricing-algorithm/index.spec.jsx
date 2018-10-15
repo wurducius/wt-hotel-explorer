@@ -80,6 +80,24 @@ describe('services.pricing-algorithm.index', () => {
       expect(result[hotel.currency][1].format()).toBe(currency(60).format());
     });
 
+    it('should return the lowest price if no modifiers are present and multiple rate plans fit (one without availableForTravel)', () => {
+      hotel.ratePlans.rpb = {
+        id: 'rpb',
+        price: 60,
+        roomTypeIds: ['rtb'],
+      };
+
+      const result = computeStayPrices(
+        guestData,
+        hotel.currency,
+        Object.values(hotel.ratePlans),
+      );
+      expect(result).toHaveProperty(hotel.currency);
+      expect(result[hotel.currency].length).toBe(2);
+      expect(result[hotel.currency][0].format()).toBe(currency(60).format());
+      expect(result[hotel.currency][1].format()).toBe(currency(60).format());
+    });
+
     it('should combine multiple rate plans if the stay range hits both of them', () => {
       hotel.ratePlans.rpa = Object.assign(
         {},
@@ -131,6 +149,51 @@ describe('services.pricing-algorithm.index', () => {
       expect(result[hotel.currency][5].format()).toBe(currency(3 * 60).format()); // 10-07
       expect(result[hotel.currency][6].format()).toBe(currency(3 * 60).format()); // 10-08
       expect(result[hotel.currency][7].format()).toBe(currency(3 * 60).format()); // 10-09
+    });
+
+    it('should combine multiple rate plans if the stay range hits both of them (one without availableForTravel)', () => {
+      hotel.ratePlans.rpa = Object.assign(
+        {},
+        hotel.ratePlans.rpa, {
+          price: 60,
+          availableForTravel: {
+            from: '2018-10-02',
+            to: '2018-10-06',
+          },
+        },
+      );
+      hotel.ratePlans.rpb = {
+        id: 'rpb',
+        price: 73,
+        roomTypeIds: ['rtb'],
+      };
+      guestData = Object.assign({}, guestData, {
+        arrival: '2018-10-02',
+        departure: '2018-10-10',
+        guestAges: [10, 20, 30],
+        helpers: {
+          arrivalDateDayjs: dayjs('2018-10-02'),
+          departureDateDayjs: dayjs('2018-10-10'),
+          lengthOfStay: 8,
+          numberOfGuests: 3,
+        },
+      });
+
+      const result = computeStayPrices(
+        guestData,
+        hotel.currency,
+        Object.values(hotel.ratePlans),
+      );
+      expect(result).toHaveProperty(hotel.currency);
+      expect(result[hotel.currency].length).toBe(8);
+      expect(result[hotel.currency][0].format()).toBe(currency(3 * 60).format()); // 10-02
+      expect(result[hotel.currency][1].format()).toBe(currency(3 * 60).format()); // 10-03
+      expect(result[hotel.currency][2].format()).toBe(currency(3 * 60).format()); // 10-04
+      expect(result[hotel.currency][3].format()).toBe(currency(3 * 60).format()); // 10-05
+      expect(result[hotel.currency][4].format()).toBe(currency(3 * 60).format()); // 10-06
+      expect(result[hotel.currency][5].format()).toBe(currency(3 * 73).format()); // 10-07
+      expect(result[hotel.currency][6].format()).toBe(currency(3 * 73).format()); // 10-08
+      expect(result[hotel.currency][7].format()).toBe(currency(3 * 73).format()); // 10-09
     });
 
     it('should not return an estimate if even a single date of a stay is not covered by a valid rate plan', () => {

@@ -95,19 +95,23 @@ export const getApplicableRatePlans = (guestData, roomType, ratePlans) => {
     }
 
     // Filter out rate plans by dates
+    if (rp.availableForReservation) {
     // Rate plan cannot be used today
-    const availableForReservationFrom = dayjs(rp.availableForReservation.from);
-    const availableForReservationTo = dayjs(rp.availableForReservation.to);
-    if (availableForReservationTo.isBefore(now)
-        || availableForReservationFrom.isAfter(now)) {
-      return false;
+      const availableForReservationFrom = dayjs(rp.availableForReservation.from);
+      const availableForReservationTo = dayjs(rp.availableForReservation.to);
+      if (availableForReservationTo.isBefore(now)
+          || availableForReservationFrom.isAfter(now)) {
+        return false;
+      }
     }
-    // Rate plan is totally out of bounds of travel dates
-    const availableForTravelFrom = dayjs(rp.availableForTravel.from);
-    const availableForTravelTo = dayjs(rp.availableForTravel.to);
-    if (availableForTravelTo.isBefore(guestData.helpers.arrivalDateDayjs)
-        || availableForTravelFrom.isAfter(guestData.helpers.departureDateDayjs)) {
-      return false;
+    if (rp.availableForTravel) {
+      // Rate plan is totally out of bounds of travel dates
+      const availableForTravelFrom = dayjs(rp.availableForTravel.from);
+      const availableForTravelTo = dayjs(rp.availableForTravel.to);
+      if (availableForTravelTo.isBefore(guestData.helpers.arrivalDateDayjs)
+          || availableForTravelFrom.isAfter(guestData.helpers.departureDateDayjs)) {
+        return false;
+      }
     }
 
     // apply general restrictions if any
