@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ScrollAnimation from 'react-animate-on-scroll';
 import { withRouter } from 'react-router-dom';
+import imagePlaceholder from '../../assets/img/placeholder.png';
 
 class HotelListingItem extends React.Component {
   onCardClick = () => {
@@ -24,11 +25,14 @@ class HotelListingItem extends React.Component {
       }
       return acc;
     }, {});
+    const selectedImage = (hotel.images && hotel.images.length)
+      ? hotel.images[0]
+      : imagePlaceholder;
     return (
       <ScrollAnimation animateIn="fadeInUp" animateOnce>
 
         <div onClick={this.onCardClick} onKeyPress={this.onKeyPress} className="card mb-2 card-with-links" role="link" tabIndex="0">
-          <img src={hotel.images && hotel.images[0]} alt={hotel.name} className="card-img-top" />
+          <img src={selectedImage} alt={hotel.name} className="card-img-top" />
           <div className="card-body pt-1 text-muted block-fade">
             <h5 className="card-title h6">{hotel.name}</h5>
             <div className="card-text">

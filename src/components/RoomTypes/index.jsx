@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ScrollAnimation from 'react-animate-on-scroll';
 import ImageList from '../ImageList';
-
 import AmenitiesList from '../AmenitiesList';
+import imagePlaceholder from '../../assets/img/placeholder.png';
 
 const QuantityBadge = ({ quantity }) => {
   if (quantity === 0) {
@@ -61,19 +61,18 @@ class RoomType extends React.PureComponent {
     if (estimate.quantity === 0) {
       availabilityClassNames = 'text-muted text--deleted';
     }
+    const selectedImage = (roomType.images && roomType.images.length)
+      ? roomType.images[0]
+      : imagePlaceholder;
     return (
       <React.Fragment>
         <div className="col-sm-12 col-md-6 col-lg-4 d-flex">
           <ScrollAnimation animateIn="fadeInUp" animateOnce delay={100 * index} className="w-100 d-flex">
             <div className="card mb-2">
               <button className="card-img-top area-btn" type="button" data-toggle="modal" data-target={`#roomModal-${index + 1}`}>
-                <div className="img-crop" style={{ backgroundImage: `URL(${roomType.images && roomType.images[0]})` }}>
-                  <img
-                    src={roomType.images && roomType.images[0]}
-                    alt={roomType.images && roomType.images[0]}
-                  />
+                <div className="img-crop" style={{ backgroundImage: `URL(${selectedImage})` }}>
+                  <img src={selectedImage} alt={selectedImage} />
                 </div>
-
                 <div className="area-btn__btn">
                   <i className="mdi mdi-18px text-white mdi-arrow-expand" />
                   <span className="d-none">View Photos</span>
