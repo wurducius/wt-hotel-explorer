@@ -43,13 +43,25 @@ const routerMiddlewareInst = routerMiddleware(history);
 
 const middleware = [thunk, routerMiddlewareInst];
 const composeEnhancers = (process.env.NODE_ENV === 'development' && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose; // eslint-disable-line
-const store = createStore(
-  connectRouter(history)(combineReducers({
-    ...reducers,
-  })),
-  composeEnhancers(applyMiddleware(...middleware)),
-);
+const store = (() => {
+  const basicStore = createStore(
+    connectRouter(history)(combineReducers({
+      ...reducers,
+    })),
+    composeEnhancers(applyMiddleware(...middleware)),
+  );
 
+  if (module.hot) {
+    // Enable Webpack hot module replacement for reducers
+    module.hot.accept('../reducers', () => {
+      // eslint-disable-next-line global-require
+      const nextRootReducer = require('../reducers');
+      basicStore.replaceReducer(nextRootReducer);
+    });
+  }
+
+  return basicStore;
+})();
 
 // App itself
 const AppContainer = () => (
