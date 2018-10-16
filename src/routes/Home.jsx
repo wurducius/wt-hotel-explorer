@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import hotelActions from '../actions/hotels';
 import estimatesActions from '../actions/estimates';
@@ -11,21 +11,15 @@ import Loader from '../components/Loader';
 import GuestForm from '../components/GuestForm';
 
 class Home extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = { shouldRedirectToError: false };
-  }
-
   componentDidMount() {
     const {
       fetchHotelsList, areHotelsInitialized,
       eventuallyResolveErroredHotels,
+      history,
     } = this.props;
     if (!areHotelsInitialized) {
       fetchHotelsList().catch(() => {
-        this.setState({
-          shouldRedirectToError: true,
-        });
+        history.push('/error-page');
       });
     }
     eventuallyResolveErroredHotels();
@@ -36,10 +30,6 @@ class Home extends React.PureComponent {
       hotels, estimates, next, areHotelsInitialized, isLoadingMore, fetchHotelsList,
       handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
-    const { shouldRedirectToError } = this.state;
-    if (shouldRedirectToError) { // TODO use history.push instead of declarative Redirect
-      return <Redirect to="/error-page" />;
-    }
     return (
       <div className="row">
         <div className="col-md-12">
@@ -97,9 +87,10 @@ Home.propTypes = {
   handleGuestFormSubmit: PropTypes.func.isRequired,
   guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
   eventuallyResolveErroredHotels: PropTypes.instanceOf(Object).isRequired,
+  history: PropTypes.instanceOf(Object).isRequired,
 };
 
-export default connect(
+export default withRouter(connect(
   state => ({
     hotels: selectors.hotels.getHotelsWithName(state),
     estimates: selectors.estimates.getCurrent(state),
@@ -113,4 +104,4 @@ export default connect(
     eventuallyResolveErroredHotels: () => dispatch(hotelActions.eventuallyResolveErroredHotels()),
     handleGuestFormSubmit: values => dispatch(estimatesActions.recomputeAllPrices(values)),
   }),
-)(Home);
+)(Home));
