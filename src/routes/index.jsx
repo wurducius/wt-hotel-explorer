@@ -64,22 +64,27 @@ const store = (() => {
 })();
 
 // App itself
-const AppContainer = () => (
-  <React.Fragment>
-    <Header />
-    <div id="app-content" role="main">
-      <div className="container">
-        <Disclaimer />
-        <Switch>
-          <Route exact path="/hotels/:hotelId" component={Hotel} />
-          <Route exact path="/error-page" component={ErrorPage} />
-          <Route exact path="/" component={LoadableHome} />
-          <Route component={Handle404} />
-        </Switch>
+const AppContainer = () => {
+  const routes = (
+    <Switch>
+      <Route exact path="/hotels/:hotelId" component={Hotel} />
+      <Route exact path="/error-page" component={ErrorPage} />
+      <Route exact path="/" component={LoadableHome} />
+      <Route component={Handle404} />
+    </Switch>
+  );
+  return (
+    <React.Fragment>
+      <Header />
+      <div id="app-content" role="main">
+        <div className="container">
+          <Disclaimer />
+          {routes}
+        </div>
       </div>
-    </div>
-    <Footer />
-  </React.Fragment>
-);
+      <Footer />
+    </React.Fragment>
+  );
+};
 
 export default hot(module)(createApp({ store, history, AppContainer }));
