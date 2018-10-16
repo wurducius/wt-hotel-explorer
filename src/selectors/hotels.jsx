@@ -31,3 +31,12 @@ export function makeGetHotelById() {
     (hotels, id) => hotels.find(hotel => hotel.id === id),
   );
 }
+
+export default {
+  getHotels,
+  getNextHotel,
+  areHotelsInitialized,
+  isLoadingMore,
+  getHotelsWithName,
+  makeGetHotelById,
+};

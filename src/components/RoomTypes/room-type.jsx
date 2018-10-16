@@ -9,7 +9,7 @@ import imagePlaceholder from '../../assets/img/placeholder.png';
 
 const BookRoomButton = ({ onBookRoomTypeClicked, hotelId, roomTypeId }) => {
   const handleClick = () => {
-    onBookRoomTypeClicked(hotelId, roomTypeId);
+    onBookRoomTypeClicked({ hotelId, roomTypeId });
   };
   return (
     <button className="btn btn-primary btn-lg btn-block" type="button" onClick={handleClick}>
@@ -70,7 +70,7 @@ class RoomType extends React.PureComponent {
                   <AmenitiesList list={roomType.amenities} />
                 </div>
               )}
-              {estimate.price && (
+              {estimate.price && estimate.quantity > 0 && (
                 <div className="card-footer">
                   <BookRoomButton
                     onBookRoomTypeClicked={onBookRoomTypeClicked}

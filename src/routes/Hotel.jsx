@@ -12,7 +12,7 @@ import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
 class Hotel extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.startBooking = this.startBooking.bind(this);
+    this.startBookingWizard = this.startBookingWizard.bind(this);
   }
 
   componentDidMount() {
@@ -26,9 +26,9 @@ class Hotel extends React.PureComponent {
     }
   }
 
-  startBooking(hotelId, roomTypeId) {
+  startBookingWizard(values) {
     const { handleBookRoomTypeClicked, history } = this.props;
-    handleBookRoomTypeClicked(hotelId, roomTypeId);
+    handleBookRoomTypeClicked(values);
     history.push('/booking');
   }
 
@@ -49,7 +49,7 @@ class Hotel extends React.PureComponent {
               errors={errors}
               handleGuestFormSubmit={handleGuestFormSubmit}
               guestFormInitialValues={guestFormInitialValues}
-              handleBookRoomTypeClicked={this.startBooking}
+              handleBookRoomTypeClicked={this.startBookingWizard}
             />
           )}
       </Fragment>
@@ -92,9 +92,6 @@ export default withRouter(connect(
       dispatch(actions.booking.setGuestData(values));
       dispatch(actions.estimates.recomputeAllPrices(values));
     },
-    handleBookRoomTypeClicked: (hotelId, roomTypeId) => {
-      // TODO actually do something - store roomTypeId and hotelId into redux store
-      console.log(hotelId, roomTypeId);
-    },
+    handleBookRoomTypeClicked: values => dispatch(actions.booking.addRoomType(values)),
   }),
 )(Hotel));

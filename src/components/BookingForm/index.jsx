@@ -1,9 +1,11 @@
 import React from 'react';
 
-const BookingForm = () => (
+const BookingForm = ({ guestData, hotelData }) => (
   <React.Fragment>
     <div>
-      arrival, departure
+      {guestData.arrival}
+,
+      {guestData.departure}
     </div>
     <div>
       Guest information
@@ -11,6 +13,7 @@ const BookingForm = () => (
     </div>
     <div>
       Room type information + guest assignment
+      {hotelData.id}
     </div>
     <div>
       Personal information

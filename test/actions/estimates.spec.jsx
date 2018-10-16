@@ -13,7 +13,7 @@ describe('action.estimates', () => {
       getStateMock = jest.fn();
       exampleState = {
         booking: {
-          guestData: {
+          guest: {
             arrival: '2018-01-03',
             departure: '2018-01-05',
             guestAges: [18],
@@ -99,7 +99,7 @@ describe('action.estimates', () => {
     });
 
     it('should not do anything when guestAges are missing', () => {
-      exampleState.booking.guestData = {
+      exampleState.booking.guest = {
         arrival: '2018-01-01',
         departure: '2018-04-01',
       };
@@ -110,7 +110,7 @@ describe('action.estimates', () => {
     });
 
     it('should not do anything when guestAges is empty', () => {
-      exampleState.booking.guestData = {
+      exampleState.booking.guest = {
         arrival: '2018-01-01',
         departure: '2018-04-01',
         guestAges: [],
@@ -122,7 +122,7 @@ describe('action.estimates', () => {
     });
 
     it('should not do anything when arrival is missing', () => {
-      exampleState.booking.guestData = {
+      exampleState.booking.guest = {
         departure: '2018-01-01',
         guestAges: [18],
       };
@@ -133,7 +133,7 @@ describe('action.estimates', () => {
     });
 
     it('should not do anything when departure is missing', () => {
-      exampleState.booking.guestData = {
+      exampleState.booking.guest = {
         arrival: '2018-01-01',
         guestAges: [18],
       };

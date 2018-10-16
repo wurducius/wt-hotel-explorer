@@ -12,7 +12,7 @@ export const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   if (!roomTypes || !ratePlans) {
     return;
   }
-  const { guestData } = state.booking;
+  const { guest: guestData } = state.booking;
   if (
     !guestData
     || !guestData.arrival

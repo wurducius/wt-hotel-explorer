@@ -5,7 +5,7 @@ describe('selectors.booking', () => {
   beforeEach(() => {
     state = {
       booking: {
-        guestData: {
+        guest: {
           arrival: '2018-01-01',
           departure: '2018-04-01',
         },
