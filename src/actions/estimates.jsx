@@ -8,8 +8,8 @@ export const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   if (!hotel) {
     return;
   }
-  const { roomTypes, ratePlans, availability } = hotel;
-  if (!roomTypes || !ratePlans || !availability) {
+  const { roomTypes, ratePlans } = hotel;
+  if (!roomTypes || !ratePlans) {
     return;
   }
   const { guestData } = state.booking;
