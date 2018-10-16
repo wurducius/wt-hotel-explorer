@@ -1,4 +1,4 @@
-import estimatesActions from '../../src/actions/estimates';
+import { recomputeHotelEstimates } from '../../src/actions/estimates';
 
 describe('action.estimates', () => {
   describe('recomputeHotelEstimates', () => {
@@ -11,7 +11,7 @@ describe('action.estimates', () => {
       dispatchMock = jest.fn();
       getStateMock = jest.fn();
       exampleState = {
-        estimates: {
+        booking: {
           guestData: {
             arrival: '2018-01-03',
             departure: '2018-01-05',
@@ -44,7 +44,7 @@ describe('action.estimates', () => {
           }],
         },
       };
-      action = estimatesActions.recomputeHotelEstimates({ id: '0x933198455e38925bccb4bfe9fb59bac31d00b4d3' });
+      action = recomputeHotelEstimates({ id: '0x933198455e38925bccb4bfe9fb59bac31d00b4d3' });
     });
 
     it('should not do anything when hotel does not exist', () => {
@@ -86,7 +86,7 @@ describe('action.estimates', () => {
     });
 
     it('should not do anything when guestAges are missing', () => {
-      exampleState.estimates.guestData = {
+      exampleState.booking.guestData = {
         arrival: '2018-01-01',
         departure: '2018-04-01',
       };
@@ -97,7 +97,7 @@ describe('action.estimates', () => {
     });
 
     it('should not do anything when guestAges is empty', () => {
-      exampleState.estimates.guestData = {
+      exampleState.booking.guestData = {
         arrival: '2018-01-01',
         departure: '2018-04-01',
         guestAges: [],
@@ -109,7 +109,7 @@ describe('action.estimates', () => {
     });
 
     it('should not do anything when arrival is missing', () => {
-      exampleState.estimates.guestData = {
+      exampleState.booking.guestData = {
         departure: '2018-01-01',
         guestAges: [18],
       };
@@ -120,7 +120,7 @@ describe('action.estimates', () => {
     });
 
     it('should not do anything when departure is missing', () => {
-      exampleState.estimates.guestData = {
+      exampleState.booking.guestData = {
         arrival: '2018-01-01',
         guestAges: [18],
       };

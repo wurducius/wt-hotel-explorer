@@ -1,8 +1,8 @@
-import hotelActions from './hotels';
+import { fetchHotelRatePlans, fetchHotelRoomTypes, fetchHotelAvailability } from './hotels';
 import { computePrices } from '../services/pricing-algorithm';
 import { enhancePricingEstimates } from '../services/availability';
 
-const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
+export const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   const state = getState();
   const hotel = state.hotels.list.find(h => h.id === id);
   if (!hotel) {
@@ -12,7 +12,7 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   if (!roomTypes || !ratePlans || !availability) {
     return;
   }
-  const { guestData } = state.estimates;
+  const { guestData } = state.booking;
   if (
     !guestData
     || !guestData.arrival
@@ -32,7 +32,7 @@ const recomputeHotelEstimates = ({ id }) => (dispatch, getState) => {
   });
 };
 
-const fetchAndComputeHotelEstimates = ({
+export const fetchAndComputeHotelEstimates = ({
   id, ratePlans, roomTypes, availability,
 }) => (dispatch) => {
   let ratePlansPromise;
@@ -43,39 +43,30 @@ const fetchAndComputeHotelEstimates = ({
     ratePlansPromise = Promise.resolve();
   } else {
     // silent catch, the errors are dealt with in appropriate reducers
-    ratePlansPromise = dispatch(hotelActions.fetchHotelRatePlans({ id })).catch(() => {});
+    ratePlansPromise = dispatch(fetchHotelRatePlans({ id })).catch(() => {});
   }
   // Do not hit hotels with room types already downloaded
   if (roomTypes) {
     roomTypesPromise = Promise.resolve();
   } else {
     // silent catch, the errors are dealt with in appropriate reducers
-    roomTypesPromise = dispatch(hotelActions.fetchHotelRoomTypes({ id })).catch(() => {});
+    roomTypesPromise = dispatch(fetchHotelRoomTypes({ id })).catch(() => {});
   }
   // Do not hit hotels with availability already downloaded
   if (availability) {
     availabilityPromise = Promise.resolve();
   } else {
     // silent catch, the errors are dealt with in appropriate reducers
-    availabilityPromise = dispatch(hotelActions.fetchHotelAvailability({ id })).catch(() => {});
+    availabilityPromise = dispatch(fetchHotelAvailability({ id })).catch(() => {});
   }
   // for each hotel in parallel get rate plan, room types, availability and recompute estimates
   return Promise.all([ratePlansPromise, roomTypesPromise, availabilityPromise])
     .then(() => dispatch(recomputeHotelEstimates({ id })));
 };
 
-const recomputeAllPrices = ({
-  arrival, departure, guestAges, formActions,
+export const recomputeAllPrices = ({
+  formActions,
 }) => (dispatch, getState) => {
-  dispatch({
-    type: 'SET_GUEST_DATA',
-    payload: {
-      arrival,
-      departure,
-      guestAges,
-    },
-  });
-
   // Collect all rate plans
   const state = getState();
   const ratePlansPromises = state.hotels.list.map(h => dispatch(fetchAndComputeHotelEstimates(h)));

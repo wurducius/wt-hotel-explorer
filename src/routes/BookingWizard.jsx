@@ -10,4 +10,5 @@ class BookingWizard extends React.PureComponent {
   }
 }
 
+// guestData
 export default BookingWizard;

@@ -6,10 +6,6 @@ describe('selectors.estimates', () => {
     state = {
       estimates: {
         current: { 1: [{ price: 200 }] },
-        guestData: {
-          arrival: '2018-01-01',
-          departure: '2018-04-01',
-        },
       },
     };
   });
@@ -18,8 +14,5 @@ describe('selectors.estimates', () => {
   });
   it('getCurrent', () => {
     expect(selectors.estimates.getCurrent(state)).toEqual({ 1: [{ price: 200 }] });
-  });
-  it('getGuestData', () => {
-    expect(selectors.estimates.getGuestData(state)).toEqual({ arrival: '2018-01-01', departure: '2018-04-01' });
   });
 });

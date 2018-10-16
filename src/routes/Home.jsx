@@ -2,8 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import hotelActions from '../actions/hotels';
-import estimatesActions from '../actions/estimates';
+import actions from '../actions';
 import selectors from '../selectors';
 
 import HotelListing from '../components/HotelListing';
@@ -94,14 +93,17 @@ export default withRouter(connect(
   state => ({
     hotels: selectors.hotels.getHotelsWithName(state),
     estimates: selectors.estimates.getCurrent(state),
-    guestFormInitialValues: selectors.estimates.getGuestData(state),
+    guestFormInitialValues: selectors.booking.getGuestData(state),
     next: selectors.hotels.getNextHotel(state),
     areHotelsInitialized: selectors.hotels.areHotelsInitialized(state),
     isLoadingMore: selectors.hotels.isLoadingMore(state),
   }),
   dispatch => ({
-    fetchHotelsList: () => dispatch(hotelActions.fetchHotelsList()),
-    eventuallyResolveErroredHotels: () => dispatch(hotelActions.eventuallyResolveErroredHotels()),
-    handleGuestFormSubmit: values => dispatch(estimatesActions.recomputeAllPrices(values)),
+    fetchHotelsList: () => dispatch(actions.hotels.fetchHotelsList()),
+    eventuallyResolveErroredHotels: () => dispatch(actions.hotels.eventuallyResolveErroredHotels()),
+    handleGuestFormSubmit: (values) => {
+      dispatch(actions.booking.setGuestData(values));
+      dispatch(actions.estimates.recomputeAllPrices(values));
+    },
   }),
 )(Home));

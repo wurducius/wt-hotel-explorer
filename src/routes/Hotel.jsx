@@ -4,8 +4,7 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import selectors from '../selectors';
-import hotelActions from '../actions/hotels';
-import estimatesActions from '../actions/estimates';
+import actions from '../actions';
 import Loader from '../components/Loader';
 import HotelDetail from '../components/HotelDetail';
 import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
@@ -84,14 +83,17 @@ export default withRouter(connect(
       hotel: getHotelById(state, hotelId),
       estimates: selectors.estimates.getCurrentByHotelId(state, hotelId),
       errors: state.errors.hotels[hotelId],
-      guestFormInitialValues: selectors.estimates.getGuestData(state),
+      guestFormInitialValues: selectors.booking.getGuestData(state),
     };
   },
   dispatch => ({
-    fetchHotelDetail: id => dispatch(hotelActions.fetchHotelDetail(id)),
-    handleGuestFormSubmit: values => dispatch(estimatesActions.recomputeAllPrices(values)),
+    fetchHotelDetail: id => dispatch(actions.hotels.fetchHotelDetail(id)),
+    handleGuestFormSubmit: (values) => {
+      dispatch(actions.booking.setGuestData(values));
+      dispatch(actions.estimates.recomputeAllPrices(values));
+    },
     handleBookRoomTypeClicked: (hotelId, roomTypeId) => {
-      // TODO actually do something
+      // TODO actually do something - store roomTypeId and hotelId into redux store
       console.log(hotelId, roomTypeId);
     },
   }),
