@@ -2,23 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RoomType from './room-type';
 
-const RoomTypes = ({ map, estimates, availableRoomTypes }) => {
-  const roomTypes = map && Object.values(map)
+const RoomTypes = ({ hotel, estimates, onBookRoomTypeClicked }) => {
+  const roomTypes = hotel.roomTypes && Object.values(hotel.roomTypes)
     .map((rt, index) => (
       <RoomType
+        hotel={hotel}
         key={rt.id}
         roomType={rt}
         estimate={estimates.find(e => e.id === rt.id)}
         index={index}
-        availableRoomTypes={availableRoomTypes}
+        onBookRoomTypeClicked={onBookRoomTypeClicked}
       />
     ));
   return roomTypes && roomTypes;
 };
 
 RoomTypes.propTypes = {
-  map: PropTypes.instanceOf(Object).isRequired,
+  hotel: PropTypes.instanceOf(Object).isRequired,
   estimates: PropTypes.instanceOf(Array).isRequired,
+  onBookRoomTypeClicked: PropTypes.func.isRequired,
 };
 
 export default RoomTypes;

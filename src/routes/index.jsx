@@ -35,6 +35,17 @@ const LoadableHome = Loadable({
   },
 });
 
+const LoadableBookingWizard = Loadable({
+  loader: () => import(
+    /* webpackChunkName: "Home-page" */
+    /* webpackMode: "lazy" */
+    './BookingWizard',
+  ),
+  loading() {
+    return <Loader block={200} label="Loading..." />;
+  },
+});
+
 const Handle404 = () => <Redirect to="/error-page" />;
 
 // Setup redux
@@ -69,6 +80,7 @@ const AppContainer = () => {
     <Switch>
       <Route exact path="/hotels/:hotelId" component={Hotel} />
       <Route exact path="/error-page" component={ErrorPage} />
+      <Route exact path="/booking" component={LoadableBookingWizard} />
       <Route exact path="/" component={LoadableHome} />
       <Route component={Handle404} />
     </Switch>

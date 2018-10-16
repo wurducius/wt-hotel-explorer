@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import selectors from '../selectors';
@@ -13,18 +13,24 @@ import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
 class Hotel extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = { shouldRedirectToError: false };
+    this.startBooking = this.startBooking.bind(this);
   }
 
   componentDidMount() {
-    const { fetchHotelDetail, match, hotel } = this.props;
+    const {
+      fetchHotelDetail, match, hotel, history,
+    } = this.props;
     if (!hotel || (!hotel.hasDetailLoaded && !hotel.hasDetailLoading)) {
       fetchHotelDetail({ id: match.params.hotelId }).catch(() => {
-        this.setState({
-          shouldRedirectToError: true,
-        });
+        history.push('/error-page');
       });
     }
+  }
+
+  startBooking(hotelId, roomTypeId) {
+    const { handleBookRoomTypeClicked, history } = this.props;
+    handleBookRoomTypeClicked(hotelId, roomTypeId);
+    history.push('/booking');
   }
 
   render() {
@@ -32,10 +38,6 @@ class Hotel extends React.PureComponent {
       hotel, estimates, errors,
       handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
-    const { shouldRedirectToError } = this.state;
-    if (shouldRedirectToError) {
-      return <Redirect to="/error-page" />;
-    }
     return (
       <Fragment>
         <ScrollToTopOnMount />
@@ -48,6 +50,7 @@ class Hotel extends React.PureComponent {
               errors={errors}
               handleGuestFormSubmit={handleGuestFormSubmit}
               guestFormInitialValues={guestFormInitialValues}
+              handleBookRoomTypeClicked={this.startBooking}
             />
           )}
       </Fragment>
@@ -69,9 +72,11 @@ Hotel.propTypes = {
   fetchHotelDetail: PropTypes.func.isRequired,
   handleGuestFormSubmit: PropTypes.func.isRequired,
   guestFormInitialValues: PropTypes.instanceOf(Object).isRequired,
+  handleBookRoomTypeClicked: PropTypes.func.isRequired,
+  history: PropTypes.instanceOf(Object).isRequired,
 };
 
-export default connect(
+export default withRouter(connect(
   (state, ownProps) => {
     const getHotelById = selectors.hotels.makeGetHotelById();
     const { hotelId } = ownProps.match.params;
@@ -85,5 +90,9 @@ export default connect(
   dispatch => ({
     fetchHotelDetail: id => dispatch(hotelActions.fetchHotelDetail(id)),
     handleGuestFormSubmit: values => dispatch(estimatesActions.recomputeAllPrices(values)),
+    handleBookRoomTypeClicked: (hotelId, roomTypeId) => {
+      // TODO actually do something
+      console.log(hotelId, roomTypeId);
+    },
   }),
-)(Hotel);
+)(Hotel));

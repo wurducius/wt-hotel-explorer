@@ -37,7 +37,7 @@ class Home extends React.PureComponent {
       handleGuestFormSubmit, guestFormInitialValues,
     } = this.props;
     const { shouldRedirectToError } = this.state;
-    if (shouldRedirectToError) {
+    if (shouldRedirectToError) { // TODO use history.push instead of declarative Redirect
       return <Redirect to="/error-page" />;
     }
     return (

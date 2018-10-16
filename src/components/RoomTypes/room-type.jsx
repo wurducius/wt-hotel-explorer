@@ -7,11 +7,28 @@ import AmenitiesList from '../AmenitiesList';
 import { QuantityBadge, AvailabilityBadge } from './badges';
 import imagePlaceholder from '../../assets/img/placeholder.png';
 
-// TODO use properties, totalQuantity and occupancy
+const BookRoomButton = ({ onBookRoomTypeClicked, hotelId, roomTypeId }) => {
+  const handleClick = () => {
+    onBookRoomTypeClicked(hotelId, roomTypeId);
+  };
+  return (
+    <button className="btn btn-primary btn-lg btn-block" type="button" onClick={handleClick}>
+    Book this room!
+    </button>);
+};
 
+BookRoomButton.propTypes = {
+  onBookRoomTypeClicked: PropTypes.func.isRequired,
+  hotelId: PropTypes.string.isRequired,
+  roomTypeId: PropTypes.string.isRequired,
+};
+
+// TODO use properties, totalQuantity and occupancy
 class RoomType extends React.PureComponent {
   render() {
-    const { roomType, estimate, index } = this.props;
+    const {
+      roomType, estimate, index, hotel, onBookRoomTypeClicked,
+    } = this.props;
 
     const selectedImage = (roomType.images && roomType.images.length)
       ? roomType.images[0]
@@ -42,7 +59,9 @@ class RoomType extends React.PureComponent {
                   <p>
                     <AvailabilityBadge estimate={estimate} />
                   </p>
-                  <QuantityBadge quantity={estimate.quantity} />
+                  <p>
+                    <QuantityBadge quantity={estimate.quantity} />
+                  </p>
                 </div>
               </div>
               )}
@@ -51,11 +70,20 @@ class RoomType extends React.PureComponent {
                   <AmenitiesList list={roomType.amenities} />
                 </div>
               )}
+              {estimate.price && (
+                <div className="card-footer">
+                  <BookRoomButton
+                    onBookRoomTypeClicked={onBookRoomTypeClicked}
+                    roomTypeId={roomType.id}
+                    hotelId={hotel.id}
+                  />
+                </div>
+              )}
             </div>
           </ScrollAnimation>
         </div>
 
-        {/* Modal */}
+        {/* Room type image modal */}
         <div className="modal modal--carousel" id={`roomModal-${index + 1}`} tabIndex={`-${index + 1}`} role="dialog">
           <div className="modal-dialog" role="document">
             <div className="modal-content">
@@ -82,9 +110,11 @@ RoomType.defaultProps = {
 };
 
 RoomType.propTypes = {
+  hotel: PropTypes.instanceOf(Object).isRequired,
   roomType: PropTypes.instanceOf(Object).isRequired,
   estimate: PropTypes.instanceOf(Object),
   index: PropTypes.number.isRequired,
+  onBookRoomTypeClicked: PropTypes.func.isRequired,
 };
 
 export default RoomType;
