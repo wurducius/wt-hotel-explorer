@@ -11,6 +11,25 @@ jobs:
   - stage: test
     script:
     - npm run lint && npm run test && npm run coverage
+  - stage: Build docker image and upload to AWS
+    sudo: true
+    services:
+    - docker
+    install: true
+    if: tag IS present
+    script:
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+    - eval $(aws ecr get-login --no-include-email --region eu-west-1)
+    - echo "Building for playground"
+    - docker build --build-arg NODE_ENV=production --build-arg GIT_REV=`git rev-parse --short HEAD` --build-arg WT_READ_API=https://playground-api.windingtree.com -t wt-hotel-explorer:$TRAVIS_BRANCH-playground .
+    - docker tag wt-hotel-explorer:$TRAVIS_BRANCH-playground 029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-hotel-explorer:$TRAVIS_BRANCH-playground
+    - docker push 029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-hotel-explorer:$TRAVIS_BRANCH-playground
+    - echo "Building for demo"
+    - docker build --build-arg NODE_ENV=production --build-arg GIT_REV=`git rev-parse --short HEAD` --build-arg WT_READ_API=https://demo-api.windingtree.com -t wt-hotel-explorer:$TRAVIS_BRANCH-demo .
+    - docker tag wt-hotel-explorer:$TRAVIS_BRANCH-demo 029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-hotel-explorer:$TRAVIS_BRANCH-demo
+    - docker push 029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-hotel-explorer:$TRAVIS_BRANCH-demo
+  - stage: Start service from docker with latest merged tag
   - stage: release-playground
     install: true
     if: branch = release/playground
