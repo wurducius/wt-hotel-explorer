@@ -9,7 +9,7 @@ echo "Purging cloudflare cache for index.html"
 # CF_API_KEY=123456 #   API key generated on the "My Account" page in cloudflare
 # CF_ROOT=https://demo.example.com # Actual domain name that is used in cloudflare
 
-curl -v -X DELETE "https://api.cloudflare.com/client/v4/zones/$CF_ZONE/purge_cache" \
+curl -X DELETE "https://api.cloudflare.com/client/v4/zones/$CF_ZONE/purge_cache" \
 -H "X-Auth-Email: $CF_USER" \
 -H "X-Auth-Key: $CF_API_KEY" \
 -H "Content-Type:application/json" \

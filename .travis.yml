@@ -39,6 +39,7 @@ jobs:
     script:
     - pip install --user awscli
     - export PATH=$PATH:$HOME/.local/bin
+    - export CF_ROOT=$CF_ROOT_PLAYGROUND
     - npm run deploy-aws-playground
   - stage: release-demo
     install: true
@@ -46,6 +47,7 @@ jobs:
     script:
     - pip install --user awscli
     - export PATH=$PATH:$HOME/.local/bin
+    - export CF_ROOT=$CF_ROOT_DEMO
     - npm run deploy-aws-demo
 env:
   global:
