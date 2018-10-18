@@ -29,24 +29,22 @@ jobs:
     - docker build --build-arg NODE_ENV=production --build-arg GIT_REV=`git rev-parse --short HEAD` --build-arg WT_READ_API=https://demo-api.windingtree.com -t wt-hotel-explorer:$TRAVIS_BRANCH-demo .
     - docker tag wt-hotel-explorer:$TRAVIS_BRANCH-demo 029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-hotel-explorer:$TRAVIS_BRANCH-demo
     - docker push 029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-hotel-explorer:$TRAVIS_BRANCH-demo
-  - stage: Start service from docker with latest merged tag
   - stage: release-playground
     install: true
     if: branch = release/playground
     script:
-    - echo 'Deploying to NOW'
-    - npm i -g now
-    - npm run deploy-now-playground && npm run alias-playground
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+    - npm run deploy-aws-playground
   - stage: release-demo
     install: true
     if: branch = release/demo
     script:
-    - echo 'Deploying to NOW'
-    - npm i -g now
-    - npm run deploy-now-demo && npm run alias-demo
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+    - npm run deploy-aws-demo
 env:
   global:
-  - secure: v/ahKunTJk0aJE6hFMTeC7ycPiqTM4w+Q6myaCd5V5aSu0fEZZ5wB2zFQH6tTppAf1jEl0xjViaYT2mOv6TrPLZWy6G3dbzDECSyrPZGkcQoFveJewaAWz7chGe7KmWP66PSNp515D+msvZQ6kqXOpDhkfmwqGTyAxF1UAJBumqVhm6OFLuARWkaffJIHaM4XmGY8kDhYgIyyvhBIoSaa74/EHKfyK2xqmz121eyl705U8J6doxiegCTh4+TQk8lDtbdcZky4dZZEaCPrOTTc5O4KKyu/yUD10otxvf9seJE0czSuWVKXkKvNLaMslwqY2Yzkmgwy1pYGvof+GhRfWVRGKETnnboEQgBcuwinZ4k2eKNjl2gZ+wk9JBGJ3lW0JM5NB5r/9ou3El+ecbfdIl9yPmR/rkw4A51JiIb3/N3ifeQ1K3R3BL3pVUmXLHU3ikEhA3l+DP4YZniSh0C9u+WVZa1JKEhXVWwldYolWqMwR2FE8oSg0UiB0sbvdNFw2t3EPvRD0ZQBXE6qAWvC4bvTw4xMPFh0hrAJUdM/YvnNr9+b7P6KWteNOQb3oivYW8szaNgyZ/J+3wWXddWodfF5PyCvJ99Mp706MmIG78VTaty+0U6CPjXVcvspwpVUvcSDa04W3JJtLNr9vauSSvDl7SiFtnp7KlEk7dYiUg=
   - secure: 3GRN+gQfwBl7kYJ5euuiv9BWKFB2Hn8Lmwk8ebdyS+2Bqlzy2a/83uMx9Ru7qdRywXIsLEUeHAApiQ8ca4nOxneoZd19SSlOTDNze6XnjE6Vr618knl9PdBvQGWbia7ODNQF2uWRU4dEOatbebJ3Z/ZVXrfyD6dQWOpUD7Ho/6CwwjDkQoKpcueybsS6ujyXe+yzA5iM2zNMuqPD0aYsVKzqyrGxD5pz8PGxpNgPVFIv2EA3VvrcThrf7DNzghcMnrFeSi9/nU1cMf0EevF+pxVcR8rX9Aik97QYn9hgZLMbHPplEu+MEQHFuLM22rMh6cqkNOZGKGgnj7Dv1fqc56FQftVt2Gp79QhICQBkWc3Sflh7o+lvmjCtBmhkfGrDv5D78k8s53cbUX3CHKONbHFIelnJB+ZzZ/OyqVCb7YYXesUj5GRcXZQIMRZyMq6K0hcbudB5GENrV9DdLcYJVB+K5g5AhqxxStHAEfXhPxx2sIr6EBDaSndj84nzhFxYWnfQFdkshGtsJp5JFY7IuOH3o9vdFE0kqbTu1yOtlZHS0DPPZeupNLcBp/OnZm8B0Inbp+p39vIo8CvyvTYIyFh1yTCq1nFHHW/NDNwT+8oX2mH3PGXPzFjGR9x50e+5vd5VLVCY6aJvep+L2+QERJ7goGF6hyf4VpRWBm/Yhr0=
   - secure: EvP8YrTcwc8NL80Yb6Koo4E9I9U5FeduQYRqIMbg5k+bBLI8FK0cYqkrJIZcRYzF7MQE3sZMCZqqlns25kGikVPbUUmIzHwvaulLTT/sKM2xOOZf6kYV9j3clVz8y7WtZMumWgnPxMsGOgmWepKHxkrkAOP+15IBrX+FPAHpcvoUvggebzOShR1hG3TgXKwQ4/nFl4gIthn53AG9vhoWyqraqKi7BL+ph0HS3i6YbogAeXdHgL10TjSfUmmTBCEBph2pOry8l7L2zKTJsBRLAgmMWzklR4jPsM8x5R3Zbc3ZKqrw0HTIl9FD8gzVHAl8MKvYtdGKi0rDoNhCj2VbI9efTK9YdAxaJU3nuYmjVwl4vmqPBOQ/hA5L6FRX8krgJjfWYGmpqKSAQhe7OZUOge5jZ0XA2ocRIpjcU878Am6LYYBcGyTcTxmOzngIuNS/7Nu0nWbxBkgsib+xZOB3Cqb2vtsaPO71EOFakzK3vvlxRbkjkfWvZj4WYIHstVbbGcGulokjPSOnBqHsS9r97lF7x1A3FYJF0kcgqSokEUI0q630cUrYBgOqS4nd9SjcqHwwmvF9gFHgYRL9xkiqpmwb0vcpQPYZ0vMZ2xYH3Bh8OxipD8PsZAQ07pXSWYFiCl1793pOJTBngRCWncf0jIA+jG1cWBV14GIl224gED8=
   - secure: fEwltP3RbQyqKpk8CgiLvJPM0zOvyKXwfNJdEfb8p+RXuhB//O64g8pniiDNC7+jrV8oc9ruYN9mOPPhUb4AEayYoNcDbbaFlBRfKuwJ0df8/yp1KbLy/xNzeUdPHMMYRH61INoGoirBunt/96tgOAoSCuaxD5Q0fJQyGh6PLHyn2RIEq0e0tOCvuz1SuH4fZ17kt5MCkNQQdHW6UPgOThoERyzxD7v+NHf6U2RTv0kBrCHHoYkGJfBhDe5gnFLU33WDzuCIATx9QLRICIUVJVO1q+/2RaX6B7rO0ZKYzjN5rpv0cfwNYf58MJAJl90x66vNrDPzq2CXvauJAk5/MDds3r/BTWHGA2VthtdR2Jey7b5xQxkW/7pANZExqFg1XnMduGKgW+dY+o+gmlLTJbDDTlCTeOADRApdnsajyAkX5hGFlU0DtsEB2UWQ0B1QQlWZCDd2z/8lAdbeZSI9Y54uKlmfnnhuRXTYKmjmhsVBtT2C+pJtwmn7IRNlrA/Mn0Y9bM68U3/9mY8QgSLjni8W/4oUOlmfx5XvZALcO3zxRvmq1dQlRqLuaduVl6bqIqqGKGHVBk777PXI6oDkWqifVfbrCMY3f+leuCdWyURXQrnnW7tFGhnVwZysWnNNIb0MJnDqiunwmNABYV/WbRZzvTm9BvKz40bhxKVGKwI=
