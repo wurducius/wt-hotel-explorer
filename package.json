@@ -15,8 +15,8 @@
     "deploy-now-playground": "now --regions bru --build-env GIT_REV=$TRAVIS_COMMIT --team windingtree --token $NOW_TOKEN --local-config=now-playground.json --docker --public",
     "alias-playground": "now alias --team windingtree --token=$NOW_TOKEN --local-config=now-playground.json",
     "now-start": "serve --single ./public",
-    "postalias-playground": "CF_ROOT=$CF_ROOT_PLAYGROUND ./scripts/cloudflare-cache-purge.sh",
-    "postalias-demo": "CF_ROOT=$CF_ROOT_DEMO ./scripts/cloudflare-cache-purge.sh"
+    "postalias-playground": "CF_ROOT=$CF_ROOT_PLAYGROUND ./management/cloudflare-cache-purge.sh",
+    "postalias-demo": "CF_ROOT=$CF_ROOT_DEMO ./management/cloudflare-cache-purge.sh"
   },
   "repository": {
     "type": "git",
