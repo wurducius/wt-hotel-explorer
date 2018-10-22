@@ -1,22 +1,36 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { connect } from 'react-redux';
 // import { Link } from 'react-router-dom';
-// import PropTypes from 'prop-types';
 import selectors from '../selectors';
 import BookingForm from '../components/BookingForm';
 
-const BookingWizard = ({ guestData, hotelData }) => (
-  // TODO if no hotels, redirect to homepage
-  // hotel side pane,
+const BookingWizard = ({ hotel, guestData, hotelBookingData }) => (
+  // TODO if no hotel/guestData, redirect to homepage
   <BookingForm
     guestData={guestData}
-    hotelData={hotelData}
+    hotelBookingData={hotelBookingData}
+    hotel={hotel}
   />);
 
-// guestData
+BookingWizard.propTypes = {
+  hotel: PropTypes.instanceOf(Object).isRequired,
+  guestData: PropTypes.instanceOf(Object).isRequired,
+  hotelBookingData: PropTypes.instanceOf(Object).isRequired,
+};
+
 export default connect(
-  state => ({
-    guestData: selectors.booking.getGuestData(state),
-    hotelData: selectors.booking.getHotelData(state),
-  }),
+  (state) => {
+    const hotelBookingData = selectors.booking.getHotelData(state);
+    const getHotelById = selectors.hotels.makeGetHotelById();
+    return {
+      hotel: getHotelById(state, hotelBookingData.id),
+      guestData: selectors.booking.getGuestData(state),
+      hotelBookingData,
+    };
+  },
+  /* state => ({
+
+  }), */
 )(BookingWizard);
