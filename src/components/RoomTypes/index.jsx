@@ -98,6 +98,7 @@ class RoomType extends React.PureComponent {
                       {' '}
                       {estimate.currency}
                     </strong>
+			<button onClick={ book() }>Book!</button>
                   </p>
                   {estimate.price && (<QuantityBadge quantity={estimate.quantity} />)}
                 </div>
@@ -133,6 +134,18 @@ class RoomType extends React.PureComponent {
   }
 }
 
+function book(){
+	var request = new XMLHttpRequest()
+
+
+	var data = "{\r\n  \"hotelId\": \"0xe92a8f9a7264695f4aed8d1f397dbc687ba40299\",\r\n  \"customer\": {\r\n    \"name\": \"Sherlock\",\r\n    \"surname\": \"Holmes\",\r\n    \"address\": {\r\n      \"line1\": \"221B Baker Street\",\r\n      \"city\": \"London\",\r\n      \"country\": \"GB\"\r\n    },\r\n    \"email\": \"sherlock.holmes@houndofthebaskervilles.net\"\r\n  },\r\n  \"pricing\": {\r\n    \"currency\": \"GBP\",\r\n    \"total\": 221,\r\n    \"cancellationFees\": [\r\n      { \"from\": \"2018-12-01\", \"to\": \"2019-01-01\", \"amount\": 50 }\r\n    ]\r\n  },\r\n  \"booking\": {\r\n    \"arrival\": \"2019-01-01\",\r\n    \"departure\": \"2019-01-03\",\r\n    \"rooms\": [\r\n      {\r\n        \"id\": \"314\",\r\n        \"guestInfoIds\": [\"1\"]\r\n      },\r\n      {\r\n        \"id\": \"315\",\r\n        \"guestInfoIds\": [\"2\"]\r\n      }\r\n    ],\r\n    \"guestInfo\": [\r\n      {\r\n        \"id\": \"1\",\r\n        \"name\": \"Sherlock\",\r\n        \"surname\": \"Holmes\"\r\n      },\r\n      {\r\n        \"id\": \"2\",\r\n        \"name\": \"John\",\r\n        \"surname\": \"Watson\"\r\n      }\r\n    ]\r\n  }\r\n}"
+
+
+	request.open('POST', 'https://stage.siestasolution.com/Api/Api.aspx?Action=WTBooking', true)
+	request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8')
+	console.log("POST: "+data)
+	request.send(data)
+}
 
 RoomType.defaultProps = {
   estimate: {},

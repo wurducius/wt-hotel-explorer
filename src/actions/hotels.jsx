@@ -52,8 +52,9 @@ const translateNetworkError = (status, code, message) => {
   return e;
 };
 
+var randomNumber = Math.floor(Math.random() * (10000+1));
 const fetchHotelsList = createActionThunk('FETCH_LIST', ({ getState }) => {
-  let url = `${process.env.WT_READ_API}/hotels?fields=${LIST_FIELDS.join(',')}&limit=${LIMIT}`;
+  let url = `https://playground-api.windingtree.com/hotels?fields=${LIST_FIELDS.join(',')}&limit=30&random=`+randomNumber;
   const state = getState();
   if (state.hotels.next) {
     url = state.hotels.next;
