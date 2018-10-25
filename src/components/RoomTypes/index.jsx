@@ -134,7 +134,7 @@ class RoomType extends React.PureComponent {
       console.log('Testing QR Code');
 
       // https://chart.googleapis.com/chart?chs=300x300&cht=qr&choe=UTF-8&chl=0xdda8553c2704158e03b505641b9c7bd2fb31e81f
-      const qr = '0xdda8553c2704158e03b505641b9c7bd2fb31e81f';
+      const qr = '0x96C677A5480edC192559aa6D11D87e6Bff9A6f67';
       const qrContainer = document.getElementById('qr-container');
       const qrImage = document.getElementById('qr-image');
       qrImage.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&choe=UTF-8&chl=${qr}`;
