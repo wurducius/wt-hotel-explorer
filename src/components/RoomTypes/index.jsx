@@ -99,7 +99,7 @@ class RoomType extends React.PureComponent {
         },
         booking: {
           arrival: '2019-02-09',
-          departure: '2019-02-011',
+          departure: '2019-02-11',
           rooms: [
             {
               id: '314',
