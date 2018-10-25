@@ -160,8 +160,10 @@ const GuestForm = ({ handleSubmit, initialValues }) => {
 };
 
 const baseDate = dayjs().day() <= 3 ? dayjs() : dayjs().set('day', 0).add(7, 'days');
-const defaultArrival = dayjs(baseDate).set('day', 5).startOf('day').format('YYYY-MM-DD');
-const defaultDeparture = dayjs(baseDate).set('day', 7).startOf('day').format('YYYY-MM-DD');
+const defaultArrival = dayjs(baseDate).set('year', 2019).set('month', 2).set('day', 9)
+  .startOf('day').format('YYYY-MM-DD');
+const defaultDeparture = dayjs(baseDate).set('year', 2019).set('month', 2).set('day', 11)
+  .startOf('day').format('YYYY-MM-DD');
 
 GuestForm.defaultProps = {
   initialValues: {

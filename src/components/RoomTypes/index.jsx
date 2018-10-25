@@ -98,8 +98,8 @@ class RoomType extends React.PureComponent {
           ],
         },
         booking: {
-          arrival: '2019-01-01',
-          departure: '2019-01-03',
+          arrival: '2019-02-09',
+          departure: '2019-02-011',
           rooms: [
             {
               id: '314',
@@ -133,7 +133,8 @@ class RoomType extends React.PureComponent {
 
       console.log('Testing QR Code');
 
-      const qr = 'TEST';
+      https://chart.googleapis.com/chart?chs=300x300&cht=qr&choe=UTF-8&chl=0xdda8553c2704158e03b505641b9c7bd2fb31e81f
+      const qr = '0xdda8553c2704158e03b505641b9c7bd2fb31e81f';
       const qrContainer = document.getElementById('qr-container');
       const qrImage = document.getElementById('qr-image');
       qrImage.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&choe=UTF-8&chl=${qr}`;
