@@ -8,7 +8,7 @@
     "test": "rimraf coverage && jest --coverage",
     "coverage": "cat coverage/lcov.info | coveralls",
     "start": "NODE_ENV=development GIT_REV=`git rev-parse --short HEAD` WT_READ_API=https://playground-api.windingtree.com ./node_modules/.bin/webpack-dev-server --host 0.0.0.0 --disable-host-check",
-    "build": "NODE_ENV=production ./node_modules/.bin/webpack --mode=production",
+    "build": "NODE_ENV=production WT_READ_API=https://playground-api.windingtree.com ./node_modules/.bin/webpack --mode=production",
     "build-for-swarm-playground": "NODE_ENV=production GIT_REV=$TRAVIS_COMMIT HASH_ROUTED_BUILD=1 WT_READ_API='https://playground-api.windingtree.com' ./node_modules/.bin/webpack --mode=production",
     "deploy-now-demo": "now --regions bru --build-env GIT_REV=$TRAVIS_COMMIT --team windingtree --token $NOW_TOKEN --local-config=now-demo.json --docker --public",
     "alias-demo": "now alias --team windingtree --token=$NOW_TOKEN --local-config=now-demo.json",
